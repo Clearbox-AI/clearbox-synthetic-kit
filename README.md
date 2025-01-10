@@ -1,4 +1,6 @@
-# CLEARBOX ENGINE
+# Clearbox Synthetic Kit
+
+Clearbox AI's all-in-one solution for generation and evaluation of synthetic tabular and time-series data.
 
 ## Installation
 
@@ -10,17 +12,15 @@ $ pip install --force-reinstall dist/*.whl
 ```
 
 # Try it out
-Take a quick look at how the generation and evaluation process with Clearbox Engine works.
+Take a quick look at how the generation and evaluation process with Clearbox Synthetic Kit works.
 ## !!!! Verifica che il link Colab funzioni !!!!
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Clearbox-AI/engine/blob/main/examples/tabular_data_generation.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Clearbox-AI/clearbox-synthetic-kit/blob/main/examples/tabular_data_generation.ipynb)
 
-Find other examples [here](https://github.com/Clearbox-AI/engine/examples).
+Find other examples [here](https://github.com/Clearbox-AI/clearbox-synthetic-kit/examples).
 
-
-
-## Obfuscation
 
 ### Reference
 * [Using Cython to protect a Python codebase ](https://bucharjan.cz/blog/using-cython-to-protect-a-python-codebase.html)
 * [Package only binary compiled so files of a python library compiled with Cython](https://stackoverflow.com/questions/39499453/package-only-binary-compiled-so-files-of-a-python-library-compiled-with-cython)
 * [Distributing python packages protected with Cython](https://medium.com/swlh/distributing-python-packages-protected-with-cython-40fc29d84caf)
+* The time series generation features a modified version of [TimeVQVAE](https://github.com/ML4ITS/TimeVQVAE).
