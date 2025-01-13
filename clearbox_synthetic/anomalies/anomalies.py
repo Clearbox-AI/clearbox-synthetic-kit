@@ -11,9 +11,9 @@ import scipy.sparse
 import numpy as np
 import pandas as pd
 
-from clearbox_engine.dataset.dataset import Dataset
-from clearbox_engine.preprocessor.preprocessor import Preprocessor
-from clearbox_engine.engine.tabular_engine import TabularEngine
+from clearbox_synthetic.dataset.dataset import Dataset
+from clearbox_synthetic.preprocessor.preprocessor import Preprocessor
+from clearbox_synthetic.engine.tabular_engine import TabularEngine
 
 
 class Anomalies:

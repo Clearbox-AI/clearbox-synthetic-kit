@@ -12,7 +12,7 @@ from typing import List
 
 import numpy as np
 
-from clearbox_engine import TabularEngine
+from clearbox_synthetic import TabularEngine
 
 
 def learning_rule(training_rows_size: int):

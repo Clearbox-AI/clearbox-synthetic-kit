@@ -12,10 +12,10 @@ from pandas.api.types import is_numeric_dtype
 from sklearn.metrics import precision_score
 from sklearn.model_selection import train_test_split
 
-from clearbox_engine import Preprocessor, Dataset
+from clearbox_synthetic import Preprocessor, Dataset
 
 pyximport.install(setup_args={"include_dirs": np.get_include()})
-from clearbox_engine.metrics.privacy.gower_matrix_c import gower_matrix_c
+from clearbox_synthetic.metrics.privacy.gower_matrix_c import gower_matrix_c
 
 
 def sample_datasets(

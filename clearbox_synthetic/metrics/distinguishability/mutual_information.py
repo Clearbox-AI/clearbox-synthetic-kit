@@ -6,7 +6,7 @@ similarity between the feature relationships in both datasets.
 
 import pandas as pd
 from sklearn.metrics.cluster import normalized_mutual_info_score
-from clearbox_engine import Dataset, Preprocessor
+from clearbox_synthetic import Dataset, Preprocessor
 
 
 class MutualInformation:

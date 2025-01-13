@@ -15,7 +15,7 @@ from flax import serialization
 from flax.training import train_state
 from tqdm import trange
 from loguru import logger
-from clearbox_engine.VAE.timeseries_vae import TimeSeriesVAE, train_step, eval
+from clearbox_synthetic.VAE.timeseries_vae import TimeSeriesVAE, train_step, eval
 from .engine import EngineInterface
 
 

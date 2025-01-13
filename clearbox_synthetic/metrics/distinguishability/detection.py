@@ -7,7 +7,7 @@ distinguish between original and synthetic data.
 import pandas as pd
 import numpy as np
 from sklearn.metrics import accuracy_score, roc_auc_score
-from clearbox_engine import Dataset, Preprocessor
+from clearbox_synthetic import Dataset, Preprocessor
 
 
 class DetectionScore:

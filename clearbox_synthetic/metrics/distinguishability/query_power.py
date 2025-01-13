@@ -5,7 +5,7 @@ are between both datasets, the higher the quality of the synthetic data.
 """
 
 import random
-from clearbox_engine import Dataset, Preprocessor
+from clearbox_synthetic import Dataset, Preprocessor
 
 
 class QueryPower:

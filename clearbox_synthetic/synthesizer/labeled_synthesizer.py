@@ -9,7 +9,7 @@ import os
 from typing import List
 import numpy as np
 import pandas as pd
-from clearbox_engine.preprocessor.preprocessor import create_series
+from clearbox_synthetic.preprocessor.preprocessor import create_series
 from .synthesizer import Synthesizer
 
 

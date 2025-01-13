@@ -13,7 +13,7 @@ from sklearn.metrics import (
     r2_score,
     max_error,
 )
-from clearbox_engine import Dataset, Preprocessor
+from clearbox_synthetic import Dataset, Preprocessor
 
 
 class TSTRScore:
