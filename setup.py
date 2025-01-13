@@ -16,8 +16,8 @@ with open("requirements.txt") as f:
 
 # List of files to exclude from Cythonization
 EXCLUDE_FILES = [
-    "clearbox_engine/dataset/dataset.py",
-    "clearbox_engine/VAE/tabular_vae.py",
+    "clearbox_synthetic/dataset/dataset.py",
+    "clearbox_synthetic/VAE/tabular_vae.py",
 ]
 
 def get_extensions_paths(root_dir, exclude_files):
@@ -84,20 +84,20 @@ class CustomBuild(build_ext):
 
         # List of files to copy after the build process
         files_to_copy = [
-            Path("clearbox_engine/dataset") / "__init__.py",
-            Path("clearbox_engine/dataset") / "dataset.py",
-            Path("clearbox_engine/preprocessor") / "__init__.py",
-            Path("clearbox_engine/transformers") / "__init__.py",
-            Path("clearbox_engine/VAE") / "__init__.py",
-            Path("clearbox_engine/VAE") / "tabular_vae.py",
-            Path("clearbox_engine/VAE") / "timeseries_vae.py",
-            Path("clearbox_engine/engine") / "__init__.py",
-            Path("clearbox_engine/autoconfig") / "__init__.py",
-            Path("clearbox_engine/synthesizer") / "__init__.py",
-            Path("clearbox_engine/anomalies") / "__init__.py",
-            Path("clearbox_engine/metrics") / "__init__.py",
-            Path("clearbox_engine/metrics/privacy") / "__init__.py",
-            Path("clearbox_engine/metrics/privacy") / "gower_matrix_c.pyx"
+            Path("clearbox_synthetic/dataset") / "__init__.py",
+            Path("clearbox_synthetic/dataset") / "dataset.py",
+            Path("clearbox_synthetic/preprocessor") / "__init__.py",
+            Path("clearbox_synthetic/transformers") / "__init__.py",
+            Path("clearbox_synthetic/VAE") / "__init__.py",
+            Path("clearbox_synthetic/VAE") / "tabular_vae.py",
+            Path("clearbox_synthetic/VAE") / "timeseries_vae.py",
+            Path("clearbox_synthetic/engine") / "__init__.py",
+            Path("clearbox_synthetic/autoconfig") / "__init__.py",
+            Path("clearbox_synthetic/synthesizer") / "__init__.py",
+            Path("clearbox_synthetic/anomalies") / "__init__.py",
+            Path("clearbox_synthetic/metrics") / "__init__.py",
+            Path("clearbox_synthetic/metrics/privacy") / "__init__.py",
+            Path("clearbox_synthetic/metrics/privacy") / "gower_matrix_c.pyx"
         ]
 
         for file in files_to_copy:
@@ -126,20 +126,20 @@ class CustomBuild(build_ext):
 # Main setup configuration
 setup(
     # Metadata about the package
-    name="clearbox-engine",
-    version="1.0.3",
+    name="clearbox-synthetic-kit",
+    version="0.5.1",
     author="Clearbox AI",
     author_email="info@clearbox.ai",
-    description="The engine of all Clearbox AI tools, which provides an easy to use Dataset class, a dynamic data preprocessor and an advanced VAE.",
+    description="Clearbox AI's all-in-one solution for generation and evaluation of synthetic tabular and time-series data.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Clearbox-AI/engine",
+    url="https://github.com/Clearbox-AI/clearbox-synthetic-kit",
     install_requires=requirements,
     python_requires=">=3.7.0",
     
     # Cython modules compilation
     ext_modules=cythonize(
-        get_extensions_paths("clearbox_engine", EXCLUDE_FILES),
+        get_extensions_paths("clearbox_synthetic", EXCLUDE_FILES),
         build_dir="build",
         compiler_directives=dict(language_level=3, always_allow_keywords=True),
     ),

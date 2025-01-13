@@ -1,0 +1,60 @@
+name: Publish Libraty to PyPI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+        include:
+          - python-version: "3.10"
+            python-path: "/opt/python/cp310-cp310/bin"
+          - python-version: "3.11"
+            python-path: "/opt/python/cp311-cp311/bin"
+          - python-version: "3.12"
+            python-path: "/opt/python/cp312-cp312/bin"
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+
+    - name: Build Docker image
+      run: |
+        docker build -t my-python-wheels .
+
+    - name: Run build script in Docker container
+      run: |
+        docker run --rm \
+          -e PYTHON_VERSION=${{ matrix.python-version }} \
+          -e PYTHON_PATH=${{ matrix.python-path }} \
+          -v ${{ github.workspace }}:/io \
+          my-python-wheels /build_wheel.sh
+
+    # - name: Upload Python wheels as artifacts
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: python-wheels
+    #     path: dist/*.whl
+
+    - name: Publish wheels to PyPI
+      uses: pypa/gh-action-pypi-publish@v1.4.2
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_TOKEN }}
+
+
