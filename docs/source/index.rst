@@ -4,7 +4,8 @@
    contain the root `toctree` directive.
 
 .. include:: ../../README.md
-
+   :parser: markdown
+   
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
