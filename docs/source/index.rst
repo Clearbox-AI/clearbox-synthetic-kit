@@ -6,22 +6,14 @@
 .. include:: doc_1.md
    :parser: markdown
 
-.. image:: img/cb_purple_logo.png
-   :alt: SURE Logo
-
 .. include:: doc_2.md
    :parser: markdown
    
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-
 Modules
 =======
 .. toctree::
-   :maxdepth: 2
-   :caption: Documentation:
+   :maxdepth: 1
+   :caption: Documentation
 
    api/clearbox_engine.dataset.rst
    api/clearbox_engine.preprocessor.rst
@@ -36,10 +28,3 @@ Modules
    
 .. include:: doc_3.md
    :parser: markdown
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
