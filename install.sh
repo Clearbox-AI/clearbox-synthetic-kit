@@ -1,6 +1,6 @@
-rm -rf build 2> /dev/null
-rm -rf dist 2> /dev/null
-rm -rf *.egg-info 2> /dev/null
+rm -rf ./dist
+rm -rf ./build
+rm -rf *.egg-info
 
 
 pip install -r requirements.txt
