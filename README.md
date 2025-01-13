@@ -1,3 +1,10 @@
+<!-- [![Documentation Status](https://readthedocs.org/projects/clearbox-synthetic-kit/badge/?version=latest)](https://clearbox-sure.readthedocs.io/en/latest/?badge=latest)
+[![PyPI](https://badge.fury.io/py/clearbox-synthetic-kit.svg)](https://badge.fury.io/py/clearbox-synthetic-kit)
+[![Downloads](https://pepy.tech/badge/clearbox-synthetic-kit)](https://pepy.tech/project/clearbox-synthetic-kit)
+[![GitHub stars](https://img.shields.io/github/stars/Clearbox-AI/clearbox-synthetic-kit?style=social)](https://github.com/Clearbox-AI/clearbox-synthetic-kit) -->
+
+<img src="docs/source/img/cb_purple_logo.png" width="450">
+
 # Clearbox Synthetic Kit
 
 Clearbox AI's all-in-one solution for generation and evaluation of synthetic tabular and time-series data.
@@ -13,7 +20,7 @@ $ pip install --force-reinstall dist/*.whl
 
 # Try it out
 Take a quick look at how the generation and evaluation process with Clearbox Synthetic Kit works.
-## !!!! Verifica che il link Colab funzioni !!!!
+
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Clearbox-AI/clearbox-synthetic-kit/blob/main/examples/tabular_data_generation.ipynb)
 
 Find other examples [here](https://github.com/Clearbox-AI/clearbox-synthetic-kit/examples).
