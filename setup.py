@@ -127,7 +127,7 @@ class CustomBuild(build_ext):
 setup(
     # Metadata about the package
     name="clearbox-synthetic-kit",
-    version="0.5.1",
+    version="0.5.2",
     author="Clearbox AI",
     author_email="info@clearbox.ai",
     description="Clearbox AI's all-in-one solution for generation and evaluation of synthetic tabular and time-series data.",
@@ -135,7 +135,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Clearbox-AI/clearbox-synthetic-kit",
     install_requires=requirements,
-    python_requires=">=3.7.0",
+    python_requires=">3.10.0",
     
     # Cython modules compilation
     ext_modules=cythonize(
