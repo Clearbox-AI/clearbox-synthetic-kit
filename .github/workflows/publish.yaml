@@ -35,7 +35,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t my-python-wheels .
+        docker build -f Dockerfile_pip -t my-python-wheels .
 
     - name: Run build script in Docker container
       run: |
