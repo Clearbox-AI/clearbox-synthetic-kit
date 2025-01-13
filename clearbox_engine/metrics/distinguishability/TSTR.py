@@ -1,15 +1,7 @@
 """
-tstr_score.py
-
 This module defines the TSTRScore class, which calculates the Train on Synthetic Test on Real (TSTR) score
 for both regression and classification tasks using XGBoost models. The class compares the performance of
 models trained on original and synthetic datasets.
-
-Dependencies:
-    - numpy
-    - sklearn.metrics (accuracy_score, precision_recall_fscore_support, mean_absolute_error,
-                      mean_squared_error, r2_score, max_error)
-    - clearbox_engine (Dataset, Preprocessor)
 """
 
 import numpy as np

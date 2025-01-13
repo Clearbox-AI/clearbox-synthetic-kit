@@ -1,18 +1,7 @@
 """
-synthesizer.py
-
 This module defines the Synthesizer abstract base class, which provides a framework for generating
 synthetic datasets using various techniques. The class is intended to be extended by specific
 implementations of data synthesizers.
-
-Dependencies:
-    - abc
-    - numpy
-    - pandas
-    - scipy
-    - clearbox_engine.dataset.dataset
-    - clearbox_engine.engine.tabular_engine
-    - clearbox_engine.preprocessor.preprocessor
 """
 
 import abc

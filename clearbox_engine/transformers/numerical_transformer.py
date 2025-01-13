@@ -1,19 +1,7 @@
 """
-numerical_transformer.py
-
 This module contains the NumericalTransformer class, which is a custom scikit-learn transformer 
 used for preprocessing ordinal features. It handles imputation of missing values, scaling, 
 and optional binning of features for ordinal transformation.
-
-Dependencies:
-    - numpy
-    - sklearn.base.BaseEstimator
-    - sklearn.base.TransformerMixin
-    - sklearn.impute.SimpleImputer
-    - sklearn.preprocessing.MinMaxScaler
-    - sklearn.preprocessing.KBinsDiscretizer
-    - sklearn.preprocessing.PowerTransformer
-    - sklearn.preprocessing.QuantileTransformer
 """
 
 import numpy as np

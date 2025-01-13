@@ -1,22 +1,7 @@
 """
-timeseries_engine.py
-
 This module contains the TimeSeriesEngine class, which manages training and evaluation of a time series 
 model using VAE (Variational Autoencoder) or similar architectures. It handles license validation, 
 model initialization, training, evaluation, and model saving functionalities.
-
-Dependencies:
-    - datetime
-    - json
-    - optax
-    - requests
-    - numpy
-    - equinox
-    - jax
-    - flax
-    - tqdm
-    - loguru
-    - clearbox_engine
 """
 
 import json

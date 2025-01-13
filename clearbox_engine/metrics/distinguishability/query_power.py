@@ -1,13 +1,7 @@
 """
-query_power.py
-
 This module defines the QueryPower class, which assesses the quality of a synthetic dataset
 by running queries that compare it to the original dataset. The closer the query results
 are between both datasets, the higher the quality of the synthetic data.
-
-Dependencies:
-    - random
-    - clearbox_engine (Dataset, Preprocessor)
 """
 
 import random

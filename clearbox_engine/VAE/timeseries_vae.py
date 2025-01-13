@@ -1,17 +1,6 @@
 """
-timeseries_vae.py
-
 This module implements a Variational Autoencoder (VAE) specifically designed for time series data using Flax and JAX.
 It includes the custom Encoder and Decoder classes for sequence-based feature extraction and reconstruction.
-
-Dependencies:
-    - json
-    - jax
-    - jax.numpy
-    - numpy
-    - flax.linen as nn
-    - typing
-    - .vae.VAEInterface
 """
 
 import json

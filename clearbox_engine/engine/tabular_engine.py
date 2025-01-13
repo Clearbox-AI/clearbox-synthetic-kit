@@ -1,25 +1,7 @@
 """
-tabular_engine.py
-
 This module provides the implementation of the TabularEngine class, which integrates
 the TabularVAE and TabularDiffusion models to enable training, evaluation, and inference
 for tabular datasets.
-
-Classes:
-    - TabularEngine: A class for managing and training tabular data models, including
-      Variational Autoencoders (VAE) and Diffusion Models.
-
-Dependencies:
-    - datetime
-    - json
-    - optax
-    - requests
-    - numpy
-    - equinox
-    - jax
-    - flax
-    - loguru
-    - clearbox_engine
 """
 
 import json

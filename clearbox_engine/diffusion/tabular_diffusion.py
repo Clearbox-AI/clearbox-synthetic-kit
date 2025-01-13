@@ -1,25 +1,8 @@
 """
-diffusion_model.py
 
 This module implements a denoising diffusion model using JAX, Equinox, and Flax libraries.
 It includes an MLP-based denoising model and a TabularDiffusion class for training and sampling
 from the diffusion model.
-
-Classes:
-    - MLPDenoising: An MLP-based model for denoising tasks in the diffusion framework.
-    - TabularDiffusion: A class implementing the diffusion training and sampling mechanism.
-
-Dependencies:
-    - json
-    - jax
-    - jax.numpy
-    - numpy
-    - functools
-    - flax
-    - diffrax
-    - equinox
-    - optax
-    - loguru
 """
 
 import json

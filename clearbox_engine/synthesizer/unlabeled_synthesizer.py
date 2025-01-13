@@ -1,14 +1,6 @@
 """
-unlabeled_synthesizer.py
-
 This module defines the UnlabeledSynthesizer class, which generates synthetic unlabeled data
 based on an encoded representation of a dataset.
-
-Dependencies:
-    - os
-    - numpy
-    - pandas
-    - clearbox_engine.preprocessor.preprocessor.create_series
 """
 
 from .synthesizer import Synthesizer

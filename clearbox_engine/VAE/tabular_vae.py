@@ -1,17 +1,6 @@
 """
-tabular_vae.py
-
 This module contains the implementation of a Variational Autoencoder (VAE) for tabular data using Flax and JAX.
-It includes custom Encoder and Decoder classes, as well as the main TabularVAE class that ties everything together.
-
-Dependencies:
-    - json
-    - jax
-    - jax.numpy
-    - numpy
-    - flax.linen as nn
-    - typing
-    - .vae.VAEInterface
+It includes custom Encoder and Decoder classes, as well as the main TabularVAE class that ties everything together. - .vae.VAEInterface
 """
 
 import json

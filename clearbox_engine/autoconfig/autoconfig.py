@@ -1,24 +1,9 @@
 """
-autoconfig_module.py
 
 This module provides functionality for automatically configuring and searching
 optimal parameters for a tabular data engine. The main class, `Autoconfig`, is
 used to perform grid search over various model architectures and batch sizes 
 to find the best configuration based on reconstruction loss.
-
-Functions:
-    - learning_rule: Determines the learning rate, number of epochs, and batch
-      size based on the size of the training data.
-
-Classes:
-    - Autoconfig: Handles data splitting and performs a grid search to determine
-      the optimal configuration for a tabular model.
-
-Dependencies:
-    - math
-    - threading
-    - numpy
-    - clearbox_engine.TabularEngine
 """
 
 import math

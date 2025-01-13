@@ -1,14 +1,7 @@
 """
-mutual_information.py
-
 This module defines the MutualInformation class, which calculates the mutual information
 between features in original and synthetic datasets. The comparison helps assess the 
 similarity between the feature relationships in both datasets.
-
-Dependencies:
-    - pandas
-    - sklearn.metrics.cluster (normalized_mutual_info_score)
-    - clearbox_engine (Dataset, Preprocessor)
 """
 
 import pandas as pd

@@ -1,14 +1,7 @@
 """
-reconstruction_error.py
-
 This module defines the ReconstructionError class, which calculates the reconstruction
 error for both original and synthetic datasets using a specified TabularEngine.
 The reconstruction error histograms are generated to compare the quality of synthetic data.
-
-Dependencies:
-    - numpy
-    - sklearn.preprocessing.OneHotEncoder
-    - clearbox_engine (Dataset, Preprocessor, TabularEngine)
 """
 
 import numpy as np

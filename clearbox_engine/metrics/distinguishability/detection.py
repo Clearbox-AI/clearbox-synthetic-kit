@@ -1,16 +1,7 @@
 """
-detection_score.py
-
 This module provides the DetectionScore class, which computes a detection score
 for evaluating the quality of a synthetic dataset by training a classifier to 
 distinguish between original and synthetic data.
-
-Dependencies:
-    - pandas
-    - numpy
-    - sklearn (accuracy_score, roc_auc_score)
-    - clearbox_engine (Dataset, Preprocessor)
-    - xgboost
 """
 
 import pandas as pd

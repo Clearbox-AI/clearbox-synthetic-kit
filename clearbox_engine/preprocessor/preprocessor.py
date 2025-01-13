@@ -1,6 +1,4 @@
 """
-preprocessor.py
-
 This module provides the Preprocessor class and related functions for preprocessing tabular data. It includes 
 functionality for encoding categorical variables, handling missing values, and feature selection.
 
@@ -13,15 +11,6 @@ Functions:
 Classes:
     - Preprocessor: A class for transforming tabular data, handling categorical and numerical feature encoding, 
       and feature selection.
-
-Dependencies:
-    - pandas
-    - numpy
-    - sklearn
-    - tqdm
-    - jax
-    - loguru
-    - clearbox_engine
 """
 
 import sklearn.pipeline

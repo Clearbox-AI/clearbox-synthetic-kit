@@ -1,14 +1,6 @@
 """
-autocorrelation.py
-
 This module provides functionality to compute and compare the autocorrelation 
 between original and synthetic datasets using the Autocorrelation class.
-
-Dependencies:
-    - json
-    - pandas
-    - numpy
-    - clearbox_engine (Dataset, Preprocessor)
 """
 
 import json

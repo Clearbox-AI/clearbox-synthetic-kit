@@ -1,14 +1,6 @@
 """
-categorical_transformer.py
-
 This module defines the CategoricalTransformer class, which is a custom scikit-learn transformer
 for handling categorical data. It imputes missing values and applies one-hot encoding.
-
-Dependencies:
-    - sklearn.base.BaseEstimator
-    - sklearn.base.TransformerMixin
-    - sklearn.impute.SimpleImputer
-    - sklearn.preprocessing.OneHotEncoder
 """
 
 from sklearn.base import BaseEstimator, TransformerMixin

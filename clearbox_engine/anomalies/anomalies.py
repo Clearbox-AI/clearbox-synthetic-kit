@@ -1,22 +1,9 @@
 """
-anomalies_detection_module.py
-
 This module provides functionality to detect anomalies in tabular data using
 an engine that computes reconstruction errors, a dataset for the input data, 
 and a preprocessor for transforming the data. The main class `Anomalies` 
 provides methods to detect anomalies and to calculate feature-wise anomaly 
 probabilities.
-
-Classes:
-    - Anomalies: Detects anomalies in tabular data using reconstruction errors.
-
-Dependencies:
-    - scipy.sparse
-    - numpy
-    - pandas
-    - clearbox_engine.dataset.dataset.Dataset
-    - clearbox_engine.preprocessor.preprocessor.Preprocessor
-    - clearbox_engine.engine.tabular_engine.TabularEngine
 """
 
 import scipy.sparse

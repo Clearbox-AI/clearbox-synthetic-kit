@@ -1,17 +1,7 @@
 """
-datetime_transformer.py
-
 This module provides the DatetimeTransformer class, a custom scikit-learn transformer
 for handling datetime features. It imputes missing values and formats datetime values
 for machine learning tasks.
-
-Dependencies:
-    - dateinfer
-    - numpy
-    - datetime
-    - sklearn.base.BaseEstimator
-    - sklearn.base.TransformerMixin
-    - sklearn.impute.SimpleImputer
 """
 
 import dateinfer

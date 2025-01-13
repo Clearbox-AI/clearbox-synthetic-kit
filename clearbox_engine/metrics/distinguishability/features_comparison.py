@@ -1,13 +1,7 @@
 """
-features_comparison.py
-
 This module provides the FeaturesComparison class, which compares the statistical
 properties of features between an original dataset and a synthetic dataset. It
 provides detailed statistics for numerical, categorical, and datetime features.
-
-Dependencies:
-    - pandas
-    - clearbox_engine (Dataset, Preprocessor)
 """
 
 import pandas as pd
