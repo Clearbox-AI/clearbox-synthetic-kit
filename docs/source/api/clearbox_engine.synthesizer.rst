@@ -1,4 +1,4 @@
-Synthesizer package
+Synthesizer
 ====================================
 
 .. automodule:: clearbox_engine.synthesizer.labeled_synthesizer

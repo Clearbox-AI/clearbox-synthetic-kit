@@ -1,4 +1,4 @@
-Anomalies package
+Anomalies
 ==================================
 
 .. automodule:: clearbox_engine.anomalies.anomalies

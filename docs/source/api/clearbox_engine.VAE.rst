@@ -1,4 +1,4 @@
-VAE package
+VAE
 ============================
 
 .. automodule:: clearbox_engine.VAE.tabular_vae

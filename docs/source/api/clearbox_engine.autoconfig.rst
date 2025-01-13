@@ -1,4 +1,4 @@
-Autoconfig package
+Autoconfig
 ===================================
 
 .. automodule:: clearbox_engine.autoconfig.autoconfig

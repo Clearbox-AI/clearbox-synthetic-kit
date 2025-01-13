@@ -1,4 +1,4 @@
-Metrics package
+Metrics
 ================================
 
 .. toctree::

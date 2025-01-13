@@ -3,7 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. include:: ../../README.md
+.. include:: doc_1.md
+   :parser: markdown
+
+.. image:: img/cb_purple_logo.png
+   :alt: SURE Logo
+
+.. include:: doc_2.md
    :parser: markdown
    
 .. toctree::
@@ -15,6 +21,7 @@ Modules
 =======
 .. toctree::
    :maxdepth: 2
+   :caption: Documentation:
 
    api/clearbox_engine.dataset.rst
    api/clearbox_engine.preprocessor.rst
@@ -27,7 +34,9 @@ Modules
    api/clearbox_engine.synthesizer.rst
    api/clearbox_engine.metrics.rst
    
-   
+.. include:: doc_3.md
+   :parser: markdown
+
 Indices and tables
 ==================
 

@@ -23,7 +23,7 @@ def _infer_column_types(df: pd.DataFrame) -> Dict[str, str]:
 
 class Dataset(BaseModel):
     """
-    A class for tabular dataset.
+    A class for tabular dataset manipulation.
 
     Attributes
     ----------

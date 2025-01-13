@@ -1,4 +1,4 @@
-Diffusion package
+Diffusion
 ==================================
 
 .. automodule:: clearbox_engine.diffusion.tabular_diffusion

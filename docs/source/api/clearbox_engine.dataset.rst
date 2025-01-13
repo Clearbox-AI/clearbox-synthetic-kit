@@ -1,4 +1,4 @@
-Dataset package
+Dataset
 ================================
 
 .. automodule:: clearbox_engine.dataset.dataset

@@ -1,4 +1,4 @@
-Engine package
+Engine
 ===============================
 
 .. automodule:: clearbox_engine.engine.tabular_engine

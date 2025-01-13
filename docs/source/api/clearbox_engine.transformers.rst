@@ -1,4 +1,4 @@
-Transformers package
+Transformers
 =====================================
 
 .. automodule:: clearbox_engine.transformers.categorical_transformer

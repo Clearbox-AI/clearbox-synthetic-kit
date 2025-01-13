@@ -1,4 +1,4 @@
-Preprocessor package
+Preprocessor 
 =====================================
 
 .. automodule:: clearbox_engine.preprocessor.preprocessor
