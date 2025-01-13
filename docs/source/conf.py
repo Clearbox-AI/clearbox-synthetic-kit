@@ -13,7 +13,7 @@ extensions = [
     'sphinx.ext.napoleon',  # Support for Google-style and NumPy-style docstrings
     'sphinx.ext.viewcode',  # Add links to source code
     'sphinx.ext.intersphinx',  # Link to other project's documentation
-    'myst_parser', # To include Markdown files - if not installed when running 'make html' run -> pip install myst-parser
+    'myst_parser', # To include Markdown files - If not installed when running 'make html' run -> pip install myst-parser - Add it in requirements.txt
     'sphinx_rtd_theme'
 ]
 

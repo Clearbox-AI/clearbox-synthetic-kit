@@ -13,7 +13,7 @@ from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder, LabelEncoder
 DTYPES_MAP = {"b": bool, "i": int, "u": int, "f": float, "c": float, "O": str, "S": str}
 
 
-def infer_column_types(df: pd.DataFrame) -> Dict[str, str]:
+def _infer_column_types(df: pd.DataFrame) -> Dict[str, str]:
     """
     Infer column types from the dataframe.
     """

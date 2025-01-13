@@ -12,10 +12,7 @@ Clearbox AI's all-in-one solution for generation and evaluation of synthetic tab
 ## Installation
 
 ```shell
-$ pip install -r requirements.txt
-$ python setup.py build_ext 
-$ python setup.py bdist_wheel
-$ pip install --force-reinstall dist/*.whl
+$ pip install clearbox-synthetic-kit
 ```
 
 # Try it out
