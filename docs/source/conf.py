@@ -19,7 +19,6 @@ extensions = [
 
 myst_enable_extensions = [
     "html_image", # Allows html images format conversion
-    "linkify"
 ]
 
 source_suffix = {
