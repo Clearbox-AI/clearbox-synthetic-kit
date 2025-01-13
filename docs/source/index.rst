@@ -13,18 +13,17 @@ Modules
 =======
 .. toctree::
    :maxdepth: 1
-   :caption: Documentation
 
-   api/clearbox_engine.dataset.rst
-   api/clearbox_engine.preprocessor.rst
-   api/clearbox_engine.transformers.rst
-   api/clearbox_engine.engine.rst
-   api/clearbox_engine.VAE.rst
-   api/clearbox_engine.diffusion.rst
-   api/clearbox_engine.anomalies.rst
-   api/clearbox_engine.autoconfig.rst
-   api/clearbox_engine.synthesizer.rst
-   api/clearbox_engine.metrics.rst
+   api/clearbox_synthetic.dataset.rst
+   api/clearbox_synthetic.preprocessor.rst
+   api/clearbox_synthetic.transformers.rst
+   api/clearbox_synthetic.engine.rst
+   api/clearbox_synthetic.VAE.rst
+   api/clearbox_synthetic.diffusion.rst
+   api/clearbox_synthetic.anomalies.rst
+   api/clearbox_synthetic.autoconfig.rst
+   api/clearbox_synthetic.synthesizer.rst
+   api/clearbox_synthetic.metrics.rst
    
 .. include:: doc_3.md
    :parser: markdown
