@@ -1,0 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+  font-family: "Be Vietnam Pro", sans-serif;
+  color: #212121;
+}
+footer {
+  color: #646369;
+}
+
+.wy-nav-content-wrap {
+  background-color: #fafafa;
+}
+.wy-nav-content {
+  background-color: #ffffff;
+  max-width: 60rem;
+  min-height: 100vh;
+}
+.wy-nav-side,
+.wy-nav-top {
+  background-color: #483a8f;
+}
+
+.wy-form input[type="text"] {
+  border-radius: 0;
+  border: none;
+}
+
+/** Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Be Vietnam Pro", sans-serif;
+}
+
+/** This fixes the horizontal scroll on mobile */
+@media only screen and (max-width: 770px) {
+  .py.class dt,
+  .py.function dt {
+    display: block !important;
+    overflow-x: auto;
+  }
+}

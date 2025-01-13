@@ -1,6 +1,3 @@
-clearbox_engine
-===============
-
 .. toctree::
    :maxdepth: 4
 

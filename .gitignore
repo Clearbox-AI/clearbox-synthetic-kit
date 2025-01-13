@@ -33,6 +33,7 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*:Zone.Identifier
 MANIFEST
 
 # PyInstaller
@@ -79,6 +80,8 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/build/
+docs/build/html/
 
 # PyBuilder
 .pybuilder/

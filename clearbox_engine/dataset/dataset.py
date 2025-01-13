@@ -762,8 +762,8 @@ class Dataset(BaseModel):
         Parameters
         ----------
         include : str or list-like of dtypes or None, default 'all'
-             By default all columns of the input will be included in the output. Using a list-like of dtypes limits the
-             results to the provided data types. To limit the result to numeric types submit 'number'. To limit it
+            By default all columns of the input will be included in the output. Using a list-like of dtypes limits the
+            results to the provided data types. To limit the result to numeric types submit 'number'. To limit it
             to object columns submit 'object'.
 
         Returns

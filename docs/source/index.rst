@@ -1,15 +1,12 @@
-.. Clearbox Engine documentation master file, created by
-   sphinx-quickstart on Mon Nov 18 11:23:30 2024.
+.. clearbox-synthetic-kit documentation master file, created by
+   sphinx-quickstart on Mon Jan 13 09:17:26 2025.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
-
-Clearbox Engine documentation
-=============================
 
 .. image:: ./img/cb_purple_logo.png
    :alt: Clearbox AI Logo
 
-.. mdinclude:: ../README.md
+.. include:: ../../README.md
 
 .. toctree::
    :maxdepth: 2

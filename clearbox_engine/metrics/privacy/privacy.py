@@ -855,11 +855,9 @@ def synthetic_training_metrics(
     processed_training_dataset : pd.DataFrame
         The training dataset that has been processed and standardized.
     categorical_features : Union[List, np.ndarray]
-        A list or array indicating which features are categorical. If `categorical_features[i]` 
-        is True, the i-th feature is categorical.
+        A list or array indicating which features are categorical. If `categorical_features[i]` is True, the i-th feature is categorical.
     training_hist_bins : np.ndarray, optional
-        Precomputed histogram bin edges from the training DCR distribution. If None, they will 
-        be generated, by default None.
+        Precomputed histogram bin edges from the training DCR distribution. If None, they will be generated, by default None.
     parallel : bool, optional
         If True, enables parallel computation to speed up distance calculations, by default True.
 
@@ -868,13 +866,13 @@ def synthetic_training_metrics(
     tuple
         A tuple containing:
         - dcr_synth_train : np.ndarray
-            The Distance to the Closest Record (DCR) between the synthetic and training datasets.
+        The Distance to the Closest Record (DCR) between the synthetic and training datasets.
         - synth_train_metrics_dict : dict
-            A dictionary containing:
-            - "synth_train_clones": The number of synthetic records that are identical to training records.
-            - "synth_train_clones_percentage": The percentage of synthetic records that are clones of training records.
-            - "dcr_synth_train_stats": Statistical summary of the DCR values.
-            - "dcr_synth_train_hist": Histogram of the DCR values.
+        A dictionary containing:
+        - "synth_train_clones": The number of synthetic records that are identical to training records.
+        - "synth_train_clones_percentage": The percentage of synthetic records that are clones of training records.
+        - "dcr_synth_train_stats": Statistical summary of the DCR values.
+        - "dcr_synth_train_hist": Histogram of the DCR values.
 
     Notes
     -----
@@ -924,7 +922,7 @@ def synthetic_holdout_metrics(
 ):
     """
     Computes privacy-related metrics by analyzing the distances between a synthetic dataset
-    and a holdout dataset. Optionally compares distances to a training dataset to test 
+    and a holdout dataset. Optionally compares distances to a training dataset to test
     whether synthetic data is more similar to training data than to holdout data.
 
     Parameters
@@ -934,16 +932,16 @@ def synthetic_holdout_metrics(
     processed_holdout_dataset : pd.DataFrame
         The holdout dataset that has been processed and standardized.
     categorical_features : Union[List, np.ndarray]
-        A list or array indicating which features are categorical. If `categorical_features[i]` 
+        A list or array indicating which features are categorical. If `categorical_features[i]`
         is True, the i-th feature is categorical.
     dcr_synth_train : np.ndarray, optional
-        Precomputed Distance to the Closest Record (DCR) between the synthetic and training 
+        Precomputed Distance to the Closest Record (DCR) between the synthetic and training
         datasets. If None, it will be calculated, by default None.
     processed_training_dataset : pd.DataFrame, optional
-        The training dataset that has been processed and standardized. Needed if test sampling 
+        The training dataset that has been processed and standardized. Needed if test sampling
         is enabled, by default None.
     training_hist_bins : np.ndarray, optional
-        Precomputed histogram bin edges from the training DCR distribution. If None, they will 
+        Precomputed histogram bin edges from the training DCR distribution. If None, they will
         be generated, by default None.
     parallel : bool, optional
         If True, enables parallel computation to speed up distance calculations, by default True.
@@ -954,24 +952,25 @@ def synthetic_holdout_metrics(
     -------
     dict
         A dictionary containing the following metrics:
-        - "dcr_synth_holdout_stats": Statistics (mean, min, max, etc.) of DCR between synthetic 
-          and holdout datasets.
+        - "dcr_synth_holdout_stats": Statistics (mean, min, max, etc.) of DCR between synthetic
+        and holdout datasets.
         - "dcr_synth_holdout_hist": Histogram of DCR values between synthetic and holdout datasets.
-        - "synth_holdout_test": Percentage of synthetic data that is closer to the training data 
-          than to the holdout data.
+        - "synth_holdout_test": Percentage of synthetic data that is closer to the training data
+        than to the holdout data.
         - "synth_holdout_test_warnings": Warnings related to the DCR comparison test.
-        - "dcr_synth_train_stats": (Optional) Statistics of DCR between synthetic and training 
-          datasets if test_sampling is enabled.
-        - "dcr_synth_train_hist": (Optional) Histogram of DCR values between synthetic and training 
-          datasets if test_sampling is enabled.
+        - "dcr_synth_train_stats": (Optional) Statistics of DCR between synthetic and training
+        datasets if test_sampling is enabled.
+        - "dcr_synth_train_hist": (Optional) Histogram of DCR values between synthetic and training
+        datasets if test_sampling is enabled.
 
     Notes
     -----
-    The function uses DCR (Distance to the Closest Record) to measure the similarity between 
-    datasets. It can optionally perform sampling to reduce the computational cost when datasets 
-    are large. The validation DCR test checks if synthetic data is closer to the training set 
+    The function uses DCR (Distance to the Closest Record) to measure the similarity between
+    datasets. It can optionally perform sampling to reduce the computational cost when datasets
+    are large. The validation DCR test checks if synthetic data is closer to the training set
     compared to the holdout set, which helps assess the risk of overfitting or data leakage.
     """
+
     if test_sampling and processed_training_dataset is not None:
         (
             sampled_training,
@@ -1049,8 +1048,8 @@ def membership_inference_test(
     Conducts a Membership Inference Test to estimate the risk of revealing membership
     information based on the distance between the adversary dataset and the synthetic dataset.
 
-    The function calculates the Distance to the Closest Record (DCR) between the adversary 
-    dataset and the synthetic dataset, applies various distance thresholds, and computes 
+    The function calculates the Distance to the Closest Record (DCR) between the adversary
+    dataset and the synthetic dataset, applies various distance thresholds, and computes
     precision scores to evaluate the risk of membership inference.
 
     Parameters
@@ -1060,33 +1059,34 @@ def membership_inference_test(
     processed_synthetic_dataset : pd.DataFrame
         The processed synthetic dataset containing mixed-type data.
     categorical_features : Union[List, np.ndarray]
-        A list or array of booleans indicating which features are categorical. If 
+        A list or array of booleans indicating which features are categorical. If
         `categorical_features[i]` is True, the i-th feature is categorical.
     adversary_guesses_ground_truth : np.ndarray
-        Ground truth array indicating the true membership status of each instance in 
+        Ground truth array indicating the true membership status of each instance in
         the adversary dataset.
     parallel : bool, optional
-        If True, enables parallel computation to speed up the DCR calculation, 
+        If True, enables parallel computation to speed up the DCR calculation,
         by default True.
 
     Returns
     -------
     dict
         A dictionary containing the following keys:
-        - "adversary_distance_thresholds": List of distance thresholds used for 
-          precision calculations.
+        - "adversary_distance_thresholds": List of distance thresholds used for
+        precision calculations.
         - "adversary_precisions": List of precision scores for each distance threshold.
-        - "membership_inference_mean_risk_score": A float value representing the 
-          mean risk score, ranging from 0 to 1, with higher values indicating 
-          higher risk.
+        - "membership_inference_mean_risk_score": A float value representing the
+        mean risk score, ranging from 0 to 1, with higher values indicating
+        higher risk.
 
     Notes
     -----
-    The `membership_inference_mean_risk_score` is calculated as twice the difference 
-    between the mean adversary precision and 0.5, clipped to a minimum of 0. This score 
-    provides an estimate of how well an adversary can differentiate between members and 
+    The `membership_inference_mean_risk_score` is calculated as twice the difference
+    between the mean adversary precision and 0.5, clipped to a minimum of 0. This score
+    estimates how effectively an adversary can differentiate between members and
     non-members of the training data based on the synthetic data.
     """
+
     dcr_adversary_synth = distances_to_closest_record(
         processed_adversary_dataset,
         categorical_features,
