@@ -12,7 +12,7 @@
 Modules
 =======
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    api/clearbox_synthetic.dataset.rst
    api/clearbox_synthetic.preprocessor.rst
