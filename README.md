@@ -1,13 +1,14 @@
-[![Documentation Status](https://readthedocs.org/projects/clearbox-synthetic-kit/badge/?version=latest)](https://clearbox-sure.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/clearbox-synthetic-kit/badge/?version=latest)](https://clearbox-synthetic-kit.readthedocs.io/en/latest/?badge=latest)
 [![PyPI](https://badge.fury.io/py/clearbox-synthetic-kit.svg)](https://badge.fury.io/py/clearbox-synthetic-kit)
-[![Downloads](https://pepy.tech/badge/clearbox-synthetic-kit)](https://pepy.tech/project/clearbox-synthetic-kit)
+[![Downloads](https://pepy.tech/badge/clearbox-synthetic-kit?cache-bust=1)](https://pepy.tech/project/clearbox-synthetic-kit)
 [![GitHub stars](https://img.shields.io/github/stars/Clearbox-AI/clearbox-synthetic-kit?style=social)](https://github.com/Clearbox-AI/clearbox-synthetic-kit)
 
 <img src="docs/source/img/cb_purple_logo.png" width="450">
 
 # Clearbox Synthetic Kit
+### The synthetic data generation library.
 
-Clearbox AI's all-in-one solution for generation and evaluation of synthetic tabular and time-series data.
+Clearbox AI's all-in-one solution for generation and evaluation of synthetic **tabular** and **time-series** data.
 
 ## Installation
 
@@ -16,12 +17,14 @@ $ pip install clearbox-synthetic-kit
 ```
 
 # Try it out
-Take a quick look at how the generation and evaluation process with Clearbox Synthetic Kit works.
+Get a quick overview of the generation and evaluation process with Clearbox Synthetic Kit.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Clearbox-AI/clearbox-synthetic-kit/blob/main/examples/tabular_data_generation.ipynb)
 
 Find other examples [here](https://github.com/Clearbox-AI/clearbox-synthetic-kit/examples).
 
+
+---
 
 ### References
 * Using Cython to protect a Python codebase [[Link](https://bucharjan.cz/blog/using-cython-to-protect-a-python-codebase.html)]
