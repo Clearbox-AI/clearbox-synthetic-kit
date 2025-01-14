@@ -9,6 +9,10 @@
 .. include:: doc_2.md
    :parser: markdown
    
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
 Modules
 =======
 .. toctree::
