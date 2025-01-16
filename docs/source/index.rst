@@ -18,13 +18,9 @@ Modules
 .. toctree::
    :maxdepth: 1
 
-   api/clearbox_synthetic.dataset.rst
-   api/clearbox_synthetic.preprocessor.rst
-   api/clearbox_synthetic.engine.rst
-   api/clearbox_synthetic.anomalies.rst
-   api/clearbox_synthetic.autoconfig.rst
-   api/clearbox_synthetic.synthesizer.rst
-   api/clearbox_synthetic.metrics.rst
+   api/clearbox_synthetic.utils.rst
+   api/clearbox_synthetic.generation.rst
+   api/clearbox_synthetic.evaluation.rst
    
 .. include:: doc_3.md
    :parser: markdown

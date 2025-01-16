@@ -28,11 +28,11 @@ source_suffix = {
 }
 
 templates_path = ['_templates']
-exclude_patterns = ['diffusion/diffusion.py',
-                    'engine/engine.py',
-                    'metrics/privacy/gower_matrix_c.pyx',
-                    'VAE/vae.py',
-                    'transformers/*']
+exclude_patterns = ['generation/difusion/diffusion.py',
+                    'generation/engine/engine.py',
+                    'evaluation/privacy/gower_matrix_c.pyx',
+                    'generation/VAE/vae.py',
+                    'utils/transformers/*']
 
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {
@@ -43,7 +43,7 @@ html_theme_options = {
 html_static_path = ['_static', 'img']
 
 html_logo = "img/cb_white_logo_compact.png"
-html_favicon = "img/cb_white_logo_compact.png"
+# html_favicon = "img/favicon.png"
 
 master_doc = 'index'  # Ensure this points to your main document
 
