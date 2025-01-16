@@ -1,7 +1,4 @@
-clearbox\_synthetic.utils package
-=================================
-
-Subpackages
+Utils
 -----------
 
 .. toctree::

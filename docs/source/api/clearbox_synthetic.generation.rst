@@ -1,7 +1,4 @@
-clearbox\_synthetic.generation package
-======================================
-
-Subpackages
+Generation
 -----------
 
 .. toctree::
