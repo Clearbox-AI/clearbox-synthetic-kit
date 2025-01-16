@@ -19,8 +19,6 @@ from clearbox_synthetic.VAE.tabular_vae import TabularVAE, train_step, eval
 from clearbox_synthetic.diffusion.tabular_diffusion import TabularDiffusion
 from .engine import EngineInterface
 
-KEYGEN_FINGERPRINT = "13:77:04:39:61:57:97:85"
-
 
 class TabularEngine(EngineInterface):
     """Engine for managing, training, and evaluating tabular data models.
