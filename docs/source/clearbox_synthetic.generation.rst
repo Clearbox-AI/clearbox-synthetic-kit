@@ -1,3 +1,9 @@
+clearbox\_synthetic.generation package
+======================================
+
+Subpackages
+-----------
+
 .. toctree::
    :maxdepth: 4
 
