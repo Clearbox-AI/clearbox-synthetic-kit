@@ -58,7 +58,6 @@ class TabularEngine(EngineInterface):
         """Initializes the TabularEngine.
 
         Args:
-            license_key (str): The license key for validation.
             layers_size (Sequence[int]): The sizes of the hidden layers.
             numerical_feature_sizes (Sequence[int]): Sizes of ordinal features.
             categorical_feature_sizes (Sequence[int]): Sizes of categorical features.
