@@ -31,7 +31,8 @@ templates_path = ['_templates']
 exclude_patterns = ['diffusion/diffusion.py',
                     'engine/engine.py',
                     'metrics/privacy/gower_matrix_c.pyx',
-                    'VAE/vae.py']
+                    'VAE/vae.py',
+                    'transformers/*']
 
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {
