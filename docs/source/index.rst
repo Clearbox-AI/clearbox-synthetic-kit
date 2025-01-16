@@ -20,9 +20,7 @@ Modules
 
    api/clearbox_synthetic.dataset.rst
    api/clearbox_synthetic.preprocessor.rst
-   api/clearbox_synthetic.transformers.rst
    api/clearbox_synthetic.engine.rst
-   api/clearbox_synthetic.VAE.rst
    api/clearbox_synthetic.diffusion.rst
    api/clearbox_synthetic.anomalies.rst
    api/clearbox_synthetic.autoconfig.rst
