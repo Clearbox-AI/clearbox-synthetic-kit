@@ -5,7 +5,8 @@ provides detailed statistics for numerical, categorical, and datetime features.
 """
 
 import pandas as pd
-from clearbox_synthetic.utils import Dataset, Preprocessor
+from clearbox_synthetic.utils.dataset.dataset import Dataset
+from clearbox_synthetic.utils.preprocessor.preprocessor import Preprocessor
 
 
 class FeaturesComparison:

@@ -6,7 +6,8 @@ between original and synthetic datasets using the Autocorrelation class.
 import json
 import pandas as pd
 import numpy as np
-from clearbox_synthetic.utils import Dataset, Preprocessor
+from clearbox_synthetic.utils.dataset.dataset import Dataset
+from clearbox_synthetic.utils.preprocessor.preprocessor import Preprocessor
 
 
 def _autocorr(x: pd.Series) -> np.ndarray:

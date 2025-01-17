@@ -11,7 +11,8 @@ import scipy.sparse
 import numpy as np
 import pandas as pd
 
-from clearbox_synthetic.utils import Dataset, Preprocessor
+from clearbox_synthetic.utils.dataset.dataset import Dataset
+from clearbox_synthetic.utils.preprocessor.preprocessor import Preprocessor
 from clearbox_synthetic.generation import TabularEngine
 
 

@@ -25,7 +25,7 @@ from loguru import logger
 import copy
 from jax import jit
 
-from clearbox_synthetic.utils import Dataset
+from ..dataset.dataset import Dataset
 from ..transformers import (
     NumericalTransformer,
     CategoricalTransformer,

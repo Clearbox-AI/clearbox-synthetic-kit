@@ -6,7 +6,8 @@ The reconstruction error histograms are generated to compare the quality of synt
 
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
-from clearbox_synthetic.utils import Dataset, Preprocessor
+from clearbox_synthetic.utils.dataset.dataset import Dataset
+from clearbox_synthetic.utils.preprocessor.preprocessor import Preprocessor
 from clearbox_synthetic.generation import TabularEngine
 
 

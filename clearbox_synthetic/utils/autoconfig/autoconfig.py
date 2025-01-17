@@ -12,8 +12,6 @@ from typing import List
 
 import numpy as np
 
-from clearbox_synthetic.generation import TabularEngine
-
 
 def learning_rule(training_rows_size: int):
     """Determines the learning rate, number of epochs, and batch size based on the
@@ -98,6 +96,8 @@ class Autoconfig:
             list: The optimal configuration (architecture and batch size) based on
             the evaluation loss.
         """
+        from clearbox_synthetic.generation.engine.tabular_engine import TabularEngine
+        
         features_size = self.train_ds.shape[1]
         rows_number = self.train_ds.shape[0]
 
