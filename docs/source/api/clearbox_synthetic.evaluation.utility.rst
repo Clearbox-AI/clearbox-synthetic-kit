@@ -1,5 +1,5 @@
 Utility
---------------------------------------------------
+-------
 
 This module provides classes to evaluate the informative content and performance of synthetic 
 data with multiple metrics, such as Train on Synthetic-Test on Real (TSTR), anomalies detection,
