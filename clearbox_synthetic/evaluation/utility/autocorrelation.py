@@ -1,8 +1,3 @@
-"""
-This module provides functionality to compute and compare the autocorrelation 
-between original and synthetic datasets using the Autocorrelation class.
-"""
-
 import json
 import pandas as pd
 import numpy as np
@@ -26,7 +21,7 @@ def _autocorr(x: pd.Series) -> np.ndarray:
 
 class Autocorrelation:
     """
-    A class to compute and compare autocorrelation between original and synthetic datasets.
+    Provides functionality to compute and compare the autocorrelation between original and synthetic datasets.
 
     Attributes:
         original_dataset (Dataset): The original dataset object.

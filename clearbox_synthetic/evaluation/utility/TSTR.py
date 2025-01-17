@@ -1,5 +1,5 @@
 """
-This module defines the TSTRScore class, which calculates the Train on Synthetic Test on Real (TSTR) score
+The TSTRScore class calculates the Train on Synthetic Test on Real (TSTR) score
 for both regression and classification tasks using XGBoost models. The class compares the performance of
 models trained on original and synthetic datasets.
 """

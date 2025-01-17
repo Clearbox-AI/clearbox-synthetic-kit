@@ -1,4 +1,13 @@
-# import sys
+"""
+This module provides tools and classes for evaluating privacy metrics in synthetic datasets. 
+It includes methods to compute Distance to the Closest Record (DCR), analyze duplicates, 
+and assess risks associated with membership inference. 
+
+The module leverages advanced parallelization and customizable configurations for 
+handling large datasets efficiently. It also integrates key components like preprocessor 
+and dataset utilities to ensure seamless functionality for privacy metric computations.
+"""
+
 import pyximport
 import os
 from multiprocessing import Pool

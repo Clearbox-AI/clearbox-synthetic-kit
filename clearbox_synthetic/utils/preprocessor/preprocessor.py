@@ -22,7 +22,7 @@ from ..transformers import (
     DatetimeTransformer,
     )
 
-def process_categorical(df: pd.DataFrame, input_feats: List, target: List) -> Tuple[Dict, Dict, pd.Index]:
+def _process_categorical(df: pd.DataFrame, input_feats: List, target: List) -> Tuple[Dict, Dict, pd.Index]:
     """
     Preprocesses categorical features, generates embedding rules, and bins numerical features.
 
@@ -58,7 +58,7 @@ def process_categorical(df: pd.DataFrame, input_feats: List, target: List) -> Tu
     
     return prepro_dict, bins_num, dupli.columns
 
-def jaccard_similarity(str1: str, str2: str) -> float:
+def _jaccard_similarity(str1: str, str2: str) -> float:
     """
     Computes the Jaccard similarity between two strings.
 
@@ -75,7 +75,7 @@ def jaccard_similarity(str1: str, str2: str) -> float:
     union = len(set1.union(set2))
     return intersection / union
 
-def attach_series(dict_dep: Dict, list_str: np.array, keys: List) -> List:
+def _attach_series(dict_dep: Dict, list_str: np.array, keys: List) -> List:
     """
     Generates a series of values by comparing strings with Jaccard similarity.
 
@@ -96,7 +96,7 @@ def attach_series(dict_dep: Dict, list_str: np.array, keys: List) -> List:
             p = p / np.sum(p)
             rows.append(np.random.choice(choice, p=p))
         except KeyError:
-            w = np.argmax([jaccard_similarity(k, item) for item in list_str])
+            w = np.argmax([_jaccard_similarity(k, item) for item in list_str])
             choice = list(dict_dep[list_str[w]].keys())
             p = dict_dep[list_str[w]].values
             p = p / np.sum(p)
@@ -107,7 +107,7 @@ def attach_series(dict_dep: Dict, list_str: np.array, keys: List) -> List:
                 print(list_str[w])
     return rows
 
-def create_series(dict_dep: Dict, bins_dep: Dict, columns: List, df: pd.DataFrame) -> pd.Series:
+def _create_series(dict_dep: Dict, bins_dep: Dict, columns: List, df: pd.DataFrame) -> pd.Series:
     """
     Creates a pandas Series using embedded columns and dictionary dependencies.
 
@@ -130,7 +130,7 @@ def create_series(dict_dep: Dict, bins_dep: Dict, columns: List, df: pd.DataFram
         x[i] = pd.cut(x[i], bins=bins_dep[i])
     
     keys = list(x[columns[:-1]].apply(lambda row: ' '.join(row.astype(str)), axis=1).tolist())
-    rows = attach_series(dict_dep, list_str, keys)
+    rows = _attach_series(dict_dep, list_str, keys)
     
     return pd.Series(rows)
 
@@ -193,7 +193,7 @@ class Preprocessor:
         self.rules = rules
         self.emb_rules = {}
         for w in [i for i in rules.keys() if 'embed_category' in rules[i][0]]:
-            self.emb_rules[w] = process_categorical(X, rules[w][1], rules[w][2])
+            self.emb_rules[w] = _process_categorical(X, rules[w][1], rules[w][2])
             X = X.drop(w, axis=1)
 
         for w in [i for i in rules.keys() if 'sum' in rules[i][0]]:
@@ -427,7 +427,7 @@ class Preprocessor:
             x = self.inverse_transformer(x).fillna(0)
             x = x[self.sorted_columns]
             for w in [i for i in self.rules.keys() if 'embed_category' in self.rules[i][0]]:
-                column = create_series(self.emb_rules[w][0], self.emb_rules[w][1], self.emb_rules[w][2], x)
+                column = _create_series(self.emb_rules[w][0], self.emb_rules[w][1], self.emb_rules[w][2], x)
                 x[w] = column
 
             for w in [i for i in self.rules.keys() if 'sum' in self.rules[i][0]]:

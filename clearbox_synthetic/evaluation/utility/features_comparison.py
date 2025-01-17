@@ -1,9 +1,3 @@
-"""
-This module provides the FeaturesComparison class, which compares the statistical
-properties of features between an original dataset and a synthetic dataset. It
-provides detailed statistics for numerical, categorical, and datetime features.
-"""
-
 import pandas as pd
 from clearbox_synthetic.utils.dataset.dataset import Dataset
 from clearbox_synthetic.utils.preprocessor.preprocessor import Preprocessor
@@ -11,7 +5,9 @@ from clearbox_synthetic.utils.preprocessor.preprocessor import Preprocessor
 
 class FeaturesComparison:
     """
-    A class for comparing features between an original and a synthetic dataset.
+    The FeaturesComparison class compares the statistical
+    properties of features between an original dataset and a synthetic dataset. It
+    provides detailed statistics for numerical, categorical, and datetime features.
 
     Attributes:
         original_dataset (Dataset): The original dataset.

@@ -1,9 +1,3 @@
-"""
-This module contains the TimeSeriesEngine class, which manages training and evaluation of a time series 
-model using VAE (Variational Autoencoder) or similar architectures. It handles license validation, 
-model initialization, training, evaluation, and model saving functionalities.
-"""
-
 import json
 import optax
 import numpy as np
@@ -21,8 +15,9 @@ from .engine import EngineInterface
 
 class TimeSeriesEngine(EngineInterface):
     """
-    TimeSeriesEngine is responsible for managing and training a time series generative model. It supports model
-    initialization, training, evaluation, and saving.
+    TimeSeriesEngine manages training and evaluation of a time series 
+    model using VAE (Variational Autoencoder). It handles 
+    model initialization, training, evaluation, and model saving functionalities.
 
     Attributes:
         model (TimeSeriesVAE): The Variational Autoencoder model for time series.

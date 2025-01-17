@@ -1,10 +1,3 @@
-"""
-This module defines the LabeledSynthesizer class, which extends the Synthesizer class to generate
-new labeled instances from an existing dataset using various techniques, including shuffling and
-reconstruction. The class provides methods for generating synthetic samples while considering
-specific constraints, such as hybrid columns and discarded features.
-"""
-
 import os
 from typing import List
 import numpy as np
@@ -15,7 +8,7 @@ from .synthesizer import Synthesizer
 
 class LabeledSynthesizer(Synthesizer):
     """
-    LabeledSynthesizer generates synthetic labeled instances from an existing dataset using
+    LabeledSynthesizer generates synthetic labeled data from a pre-trained Engine instance and an existing dataset using
     sampling and shuffling techniques. It supports hybrid column handling, latent space noise
     injection, and column-specific rules for sample generation.
 

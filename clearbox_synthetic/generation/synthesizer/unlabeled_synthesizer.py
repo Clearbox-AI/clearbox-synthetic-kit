@@ -1,8 +1,3 @@
-"""
-This module defines the UnlabeledSynthesizer class, which generates synthetic unlabeled data
-based on an encoded representation of a dataset.
-"""
-
 from .synthesizer import Synthesizer
 import os
 from typing import List
@@ -13,7 +8,7 @@ from ...utils.preprocessor.preprocessor import create_series
 
 class UnlabeledSynthesizer(Synthesizer):
     """
-    UnlabeledSynthesizer is a class that generates synthetic unlabeled data
+    The UnlabeledSynthesizer class generates synthetic unlabeled data
     using a pre-trained engine and a specified dataset.
 
     Attributes:

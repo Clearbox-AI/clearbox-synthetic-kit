@@ -1,9 +1,3 @@
-"""
-This module provides the implementation of the TabularEngine class, which integrates
-the TabularVAE and TabularDiffusion models to enable training, evaluation, and inference
-for tabular datasets.
-"""
-
 import json
 import optax
 import numpy as np
@@ -21,7 +15,8 @@ from .engine import EngineInterface
 
 
 class TabularEngine(EngineInterface):
-    """Engine for managing, training, and evaluating tabular data models.
+    """This class integrates the TabularVAE and TabularDiffusion models to enable training, evaluation, and inference
+        for tabular datasets.
 
     Attributes:
         model (TabularVAE): The Variational Autoencoder model.

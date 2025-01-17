@@ -1,9 +1,3 @@
-"""
-This module provides the DetectionScore class, which computes a detection score
-for evaluating the quality of a synthetic dataset by training a classifier to 
-distinguish between original and synthetic data.
-"""
-
 import pandas as pd
 import numpy as np
 from sklearn.metrics import accuracy_score, roc_auc_score
@@ -13,7 +7,9 @@ from clearbox_synthetic.utils.preprocessor.preprocessor import Preprocessor
 
 class DetectionScore:
     """
-    A class for computing detection scores to evaluate the quality of synthetic datasets.
+    The DetectionScore class computes a detection score
+    for evaluating the quality of a synthetic dataset by training a classifier to 
+    distinguish between original and synthetic data.
 
     Attributes:
         original_dataset (Dataset): The original dataset.
