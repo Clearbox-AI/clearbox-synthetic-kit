@@ -14,7 +14,7 @@
    :caption: Contents:
 
 Modules
-=======
+-------
 .. toctree::
    :maxdepth: 1
 
