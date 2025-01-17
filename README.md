@@ -18,7 +18,7 @@ In addition to its data generation modules, Clearbox Synthetic Kit includes a hi
 $ pip install clearbox-synthetic-kit
 ```
 
-# Try it out
+## Try it out
 Get a quick overview of the generation and evaluation process with Clearbox Synthetic Kit.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Clearbox-AI/clearbox-synthetic-kit/blob/main/examples/tabular_data_generation.ipynb)
