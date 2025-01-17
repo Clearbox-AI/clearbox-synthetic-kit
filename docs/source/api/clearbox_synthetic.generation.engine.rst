@@ -1,4 +1,4 @@
-Generating Engine
+Generative Engine
 =================
 
 .. automodule:: clearbox_synthetic.generation.engine.tabular_engine
