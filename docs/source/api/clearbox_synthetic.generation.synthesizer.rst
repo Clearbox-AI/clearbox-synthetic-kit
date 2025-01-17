@@ -1,3 +1,6 @@
+Synthesizer
+===========
+
 .. automodule:: clearbox_synthetic.generation.synthesizer.labeled_synthesizer
    :members:
    :undoc-members:

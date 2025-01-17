@@ -1,3 +1,6 @@
+Generating Engine
+=================
+
 .. automodule:: clearbox_synthetic.generation.engine.tabular_engine
    :members:
    :undoc-members:
