@@ -2,7 +2,7 @@ Evaluation
 -----------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    clearbox_synthetic.evaluation.utility
    clearbox_synthetic.evaluation.privacy
