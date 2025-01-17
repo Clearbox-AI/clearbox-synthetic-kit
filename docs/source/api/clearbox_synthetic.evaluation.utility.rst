@@ -8,10 +8,10 @@ distinguish between original and synthetic data and more.
 
 TSTRScore
 ~~~~~~~~~
+
 .. automodule:: clearbox_synthetic.evaluation.utility.TSTR
    :members:
    :undoc-members:
-   :show-inheritance:
 
 Anomalies
 ~~~~~~~~~

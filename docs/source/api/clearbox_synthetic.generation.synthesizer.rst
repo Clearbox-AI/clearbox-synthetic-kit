@@ -16,7 +16,6 @@ The ``UnlabeledSynthesizer`` focuses on generating synthetic unlabeled data by:
 - Sampling based on similarity in encoded representation.
 - Supporting hybrid feature columns and custom rules.
 
-
 .. automodule:: clearbox_synthetic.generation.synthesizer.unlabeled_synthesizer
    :members:
    :undoc-members:
