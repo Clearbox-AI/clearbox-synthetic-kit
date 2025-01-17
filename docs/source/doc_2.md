@@ -2,7 +2,7 @@
 
 Clearbox AI's all-in-one solution for generation and evaluation of synthetic tabular and time-series data.
 
-In addition to its data generation modules, the Clearbox Synthetic Kit includes a high-speed preprocessing module to prepare data for training, as well as an evaluation package designed to assess the informative content and, when necessary, the privacy level of synthetic data.
+In addition to its data generation modules, Clearbox Synthetic Kit includes a high-speed preprocessing module to prepare data for training, as well as an evaluation package designed to assess the informative content and, when necessary, the privacy level of synthetic data.
 
 ## Installation
 
