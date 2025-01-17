@@ -23,7 +23,7 @@ Get a quick overview of the generation and evaluation process with Clearbox Synt
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Clearbox-AI/clearbox-synthetic-kit/blob/main/examples/tabular_data_generation.ipynb)
 
-Find other examples [here](https://github.com/Clearbox-AI/clearbox-synthetic-kit/examples).
+Find other examples [here](https://github.com/Clearbox-AI/clearbox-synthetic-kit/tree/main/examples).
 
 
 ---
