@@ -1,5 +1,4 @@
 """
-
 This module provides functionality for automatically configuring and searching
 optimal parameters for a tabular data engine. The main class, `Autoconfig`, is
 used to perform grid search over various model architectures and batch sizes 

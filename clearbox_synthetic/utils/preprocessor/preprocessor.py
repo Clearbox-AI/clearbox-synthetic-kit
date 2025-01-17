@@ -1,16 +1,6 @@
 """
 This module provides the Preprocessor class and related functions for preprocessing tabular data. It includes 
 functionality for encoding categorical variables, handling missing values, and feature selection.
-
-Functions:
-    - process_categorical: Preprocesses categorical and numerical features for embedding.
-    - jaccard_similarity: Computes Jaccard similarity between two strings.
-    - attach_series: Generates a series based on Jaccard similarity and a dependency dictionary.
-    - create_series: Creates a pandas Series using embedded columns from the dataset.
-
-Classes:
-    - Preprocessor: A class for transforming tabular data, handling categorical and numerical feature encoding, 
-      and feature selection.
 """
 
 import sklearn.pipeline

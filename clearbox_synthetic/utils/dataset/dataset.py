@@ -1,3 +1,10 @@
+"""
+This module provides tools and classes for working with tabular datasets, including data manipulation, 
+validation, preprocessing, and analysis.
+It is designed for flexibility in machine learning workflows, supporting regression and classification tasks,
+and ensuring dataset integrity through automated checks and validations. 
+"""
+
 import copy
 import pickle
 from jax.numpy import ndarray
