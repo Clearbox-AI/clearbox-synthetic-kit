@@ -28,11 +28,11 @@ source_suffix = {
 }
 
 templates_path = ['_templates']
-exclude_patterns = ['generation/difusion/diffusion.py',
-                    'generation/engine/engine.py',
-                    'evaluation/privacy/gower_matrix_c.pyx',
-                    'generation/VAE/vae.py',
-                    'utils/transformers/*']
+exclude_patterns = ['clearbox_synthetic/generation/difusion/diffusion.py',
+                    'clearbox_synthetic/generation/engine/engine.py',
+                    'clearbox_synthetic/evaluation/privacy/gower_matrix_c.pyx',
+                    'clearbox_synthetic/generation/VAE/vae.py',
+                    'clearbox_synthetic/utils/transformers/*']
 
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {
