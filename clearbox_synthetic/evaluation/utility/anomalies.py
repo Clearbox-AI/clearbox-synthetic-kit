@@ -1,5 +1,9 @@
 """
+The Anomalies class detects anomalies (who would have ever imagined...) in tabular data using
+an engine that computes reconstruction errors, a dataset for the input data, 
+and a preprocessor for transforming the data.
 """
+
 import scipy.sparse
 
 import numpy as np

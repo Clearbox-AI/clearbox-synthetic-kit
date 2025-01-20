@@ -1,5 +1,9 @@
 """
+The DetectionScore class computes a detection score
+for evaluating the quality of a synthetic dataset by training a classifier to 
+distinguish between original and synthetic data.
 """
+
 import pandas as pd
 import numpy as np
 from sklearn.metrics import accuracy_score, roc_auc_score

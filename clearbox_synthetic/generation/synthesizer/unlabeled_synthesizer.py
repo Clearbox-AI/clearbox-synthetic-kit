@@ -1,5 +1,8 @@
 """
+This module defines the UnlabeledSynthesizer class, which generates synthetic unlabeled data
+based on an encoded representation of a dataset.
 """
+
 from .synthesizer import Synthesizer
 import os
 from typing import List

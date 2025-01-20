@@ -1,5 +1,9 @@
 """
+The MutualInformation class calculates the mutual information
+between features in original and synthetic datasets. The comparison helps assess the 
+similarity between the feature relationships in both datasets.
 """
+
 import pandas as pd
 from sklearn.metrics.cluster import normalized_mutual_info_score
 from clearbox_synthetic.utils.dataset.dataset import Dataset
@@ -8,9 +12,8 @@ from clearbox_synthetic.utils.preprocessor.preprocessor import Preprocessor
 
 class MutualInformation:
     """
-    The MutualInformation class calculates the mutual information
-    between features in original and synthetic datasets. The comparison helps assess the 
-    similarity between the feature relationships in both datasets.
+    A class for calculating and comparing the mutual information between features in 
+    original and synthetic datasets.
 
     Attributes:
         original_dataset (Dataset): The original dataset.

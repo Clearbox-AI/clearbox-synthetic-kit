@@ -1,5 +1,9 @@
 """
+The ReconstructionError class calculates the reconstruction
+error for both original and synthetic datasets using a specified TabularEngine.
+The reconstruction error histograms are generated to compare the quality of synthetic data.
 """
+
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 from clearbox_synthetic.utils.dataset.dataset import Dataset

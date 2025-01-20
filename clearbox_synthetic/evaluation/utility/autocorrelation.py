@@ -1,5 +1,8 @@
 """
+The Autocorrelation class provides functionality to compute and compare the autocorrelation 
+between original and synthetic datasets.
 """
+
 import json
 import pandas as pd
 import numpy as np

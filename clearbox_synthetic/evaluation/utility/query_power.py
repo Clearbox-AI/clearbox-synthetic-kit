@@ -1,5 +1,9 @@
 """
+The QueryPower class assesses the quality of a synthetic dataset
+by running queries that compare it to the original dataset. The closer the query results
+are between both datasets, the higher the quality of the synthetic data.
 """
+
 import random
 from clearbox_synthetic.utils.dataset.dataset import Dataset
 from clearbox_synthetic.utils.preprocessor.preprocessor import Preprocessor
@@ -7,9 +11,8 @@ from clearbox_synthetic.utils.preprocessor.preprocessor import Preprocessor
 
 class QueryPower:
     """
-    The QueryPower class assesses the quality of a synthetic dataset
-    by running queries that compare it to the original dataset. The closer the query results
-    are between both datasets, the higher the quality of the synthetic data.
+    A class to evaluate the quality of a synthetic dataset by running comparative
+    queries against the original dataset.
 
     Attributes:
         original_dataset (Dataset): The original dataset.
