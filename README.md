@@ -38,4 +38,4 @@ Find other examples [here](https://github.com/Clearbox-AI/clearbox-synthetic-kit
 
 ### Contacts
 [![Email](https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/email.svg)](mailto:info@clearbox.ai)
-[![Website](https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/websitesvg)](https://clearbox.ai)
+[![Website](https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/website.svg)](https://clearbox.ai)
