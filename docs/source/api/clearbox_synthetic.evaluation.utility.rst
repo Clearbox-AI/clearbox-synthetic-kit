@@ -9,7 +9,6 @@ distinguish between original and synthetic data and more.
 .. automodule:: clearbox_synthetic.evaluation.utility.TSTR
    :members:
    :undoc-members:
-   :show-inheritance:
 
 .. automodule:: clearbox_synthetic.evaluation.utility.anomalies
    :members:
