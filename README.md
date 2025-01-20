@@ -33,3 +33,9 @@ Find other examples [here](https://github.com/Clearbox-AI/clearbox-synthetic-kit
 * Package only binary compiled so files of a python library compiled with Cython [[Link](https://stackoverflow.com/questions/39499453/package-only-binary-compiled-so-files-of-a-python-library-compiled-with-cython)]
 * Distributing python packages protected with Cython [[Link](https://medium.com/swlh/distributing-python-packages-protected-with-cython-40fc29d84caf)]
 * The time series generation features a modified version of TimeVQVAE [[Link](https://github.com/ML4ITS/TimeVQVAE)]
+
+---
+
+### Contacts
+[![Email](https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/email.svg)](mailto:info@clearbox.ai)
+[![Website](https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/websitesvg)](https://clearbox.ai)
