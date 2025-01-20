@@ -6,10 +6,15 @@ data with multiple metrics, such as Train on Synthetic-Test on Real (TSTR), anom
 autocorrelation between synthetic and orignial dataset, detection score of a classifier to 
 distinguish between original and synthetic data and more.
 
+
+TSTScore
+~~~~~~~~
 .. automodule:: clearbox_synthetic.evaluation.utility.TSTR
    :members:
    :undoc-members:
 
+Anomalies
+~~~~~~~~~
 .. automodule:: clearbox_synthetic.evaluation.utility.anomalies
    :members:
    :undoc-members:
