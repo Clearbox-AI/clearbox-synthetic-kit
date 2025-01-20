@@ -9,7 +9,7 @@ import os
 from typing import List
 import numpy as np
 import pandas as pd
-from ...utils.preprocessor.preprocessor import create_series
+from ...utils.preprocessor.preprocessor import _create_series
 from .synthesizer import Synthesizer
 
 
@@ -169,7 +169,7 @@ class LabeledSynthesizer(Synthesizer):
         for w in [
             i for i in self.preprocessor.rules.keys() if "embed_category" in self.preprocessor.rules[i][0]
         ]:
-            column = create_series(
+            column = _create_series(
                 self.preprocessor.emb_rules[w][0],
                 self.preprocessor.emb_rules[w][1],
                 self.preprocessor.emb_rules[w][2],
