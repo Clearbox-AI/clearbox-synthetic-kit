@@ -1126,6 +1126,7 @@ def membership_inference_test(
 
 
 class PrivacyScore:
+    __module__ = "clearbox_synthetic.evaluation.privacy"
     original_dataset: pd.DataFrame
     synthetic_dataset: pd.DataFrame
     holdout_dataset: pd.DataFrame
