@@ -16,11 +16,15 @@ The ``TabularEngine`` handles tabular data, supporting both **VAE** and **Diffus
 - Reconstruction of mixed data types.
 - Configurable architectures for numerical and categorical data.
 
+TabularEngine
+~~~~~~~~~~~~~
 .. automodule:: clearbox_synthetic.generation.engine.tabular_engine
    :members:
    :undoc-members:
    :show-inheritance:
 
+TimeSeriesEngine
+~~~~~~~~~~~~~~~~
 .. automodule:: clearbox_synthetic.generation.engine.timeseries_engine
    :members:
    :undoc-members:

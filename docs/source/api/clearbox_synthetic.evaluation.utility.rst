@@ -20,31 +20,43 @@ Anomalies
    :undoc-members:
    :show-inheritance:
 
+Autocorrelation
+~~~~~~~~~~~~~~~
 .. automodule:: clearbox_synthetic.evaluation.utility.autocorrelation
    :members:
    :undoc-members:
    :show-inheritance:
 
+DetectionScore
+~~~~~~~~~~~~~~
 .. automodule:: clearbox_synthetic.evaluation.utility.detection
    :members:
    :undoc-members:
    :show-inheritance:
 
+FeaturesComparison
+~~~~~~~~~~~~~~~~~~~
 .. automodule:: clearbox_synthetic.evaluation.utility.features_comparison
    :members:
    :undoc-members:
    :show-inheritance:
 
+MutualInformation
+~~~~~~~~~~~~~~~~~
 .. automodule:: clearbox_synthetic.evaluation.utility.mutual_information
    :members:
    :undoc-members:
    :show-inheritance:
 
+QueryPower
+~~~~~~~~~~
 .. automodule:: clearbox_synthetic.evaluation.utility.query_power
    :members:
    :undoc-members:
    :show-inheritance:
 
+ReconstructionError
+~~~~~~~~~~~~~~~~~~~
 .. automodule:: clearbox_synthetic.evaluation.utility.reconstruction_error
    :members:
    :undoc-members:
