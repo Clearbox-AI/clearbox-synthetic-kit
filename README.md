@@ -37,5 +37,11 @@ Find other examples [here](https://github.com/Clearbox-AI/clearbox-synthetic-kit
 ---
 
 ### Contacts
-[![Email](https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/email.svg)](mailto:info@clearbox.ai)
-[![Website](https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/website.svg)](https://clearbox.ai)
+<a href="mailto:info@clearbox.ai">
+  <img src="https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/email.svg" alt="Email" width="20" height="20">
+  &nbsp; E-mail</span>
+</a><br>
+<a href="https://clearbox.ai">
+  <img src="https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/website.svg" alt="Website" width="20" height="20">
+  &nbsp; Website
+</a>
