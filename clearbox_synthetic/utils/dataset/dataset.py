@@ -14,7 +14,7 @@ from loguru import logger
 
 from datetime import datetime
 from typing import List, Dict, Set, Tuple, Union, Optional, IO, Callable, Any, ClassVar
-from pydantic import BaseModel, field_validator,ConfigDict
+from pydantic import BaseModel, field_validator, ConfigDict, FieldValidationInfo
 from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder, LabelEncoder
 
 DTYPES_MAP = {"b": bool, "i": int, "u": int, "f": float, "c": float, "O": str, "S": str}
@@ -70,11 +70,11 @@ class Dataset(BaseModel):
         return v or datetime.now()
 
     @field_validator("target_column", mode="before")
-    @classmethod
-    def validate_target_column(cls, v, values):
-        if v is not None and isinstance(v, str) and v not in values["data"].columns:
+    def validate_target_column(cls, v, info: FieldValidationInfo):
+        data = info.data.get("data")  # Access the field "data" from the ValidationInfo object
+        if v is not None and isinstance(v, str) and data is not None and v not in data.columns:
             raise ValueError(f"'{v}' is not a column of the dataset.")
-        if v is not None and isinstance(v, int) and v >= len(values["data"].columns):
+        if v is not None and isinstance(v, int) and data is not None and v >= len(data.columns):
             raise ValueError(f"'{v}' is not a valid index.")
         return v
 
@@ -88,41 +88,40 @@ class Dataset(BaseModel):
         return v
 
     @field_validator("sequence_index", mode="before")
-    @classmethod
-    def validate_sequence_index(cls, v, values):
-        if v is not None and isinstance(v, str) and v not in values["data"].columns:
+    def validate_sequence_index(cls, v, info: FieldValidationInfo):
+        data = info.data.get("data")
+        if v is not None and isinstance(v, str) and data is not None and v not in data.columns:
             raise ValueError(f"'{v}' is not a column of the dataset.")
-        if v is not None and isinstance(v, int) and v >= len(values["data"].columns):
+        if v is not None and isinstance(v, int) and data is not None and v >= len(data.columns):
             raise ValueError(f"'{v}' is not a valid index.")
         return v
 
     @field_validator("bounds", mode="before")
-    @classmethod
-    def validate_bounds(cls, v, values):
-        if "data" not in values:
+    def validate_bounds(cls, v, info: FieldValidationInfo):
+        data = info.data.get("data")
+        if data is None:
             raise ValueError("Data attribute is missing; cannot validate bounds.")
         if not v:
-            numerical_cols = values["data"].select_dtypes(include=["number", "datetime"])
-            categorical_cols = values["data"].select_dtypes(include=["object", "category"])
+            numerical_cols = data.select_dtypes(include=["number", "datetime"])
+            categorical_cols = data.select_dtypes(include=["object", "category"])
             bounds = {}
             for num in numerical_cols.columns:
-                bounds[num] = {"min": values["data"][num].min(), "max": values["data"][num].max()}
+                bounds[num] = {"min": data[num].min(), "max": data[num].max()}
             for cat in categorical_cols.columns:
-                bounds[cat] = set(values["data"][cat].dropna().unique())
+                bounds[cat] = set(data[cat].dropna().unique())
             return bounds
         return v
 
     @field_validator("column_types", mode="before")
-    @classmethod
-    def validate_column_types(cls, v, values):
+    def validate_column_types(cls, v, info: FieldValidationInfo):
+        data = info.data.get("data")
         if v:
-            if set(v.keys()) != set(values["data"].columns):
+            if data is not None and set(v.keys()) != set(data.columns):
                 raise ValueError("Column types must be defined for all columns.")
         return v
 
     @field_validator("regression", mode="before")
-    @classmethod
-    def validate_regression(cls, v):
+    def validate_regression(cls, v, info: FieldValidationInfo):
         return v or False
     
     @classmethod
