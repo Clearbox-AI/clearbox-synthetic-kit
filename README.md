@@ -37,6 +37,6 @@ Find other examples [here](https://github.com/Clearbox-AI/clearbox-synthetic-kit
 ---
 
 ### Contacts
-<img src="https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/email.svg" alt="Email" width="20" height="20"> &nbsp; &#8203;`infoclearbox.ai`
+<img src="https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/email.svg" alt="Email" width="20" height="20"> &nbsp; &#8203;`info@clearbox.ai`
 
 <img src="https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/website.svg" alt="Website" width="20" height="20">&nbsp; <a href="https://clearbox.ai" target="_blank">`https://clearbox.ai`</a>
