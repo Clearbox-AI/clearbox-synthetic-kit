@@ -127,7 +127,7 @@ class CustomBuild(build_ext):
 setup(
     # Metadata about the package
     name="clearbox-synthetic-kit",
-    version="0.6.5",
+    version="0.6.6",
     author="Clearbox AI",
     author_email="info@clearbox.ai",
     description="Clearbox AI's all-in-one solution for generation and evaluation of synthetic tabular and time-series data.",
