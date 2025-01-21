@@ -65,7 +65,6 @@ class Dataset(BaseModel):
     # to_csv: ClassVar = pd.DataFrame.to_csv
 
     @field_validator("timestamp", mode="before", check_fields=True)
-    @classmethod
     def set_timestamp_now(cls, v):
         return v or datetime.now()
 
@@ -79,7 +78,6 @@ class Dataset(BaseModel):
         return v
 
     @field_validator("group_by", mode="before")
-    @classmethod
     def validate_group_by(cls, v, values):
         if v is not None and isinstance(v, str) and v not in values["data"].columns:
             raise ValueError(f"'{v}' is not a column of the dataset.")
@@ -307,7 +305,6 @@ class Dataset(BaseModel):
             regression=regression,
         )
 
-    @classmethod
     def to_csv(self, path: str):
         """
         Generate and save a csv file starting from the dataset.
@@ -322,7 +319,6 @@ class Dataset(BaseModel):
             index=False,
         )
 
-    @classmethod
     def get_x(self) -> Union[pd.DataFrame, pd.Series]:
         """
         Return all columns of the dataset except the target column (y).
@@ -336,7 +332,6 @@ class Dataset(BaseModel):
             [column for column in self.columns() if column != self.target_column]
         )
 
-    @classmethod
     def get_group_by(self) -> pd.Series:
         """
         Return the sequence index of the dataset.
@@ -351,7 +346,6 @@ class Dataset(BaseModel):
         else:
             return None
 
-    @classmethod
     def get_y(self) -> pd.Series:
         """
         Return the target column of the dataset (y).
@@ -366,7 +360,6 @@ class Dataset(BaseModel):
         else:
             return None
 
-    @classmethod
     def get_y_std(self) -> float:
         """
         Return the std of target column of the dataset (y), if regression.
@@ -385,7 +378,6 @@ class Dataset(BaseModel):
         else:
             return None
 
-    @classmethod
     def get_y_mean(self) -> float:
         """
         Return the mean of target column of the dataset (y), if regression.
@@ -400,7 +392,6 @@ class Dataset(BaseModel):
         else:
             return None
 
-    @classmethod
     def get_normalized_y(self) -> ndarray:
         """
         Standardize the target column of the dataset (y), if regression is True
@@ -419,7 +410,6 @@ class Dataset(BaseModel):
         else:
             return None
 
-    @classmethod
     def get_label_encoded_y(self) -> pd.Series:
         """
         Return the target column of the dataset (y), preprocessed with a Label Encoder
@@ -439,7 +429,6 @@ class Dataset(BaseModel):
         else:
             return None
 
-    @classmethod
     def get_one_hot_encoded_y(self) -> pd.Series:
         """
         Return the target column of the dataset (y), preprocessed with a One Hot Encoder.
@@ -460,7 +449,6 @@ class Dataset(BaseModel):
         else:
             return None
 
-    @classmethod
     def get_n_classes(self) -> int:
         """
         Return the number of unique values in the target column (y) of the dataset.
@@ -479,7 +467,6 @@ class Dataset(BaseModel):
         else:
             return 0
 
-    @classmethod
     def rows_number(self) -> int:
         """
         Return the number of rows of the dataset.
@@ -491,7 +478,6 @@ class Dataset(BaseModel):
         """
         return self.data.shape[0]
 
-    @classmethod
     def columns_number(self) -> int:
         """
         Return the number of columns/features of the dataset.
@@ -503,7 +489,6 @@ class Dataset(BaseModel):
         """
         return self.data.shape[1]
 
-    @classmethod
     def columns(self, include: Union[int, str, List] = None) -> List[str]:
         """
         Return the list of column names of (a subset of) the dataset.
@@ -526,7 +511,6 @@ class Dataset(BaseModel):
             else list(self.data.columns)
         )
 
-    @classmethod
     def x_columns(self, include: Union[int, str, List] = None) -> List[str]:
         """
         Return the list of column names of the X subset of the dataset (no target column).
@@ -553,7 +537,6 @@ class Dataset(BaseModel):
             else x_columns
         )
     
-    @classmethod
     def columns_types(self) -> Dict:
         """
         Return a dict with the column name as key and the column dtype as value.
@@ -568,7 +551,6 @@ class Dataset(BaseModel):
             types[column_name] = column_dtype
         return types
 
-    @classmethod
     def column_bounds(self, column: Union[str, Tuple]) -> Union[Dict, Set]:
         """
         Return the bounds of a single column of the dataset.
@@ -585,7 +567,6 @@ class Dataset(BaseModel):
         """
         return self.bounds[column]
 
-    @classmethod
     def subset(self, columns: List) -> Union[pd.DataFrame, pd.Series]:
         """
         Return a subset of the dataset given a list of column names.
@@ -602,7 +583,6 @@ class Dataset(BaseModel):
         """
         return self.data[columns]
 
-    @classmethod
     def subset_by_type(self, include: Union[int, str, List]) -> pd.DataFrame:
         """
         Return a subset of the dataset based on the column dtypes.
@@ -622,7 +602,6 @@ class Dataset(BaseModel):
         """
         return self.data.select_dtypes(include=include)
 
-    @classmethod
     def row_by_index(self, idx: int) -> pd.Series:
         """
         Return a row of the dataset given an index.
@@ -639,7 +618,6 @@ class Dataset(BaseModel):
         """
         return self.data.loc[idx]
 
-    @classmethod
     def pop_column(self, column: Union[str, Tuple]) -> Union[pd.Series, pd.DataFrame]:
         """
         Return a column and drop it from the dataset.
@@ -657,7 +635,6 @@ class Dataset(BaseModel):
         self.bounds.pop(column)
         return self.data.pop(column)
 
-    @classmethod
     def drop_columns(self, columns: Union[str, List]) -> None:
         """
         Drop one or more columns of the dataset. This method transform the dataset in place.
@@ -674,7 +651,6 @@ class Dataset(BaseModel):
                 self.bounds.pop(col)
         self.data.drop(columns, axis=1, inplace=True)
 
-    @classmethod
     def info(self) -> None:
         """
         Display a concise summary of the dataset: information about the pd.DataFrame including the index dtype and
@@ -682,7 +658,6 @@ class Dataset(BaseModel):
         """
         self.data.info()
 
-    @classmethod
     def head(self, num_rows: int = 5) -> pd.DataFrame:
         """
         Return the first num_rows rows of the dataset. It is useful for quickly testing if your object has the right
@@ -700,7 +675,6 @@ class Dataset(BaseModel):
         """
         return self.data.head(num_rows)
 
-    @classmethod
     def describe(self, include: str = "all") -> pd.DataFrame:
         """
         Return descriptive statistics that summarize the central tendency, dispersion and shape of the dataset
@@ -721,7 +695,6 @@ class Dataset(BaseModel):
         """
         return self.data.describe(include=include).transpose()
 
-    @classmethod
     def unique_values(self, columns: List = None) -> Dict:
         """
         Return a dictionary of unique values of (a subset of) the dataset.
@@ -740,7 +713,6 @@ class Dataset(BaseModel):
         feats: List = self.columns() if columns is None else list(columns)
         return {feat: self.data[feat].unique() for feat in feats}
 
-    @classmethod
     def value_counts(self, column: Union[int, str, Tuple]) -> pd.DataFrame:
         """
         Given a target column, return a dataframe containing the number of samples and the frequency for each unique
@@ -766,7 +738,6 @@ class Dataset(BaseModel):
             }
         )
 
-    @classmethod
     def target_balance(self) -> pd.DataFrame:
         """
         Return a dataframe containing the number of samples and the frequency for each unique values of the target
@@ -782,7 +753,6 @@ class Dataset(BaseModel):
         else:
             return None
 
-    @classmethod
     def get_values(self):
         """
         Return the Dataset as a NumPy array/matrix.
@@ -794,7 +764,6 @@ class Dataset(BaseModel):
         """
         return self.data.to_numpy()
 
-    @classmethod
     def categorical_map(self) -> Dict:
         """
         Return a map of the categorical feature indices and corresponding values.
@@ -813,7 +782,6 @@ class Dataset(BaseModel):
             category_map[features.index(f)] = list(self.data[f].unique().astype(str))
         return category_map
 
-    @classmethod
     def types_map(self) -> Dict:
         """
         Return a map of the features and corresponding type. This is necessary to create a Pydantic model based on
@@ -829,7 +797,6 @@ class Dataset(BaseModel):
         types_map = {f: (DTYPES_MAP[self.data[f].dtype.kind], ...) for f in features}
         return types_map
 
-    @classmethod
     def pairwise_correlation(self) -> pd.DataFrame:
         """
         Compute pairwise correlation of columns, excluding NA/null values.
@@ -841,7 +808,6 @@ class Dataset(BaseModel):
         """
         return self.data.corr()
 
-    @classmethod
     def column_correlation(self, column: Union[str, Tuple]) -> pd.Series:
         """
         Compute correlation between a single numeric column and each other columns in the dataset.
@@ -858,7 +824,6 @@ class Dataset(BaseModel):
         corr_mat = self.data.corr()
         return corr_mat.loc[:, column].sort_values(ascending=False)
 
-    @classmethod
     def check_na_values(self) -> Union[pd.Series, None]:
         """
         Check for columns with missing values in the dataset.
@@ -876,7 +841,6 @@ class Dataset(BaseModel):
         else:
             return None
 
-    @classmethod
     def drop_na_values(self, axis: int = 0, how: str = "any") -> None:
         """
         Drop all the missing values in the dataset. This method transform the dataset in place. Check also
@@ -892,7 +856,6 @@ class Dataset(BaseModel):
         self.data.dropna(axis=axis, how=how, inplace=True)
         self._update_all_bounds()
     
-    @classmethod
     def fill_na_values(
         self, fill_with: Union[str, int, float, Dict], columns: List = None
     ) -> Union[str, int, float, Dict]:
@@ -932,7 +895,6 @@ class Dataset(BaseModel):
         self._update_all_bounds()
         return fill_with
     
-    @classmethod
     def check_duplicates(self, columns: List = None) -> int:
         """
         Return number of duplicated rows in the dataset, optionally considering only certain columns.
@@ -950,7 +912,6 @@ class Dataset(BaseModel):
         """
         return self.data.duplicated(columns).sum()
     
-    @classmethod
     def drop_duplicates(self, columns: List = None) -> None:
         """
         Remove duplicate rows from the dataset, optionally considering only certain columns. This method
@@ -964,7 +925,6 @@ class Dataset(BaseModel):
         """
         self.data.drop_duplicates(subset=columns, inplace=True)
     
-    @classmethod
     def variance(
         self,
         columns: List = None,
@@ -1008,7 +968,6 @@ class Dataset(BaseModel):
             ).sort_values(ascending=False)
         )
     
-    @classmethod
     def map_column(self, column: Union[str, Tuple[str]], dict_map: Dict) -> None:
         """
         Map values of a column according to the 'dict_map' correspondence. It substitute each value in the
@@ -1028,7 +987,6 @@ class Dataset(BaseModel):
         self.data[column] = col_temp
         self._update_column_bounds(column)
     
-    @classmethod
     def map_columns(self, mapping_cols: Dict) -> None:
         """
         Map the values of some columns of the dataset to new values.
@@ -1041,7 +999,6 @@ class Dataset(BaseModel):
         for f, f_map in mapping_cols.items():
             self.map_column(f, f_map)
     
-    @classmethod
     def discretize(
         self,
         column: Union[str, Tuple],
@@ -1104,7 +1061,6 @@ class Dataset(BaseModel):
             )
         self._update_column_bounds(column)
     
-    @classmethod
     def scaler(self, column: Union[str, Tuple[str]], strategy: str = "min-max") -> None:
         """
         Scale values of a numeric column.
@@ -1145,7 +1101,6 @@ class Dataset(BaseModel):
             )
         self._update_column_bounds(column)
     
-    @classmethod
     def scale_numeric_columns(self, strategy: str = "min-max") -> None:
         """
         Scale every numeric column in the dataset. This method transform the dataset in place.
@@ -1160,7 +1115,6 @@ class Dataset(BaseModel):
         for nf in numeric_features:
             self.scaler(nf, strategy=strategy)
     
-    @classmethod
     def numerical_encoder(self, column: Union[str, Tuple]) -> None:
         """
         Encode categorical values of a column to ordinal values. This method transform the dataset in place.
@@ -1176,7 +1130,6 @@ class Dataset(BaseModel):
         self.data[column] = enc.fit_transform(X.to_numpy().reshape(-1, 1))
         self._update_column_bounds(column)
     
-    @classmethod
     def categorical_to_ordinal(self) -> None:
         """
         Encode every categorical column in the dataset to ordinal type. This method transform the dataset in place.
@@ -1185,7 +1138,6 @@ class Dataset(BaseModel):
         for cf in categorical_features:
             self.numerical_encoder(cf)
     
-    @classmethod
     def shuffle(self, reset_index: bool = False) -> None:
         """
         Shuffle the dataset rows in place.
@@ -1201,7 +1153,6 @@ class Dataset(BaseModel):
             else self.data.sample(frac=1)
         )
     
-    @classmethod
     def train_test_split(
         self, frac: float = 0.8, random_state: int = None
     ) -> Tuple["Dataset", "Dataset"]:
@@ -1247,7 +1198,6 @@ class Dataset(BaseModel):
             ),
         )
     
-    @classmethod
     def save(self, path: str) -> None:
         """
         Exports the Dataset object as serialized pickle file, given a filepath of the pickle file to create.
@@ -1261,7 +1211,6 @@ class Dataset(BaseModel):
         pickle.dump(self, pickle_file)
         pickle_file.close()
     
-    @classmethod
     def _update_all_bounds(self) -> None:
         """
         Update bounds for every column of dataset. To use internally after a modification of the dataset values.
@@ -1275,7 +1224,6 @@ class Dataset(BaseModel):
             bounds[cat] = {c for c in self.data[cat].dropna().unique()}
         self.bounds = bounds
     
-    @classmethod
     def _update_column_bounds(self, column_name: Union[str, Tuple]) -> None:
         """
         Update bounds for one column of dataset. To use internally after a modification of the dataset values.
