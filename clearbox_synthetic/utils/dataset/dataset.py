@@ -51,13 +51,13 @@ class Dataset(BaseModel):
     """
 
     data: pd.DataFrame
-    timestamp: Optional[datetime]
-    name: Optional[str]
-    target_column: Optional[Union[int, str, tuple]]
+    timestamp: Optional[datetime] = None
+    name: Optional[str] = None
+    target_column: Optional[Union[int, str, tuple]] = None
     sequence_index: Optional[Union[int, str]] = None
     group_by: Optional[Union[int, str]] = None
-    column_types: Optional[Dict[str, str]]
-    bounds: Optional[Dict]
+    column_types: Optional[Dict[str, str]] = None
+    bounds: Optional[Dict] = None
     regression: bool = False
 
     model_config = ConfigDict(arbitrary_types_allowed=True, validate_assignment=True)
