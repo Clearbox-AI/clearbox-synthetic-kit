@@ -14,7 +14,7 @@ from loguru import logger
 
 from datetime import datetime
 from typing import List, Dict, Set, Tuple, Union, Optional, IO, Callable, Any
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder, LabelEncoder
 
 DTYPES_MAP = {"b": bool, "i": int, "u": int, "f": float, "c": float, "O": str, "S": str}
@@ -64,11 +64,11 @@ class Dataset(BaseModel):
         arbitrary_types_allowed = True
         validate_assignment = True
 
-    @validator("timestamp", always=True)
+    @field_validator("timestamp", always=True)
     def set_timestamp_now(cls, v):
         return v or datetime.now()
 
-    @validator("target_column")
+    @field_validator("target_column")
     def target_match_dataset(cls, v, values):
         if v is not None and isinstance(v, str) and v not in values.get("data").columns:
             raise ValueError("'{}' is not a column of the dataset.".format(v))
@@ -80,7 +80,7 @@ class Dataset(BaseModel):
             raise ValueError("'{}' is not a valid index.".format(v))
         return v
 
-    @validator("group_by")
+    @field_validator("group_by")
     def group_by_match_dataset(cls, v, values):
         if v is not None and isinstance(v, str) and v not in values.get("data").columns:
             raise ValueError("'{}' is not a column of the dataset.".format(v))
@@ -92,7 +92,7 @@ class Dataset(BaseModel):
             raise ValueError("'{}' is not a valid index.".format(v))
         return v
 
-    @validator("sequence_index")
+    @field_validator("sequence_index")
     def sequence_index_match_dataset(cls, v, values):
         if v is not None and isinstance(v, str) and v not in values.get("data").columns:
             raise ValueError("'{}' is not a column of the dataset.".format(v))
@@ -104,7 +104,7 @@ class Dataset(BaseModel):
             raise ValueError("'{}' is not a valid index.".format(v))
         return v
 
-    @validator("bounds", always=True)
+    @field_validator("bounds", always=True)
     def set_bounds(cls, v, values):
         """
         If no bounds are passed, initialize it automatically based on the dataset values.
@@ -148,7 +148,7 @@ class Dataset(BaseModel):
         else:
             return v
 
-    @validator("column_types", always=True)
+    @field_validator("column_types", always=True)
     def set_column_types(cls, v, values):
         if v:
             # if not any(item in values.get("data").columns for item in v.keys()):
@@ -159,7 +159,7 @@ class Dataset(BaseModel):
                 )
         return v
 
-    @validator("regression", always=True)
+    @field_validator("regression", always=True)
     def set_is_regression(cls, v):
         return v or False
 
