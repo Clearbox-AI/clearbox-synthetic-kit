@@ -64,7 +64,7 @@ class Dataset(BaseModel):
         arbitrary_types_allowed = True
         validate_assignment = True
 
-    @field_validator("timestamp", always=True)
+    @field_validator("timestamp")
     def set_timestamp_now(cls, v):
         return v or datetime.now()
 
@@ -104,7 +104,7 @@ class Dataset(BaseModel):
             raise ValueError("'{}' is not a valid index.".format(v))
         return v
 
-    @field_validator("bounds", always=True)
+    @field_validator("bounds")
     def set_bounds(cls, v, values):
         """
         If no bounds are passed, initialize it automatically based on the dataset values.
@@ -148,7 +148,7 @@ class Dataset(BaseModel):
         else:
             return v
 
-    @field_validator("column_types", always=True)
+    @field_validator("column_types")
     def set_column_types(cls, v, values):
         if v:
             # if not any(item in values.get("data").columns for item in v.keys()):
@@ -159,7 +159,7 @@ class Dataset(BaseModel):
                 )
         return v
 
-    @field_validator("regression", always=True)
+    @field_validator("regression")
     def set_is_regression(cls, v):
         return v or False
 
