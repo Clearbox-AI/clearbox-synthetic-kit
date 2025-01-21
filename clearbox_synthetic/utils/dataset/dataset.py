@@ -13,8 +13,8 @@ import pandas as pd
 from loguru import logger
 
 from datetime import datetime
-from typing import List, Dict, Set, Tuple, Union, Optional, IO, Callable, Any
-from pydantic import BaseModel, field_validator
+from typing import List, Dict, Set, Tuple, Union, Optional, IO, Callable, Any, ClassVar
+from pydantic import BaseModel, field_validator,ConfigDict
 from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder, LabelEncoder
 
 DTYPES_MAP = {"b": bool, "i": int, "u": int, "f": float, "c": float, "O": str, "S": str}
@@ -60,153 +60,71 @@ class Dataset(BaseModel):
     bounds: Optional[Dict]
     regression: bool = False
 
-    class Config:
-        arbitrary_types_allowed = True
-        validate_assignment = True
+    model_config = ConfigDict(arbitrary_types_allowed=True, validate_assignment=True)
 
-    @field_validator("timestamp")
+    to_csv: ClassVar = pd.DataFrame.to_csv
+
+    @field_validator("timestamp", mode="before", check_fields=True)
+    @classmethod
     def set_timestamp_now(cls, v):
         return v or datetime.now()
 
-    @field_validator("target_column")
-    def target_match_dataset(cls, v, values):
-        if v is not None and isinstance(v, str) and v not in values.get("data").columns:
-            raise ValueError("'{}' is not a column of the dataset.".format(v))
-        if (
-            v is not None
-            and isinstance(v, int)
-            and v >= len(values.get("data").columns)
-        ):
-            raise ValueError("'{}' is not a valid index.".format(v))
+    @field_validator("target_column", mode="before")
+    @classmethod
+    def validate_target_column(cls, v, values):
+        if v is not None and isinstance(v, str) and v not in values["data"].columns:
+            raise ValueError(f"'{v}' is not a column of the dataset.")
+        if v is not None and isinstance(v, int) and v >= len(values["data"].columns):
+            raise ValueError(f"'{v}' is not a valid index.")
         return v
 
-    @field_validator("group_by")
-    def group_by_match_dataset(cls, v, values):
-        if v is not None and isinstance(v, str) and v not in values.get("data").columns:
-            raise ValueError("'{}' is not a column of the dataset.".format(v))
-        if (
-            v is not None
-            and isinstance(v, int)
-            and v >= len(values.get("data").columns)
-        ):
-            raise ValueError("'{}' is not a valid index.".format(v))
+    @field_validator("group_by", mode="before")
+    @classmethod
+    def validate_group_by(cls, v, values):
+        if v is not None and isinstance(v, str) and v not in values["data"].columns:
+            raise ValueError(f"'{v}' is not a column of the dataset.")
+        if v is not None and isinstance(v, int) and v >= len(values["data"].columns):
+            raise ValueError(f"'{v}' is not a valid index.")
         return v
 
-    @field_validator("sequence_index")
-    def sequence_index_match_dataset(cls, v, values):
-        if v is not None and isinstance(v, str) and v not in values.get("data").columns:
-            raise ValueError("'{}' is not a column of the dataset.".format(v))
-        if (
-            v is not None
-            and isinstance(v, int)
-            and v >= len(values.get("data").columns)
-        ):
-            raise ValueError("'{}' is not a valid index.".format(v))
+    @field_validator("sequence_index", mode="before")
+    @classmethod
+    def validate_sequence_index(cls, v, values):
+        if v is not None and isinstance(v, str) and v not in values["data"].columns:
+            raise ValueError(f"'{v}' is not a column of the dataset.")
+        if v is not None and isinstance(v, int) and v >= len(values["data"].columns):
+            raise ValueError(f"'{v}' is not a valid index.")
         return v
 
-    @field_validator("bounds")
-    def set_bounds(cls, v, values):
-        """
-        If no bounds are passed, initialize it automatically based on the dataset values.
-        """
+    @field_validator("bounds", mode="before")
+    @classmethod
+    def validate_bounds(cls, v, values):
         if "data" not in values:
-            raise ValueError(
-                "Invalid attribute 'data'. It is not possible to create bounds."
-            )
-        elif v is None or len(v) == 0:
-            numerical_cols = values["data"].select_dtypes(
-                include=["number", "datetime", "timedelta"]
-            )
-            categorical_cols = values["data"].select_dtypes(
-                include=["object", "category", "bool"]
-            )
-            bounds = dict()
-            for num in list(numerical_cols.columns):
-                bounds[num]: Dict = {
-                    "min": values["data"][num].min(),
-                    "max": values["data"][num].max(),
-                }
-            for obj in list(categorical_cols.columns):
-                bounds[obj]: Set = {v for v in values["data"][obj].dropna().unique()}
+            raise ValueError("Data attribute is missing; cannot validate bounds.")
+        if not v:
+            numerical_cols = values["data"].select_dtypes(include=["number", "datetime"])
+            categorical_cols = values["data"].select_dtypes(include=["object", "category"])
+            bounds = {}
+            for num in numerical_cols.columns:
+                bounds[num] = {"min": values["data"][num].min(), "max": values["data"][num].max()}
+            for cat in categorical_cols.columns:
+                bounds[cat] = set(values["data"][cat].dropna().unique())
             return bounds
-        elif not all(col in v for col in values["data"].columns):
-            raise ValueError(
-                "Invalid bounds -> {}: Every column of the dataset must be defined in 'bounds'.".format(
-                    list(v.keys())
-                )
-            )
-        elif any(
-            [
-                bool({"min", "max"} - val)
-                for val in [set(v.keys()) for v in v.values() if isinstance(v, dict)]
-            ]
-        ):
-            raise ValueError(
-                "Invalid bounds: bounds for ordinal columns (numbers, datetimes and timedeltas) must be "
-                "defined as {'min': min_value, 'max': max_value}"
-            )
-        else:
-            return v
-
-    @field_validator("column_types")
-    def set_column_types(cls, v, values):
-        if v:
-            # if not any(item in values.get("data").columns for item in v.keys()):
-            columns = set(v.keys())
-            if columns != set(values.get("data").columns):
-                raise ValueError(
-                    "Invalid column types. All features should be defined, not only a subset."
-                )
         return v
 
-    @field_validator("regression")
-    def set_is_regression(cls, v):
+    @field_validator("column_types", mode="before")
+    @classmethod
+    def validate_column_types(cls, v, values):
+        if v:
+            if set(v.keys()) != set(values["data"].columns):
+                raise ValueError("Column types must be defined for all columns.")
+        return v
+
+    @field_validator("regression", mode="before")
+    @classmethod
+    def validate_regression(cls, v):
         return v or False
-
-    def __init__(
-        self,
-        data: pd.DataFrame,
-        target_column: Union[int, str, Tuple] = None,
-        regression: bool = False,
-        column_types: Optional[Dict[str, str]] = None,
-        timestamp: Optional[datetime] = None,
-        name: Optional[str] = None,
-        sequence_index: Optional[Union[int, str]] = None,
-        group_by: Optional[Union[int, str]] = None,
-        bounds: Dict = None,
-        drop_target_na_rows: bool = True,
-    ):
-
-        if target_column is not None and target_column not in data:
-            logger.warning(
-                f"Target column '{target_column}' is not a column in the dataset, target_column set as None (Unlabeled Dataset) "
-            )
-            target_column = None
-
-        if target_column and drop_target_na_rows:
-            target_column_na_values = data[target_column].isnull().sum()
-            if target_column_na_values > 0:
-                logger.info(
-                    f"There are {target_column_na_values} rows containing na value in the target column, they will be dropped."
-                )
-                data.dropna(subset=[target_column], inplace=True)
-                if len(data.index) == 0:
-                    raise ValueError(
-                        "After removing the rows containing na value in the target column, the dataset is empty."
-                    )
-
-        super().__init__(
-            data=data,
-            target_column=target_column,
-            regression=regression,
-            column_types=column_types,
-            timestamp=timestamp,
-            name=name,
-            sequence_index=sequence_index,
-            group_by=group_by,
-            bounds=bounds,
-        )
-
+    
     @classmethod
     def from_csv(
         cls,
