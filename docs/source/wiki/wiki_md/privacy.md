@@ -143,7 +143,7 @@ The distance $d_{ij}$ is defined depending on the type of feature $k$:
 
 Quantitative/numerical feature:
 
-{math}`d_{ij}=\frac{|x_{ik}-x_{jk}}{R_k}`
+$$d_{ij}=\frac{|x_{ik}-x_{jk}|}{R_k}$$
 
 
 Where the range $R_k$ is defined as:
@@ -165,7 +165,7 @@ $$
 The Gower's distance is:
 
 $$
-D_{ij} = \frac{1}{p}\sum_{k=1}^{p} d_{ijk} w_{ijk}
+D_{ij} = \frac{1}{p}\sum_{k=1}^{p} d_{ijk}
 $$
 
 Finally the Distance to Closest Record is computed as:

@@ -6,7 +6,7 @@
    :maxdepth: 1
    :caption: Read more
 
-   preprocessor
-   generation
-   utility
-   privacy
+   preprocessor.rst
+   generation.rst
+   utility.rst
+   privacy.rst
