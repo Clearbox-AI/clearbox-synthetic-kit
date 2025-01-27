@@ -143,9 +143,8 @@ The distance $d_{ij}$ is defined depending on the type of feature $k$:
 
 Quantitative/numerical feature:
 
-$$
-d_{ij}=\frac{|x_{ik}-x_{jk}}{R_k}
-$$
+{math}`d_{ij}=\frac{|x_{ik}-x_{jk}}{R_k}`
+
 
 Where the range $R_k$ is defined as:
 
@@ -181,12 +180,7 @@ Where N is the length of the original dataset.
 <br>
 <br>
 **References**
-<!-- [^1]: Multipurpose synthetic population for policy applications [[Link](https://publications.jrc.ec.europa.eu/repository/handle/JRC128595)]
+[^1]: Multipurpose synthetic population for policy applications [[Link](https://publications.jrc.ec.europa.eu/repository/handle/JRC128595)]
 [^2]: Broken Promises of Privacy: Responding to the Surprising Failure of Anonymization [[Link](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1450006)]
 [^3]: Membership Inference on data: How To Break Anonymity of the Netflix Prize Dataset [[Link](https://arxiv.org/abs/cs/0610105)]
-[^4]: Who's Watching? De-anonymization of Netflix Reviews using Amazon Reviews [[Link](https://courses.csail.mit.edu/6.857/2018/project/Archie-Gershon-Katchoff-Zeng-Netflix.pdf)] -->
-
-[^1]: Multipurpose synthetic population for policy applications 
-[^2]: Broken Promises of Privacy: Responding to the Surprising Failure of Anonymization 
-[^3]: Membership Inference on data: How To Break Anonymity of the Netflix Prize Dataset 
-[^4]: Who's Watching? De-anonymization of Netflix Reviews using Amazon Reviews 
+[^4]: Who's Watching? De-anonymization of Netflix Reviews using Amazon Reviews [[Link](https://courses.csail.mit.edu/6.857/2018/project/Archie-Gershon-Katchoff-Zeng-Netflix.pdf)]
