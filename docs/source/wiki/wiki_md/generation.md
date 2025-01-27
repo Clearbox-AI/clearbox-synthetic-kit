@@ -1,1 +1,1 @@
-# Synthetic data generation with Clearboc Synthetic Kit
+# Synthetic data generation with Clearbox Synthetic Kit

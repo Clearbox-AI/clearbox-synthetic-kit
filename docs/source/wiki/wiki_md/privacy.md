@@ -128,7 +128,7 @@ Synthetic data generation techniques must ensure that records in the synthetic d
     Conversely, if the precision scores are low across thresholds, it suggests that the synthetic dataset is well-anonymized, reducing the likelihood of successful membership inference.
 
     The **MI Mean Risk score** is computed as $(precision - 0.5) * 2$.<br>
-    MI Risk Score smaller than 0.2 (20%) are considered to be very LOW RISK of disclosure due to membership inference.
+    MI Risk Score smaller than 0.2 (20%) are considered to be very low risk of disclosure due to membership inference.
 
 ## 5. Appendix
 ### Distance to Closest Record with Gower's distance
@@ -137,7 +137,7 @@ The version used in Clearbox Synthetic Kit to determine the Distance to Closest 
 
 Suppose we have two observations $x_i=(x_{i1},...,x_{ip})$ and $x_j=(x_{j1},...,x_{jp})$.
 
-For each feature $k=1,...,p$ we define the Gower's distance $d_{ij} \in [0,1].
+For each feature $k=1,...,p$ we define the Gower's distance $d_{ij} \in [0,1]$.
 
 The distance $d_{ij}$ is defined depending on the type of feature $k$:
 

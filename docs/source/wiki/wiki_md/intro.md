@@ -1,4 +1,4 @@
-## Wiki
+# Wiki
 
 Clearbox Synthetic Kit is an open source Python library by [Clearbox AI](https://clearbox.ai) designed to empower data practitioners and researchers in working with synthetic tabular data and time series generation. Built with flexibility and functionality in mind, this comprehensive tool bridges the gap between raw data preparation and high-quality synthetic data generation while ensuring robust evaluation capabilities.
 
