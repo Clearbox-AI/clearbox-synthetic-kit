@@ -8,6 +8,10 @@ project = 'clearbox-synthetic-kit'
 copyright = '2025, Clearbox-AI'
 author = 'Clearbox-AI'
 
+html_js_files = [
+    'mathjax.js',  # Manually include MathJax
+]
+
 extensions = [
     'sphinx.ext.autodoc',  # Automatically document code
     'sphinx.ext.napoleon',  # Support for Google-style and NumPy-style docstrings
@@ -28,6 +32,7 @@ myst_links_external_new_tab = True
 mathjax3_config = {
     'tex': {
         'inlineMath': [['$', '$'], ['\\(', '\\)']],
+        'displayMath': [['$$', '$$'], ['\\[', '\\]']],
     }
 }
 
