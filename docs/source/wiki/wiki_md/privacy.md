@@ -1,5 +1,5 @@
 # Privacy evaluation
-## Synthetic data as Privacy Enhancing Technology
+## 1. Synthetic data as Privacy Enhancing Technology
 In an era where data fuels innovation, the challenge of balancing data utility with privacy has become increasingly critical. Synthetic data has emerged as a transformative privacy-enhancing technology (PET) that offers a powerful solution to this challenge. By simulating artificial yet realistic datasets, synthetic data provides a way to anonymize sensitive information while preserving the statistical properties of the original data[^1].
 
 Unlike traditional anonymization techniques, such as masking or redaction, which often compromise data utility, synthetic data ensures that privacy and usability go hand in hand. Here's how synthetic data stands out as a privacy-enhancing technology:
@@ -24,7 +24,7 @@ By decoupling data utility from privacy risks, synthetic data unlocks new opport
 
 As synthetic data continues to evolve, its role as a cornerstone of privacy-enhancing technologies becomes more evident—paving the way for responsible, ethical, and scalable data usage.
 
-## Privacy risks with synthetic data
+## 2. Privacy risks with synthetic data
 > Data can be either useful or perfectly anonymous but never both.[^2]<br>
 > -Paul Ohm
 
@@ -44,7 +44,7 @@ It is essential to regularly assess privacy vulnerabilities using state-of-the-a
 
 By addressing these privacy risks proactively, synthetic data can remain a reliable and effective tool for responsible data sharing and innovation.
 
-## Distance to Closest Record with Clearbox Synthetic Kit
+## 3. Distance to Closest Record with Clearbox Synthetic Kit
 Distance to Closest Record (DCR) is a widely used privacy metric to evaluate the vulnerability of individual records in a synthetic dataset. This metric measures the similarity between each synthetic record and its nearest real record in the original dataset. By analyzing these distances, organizations can identify synthetic records that are overly similar to real-world records, which might pose a privacy risk due to potential re-identification attacks, such as membership inference attack.
 
 These are the steps that make up the DCR metric computation:
@@ -81,7 +81,7 @@ Low DCR values indicate synthetic records that closely resemble specific real re
 By flagging overly similar records, DCR helps in refining synthetic data generation methods to balance privacy (ensuring records aren't too close to real data) with utility (maintaining useful patterns for analysis).\
 DCR is also useful to evaluate the generative model performance. Infact, synthetic data generation methods that produce low DCR values across the dataset might indicate overfitting to the real data. This suggests a failure to adequately generalize, which compromises privacy.
 
-## Membership Inference Attack simulation with Clearbox Synthetic Kit
+## 4. Membership Inference Attack simulation with Clearbox Synthetic Kit
 The **Membership Inference Test**[^3] [^4]: is a critical evaluation used to estimate the risk of revealing membership information in a dataset.<br> 
 
 If a malicious attacker manages to put his hands on an anonymized synthetic dataset and also has some prior knowledge about one or more of the records of the original dataset he may be able to infer whether the records he has information about were part of the original dataset from which the synthetic dataset was generated from, possibily disclosing sensitive information about the records.
@@ -130,7 +130,7 @@ Synthetic data generation techniques must ensure that records in the synthetic d
     The **MI Mean Risk score** is computed as $(precision - 0.5) * 2$.<br>
     MI Risk Score smaller than 0.2 (20%) are considered to be very LOW RISK of disclosure due to membership inference.
 
-## Appendix
+## 5. Appendix
 ### Distance to Closest Record with Gower's distance
 The Gower's distance is a mathematical distance metric that can be computed between two records of two datasets with the same features.\
 The version used in Clearbox Synthetic Kit to determine the Distance to Closest Record takes into account both numerical and categorical distances.
