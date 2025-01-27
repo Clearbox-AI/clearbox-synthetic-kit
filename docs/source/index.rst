@@ -10,7 +10,10 @@
 .. include:: doc_3.md
    :parser: markdown
 
-
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+   
 .. toctree::
    :maxdepth: 1
    :hidden:

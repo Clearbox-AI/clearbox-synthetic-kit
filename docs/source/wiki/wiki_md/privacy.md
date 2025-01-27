@@ -25,7 +25,7 @@ By decoupling data utility from privacy risks, synthetic data unlocks new opport
 As synthetic data continues to evolve, its role as a cornerstone of privacy-enhancing technologies becomes more evident—paving the way for responsible, ethical, and scalable data usage.
 
 ## Privacy risks with synthetic data
-> Data can be either useful or perfectly anonymous but never both[^2].<br>
+> Data can be either useful or perfectly anonymous but never both.[^2]<br>
 > -Paul Ohm
 
 It is not possible to have a dataset that is 100% privacy reserving if we also want to obtain actionable information from it, and synthetic data is no exception.
@@ -142,11 +142,13 @@ For each feature $k=1,...,p$ we define the Gower's distance $d_{ij} \in [0,1].
 The distance $d_{ij}$ is defined depending on the type of feature $k$:
 
 Quantitative/numerical feature:
+
 $$d_{ij}=\frac{|x_{ik}-x_{jk}}{R_k}$$
 Where the range $R_k$ is defined as
 $$R_k=max(x_{ik},x_{jk})-min(x_{ik},x_{jk})$$
 
 Qualitative/categorical feature:
+
 $$
 d_{ijk} =
 \begin{cases} 
@@ -156,14 +158,19 @@ d_{ijk} =
 $$
 
 The Gower's distance is:
+
 $$D_{ij} = \frac{1}{p}\sum_{k=1}^{p} d_{ijk} w_{ijk}$$
 
 Finally the Distance to Closest Record is computed as:
+
 $$DCR=min(D_{i1},...,D_{iN})$$
 
 Where N is the length of the original dataset.
-
-## References
+<br>
+<br>
+<br>
+<br>
+**References**
 [^1]: Multipurpose synthetic population for policy applications [[Link](https://publications.jrc.ec.europa.eu/repository/handle/JRC128595)]
 [^2]: Broken Promises of Privacy: Responding to the Surprising Failure of Anonymization [[Link](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1450006)]
 [^3]: Membership Inference on data: How To Break Anonymity of the Netflix Prize Dataset [[Link](https://arxiv.org/abs/cs/0610105)]
