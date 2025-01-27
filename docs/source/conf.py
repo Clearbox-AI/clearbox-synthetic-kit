@@ -13,14 +13,22 @@ extensions = [
     'sphinx.ext.napoleon',  # Support for Google-style and NumPy-style docstrings
     'sphinx.ext.viewcode',  # Add links to source code
     'sphinx.ext.intersphinx',  # Link to other project's documentation
+    'sphinx.ext.mathjax', # Enables MathJax for rendering LaTeX equations
     'myst_parser', # To include Markdown files - If not installed when running 'make html' run -> pip install myst-parser - Add it in requirements.txt
     'sphinx_rtd_theme'
 ]
 
 myst_enable_extensions = [
     "html_image", # Allows html images format conversion
+    "dollarmath",  # Enables $...$ and $$...$$ syntax for math
+    "amsmath" # Enables support for amsmath-style math blocks
 ]
 
+mathjax_config = {
+    'tex': {
+        'inlineMath': [['$', '$'], ['\\(', '\\)']],
+    }
+}
 source_suffix = {
     '.rst': 'restructuredtext',
     '.txt': 'markdown',
