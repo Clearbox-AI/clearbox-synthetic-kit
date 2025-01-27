@@ -71,7 +71,7 @@ This step effectively quantifies how closely each synthetic record resembles the
 
 3. Finally, the **share** of synthetic rows closer to the training dataset than to the validation dataset is computed as:
 
-$$ DCR\_share = \frac{number\space of\space DCR\_synth\_train \space smaller\space than\space DCR\_synth\_holdout}{total \space number \space of \space DCR\_synth\_train \space rows}   * 100$$
+{math}`DCR\_share = \frac{number\space of\space DCR\_synth\_train \space smaller\space than\space DCR\_synth\_holdout}{total \space number \space of \space DCR\_synth\_train \space rows}   * 100`
 
 If the percentage is close to or below 50%, it provides empirical evidence that the training and validation data are interchangeable with respect to the synthetic data. This indicates that the synthetic data does not disproportionately resemble the training dataset.<br> 
 In such a case, it would not be possible to infer whether a specific individual was or was not included in the training dataset based on the synthetic data alone.<br>
