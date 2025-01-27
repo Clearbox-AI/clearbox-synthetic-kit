@@ -21,14 +21,16 @@ extensions = [
 myst_enable_extensions = [
     "html_image", # Allows html images format conversion
     "dollarmath",  # Enables $...$ and $$...$$ syntax for math
-    "amsmath" # Enables support for amsmath-style math blocks
+    "amsmath", # Enables support for amsmath-style math blocks
 ]
+myst_links_external_new_tab = True
 
-mathjax_config = {
+mathjax3_config = {
     'tex': {
         'inlineMath': [['$', '$'], ['\\(', '\\)']],
     }
 }
+
 source_suffix = {
     '.rst': 'restructuredtext',
     '.txt': 'markdown',
