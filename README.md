@@ -3,7 +3,7 @@
 [![Downloads](https://pepy.tech/badge/clearbox-synthetic-kit)](https://pepy.tech/project/clearbox-synthetic-kit)
 [![GitHub stars](https://img.shields.io/github/stars/Clearbox-AI/clearbox-synthetic-kit?style=social)](https://github.com/Clearbox-AI/clearbox-synthetic-kit)
 
-<img src="docs/source/img/cb_purple_logo.png" width="450">
+<img src="docs/source/img/synthetickit.png" width="450">
 
 # Clearbox Synthetic Kit
 ### The synthetic data generation library.

@@ -1,3 +1,5 @@
+<img src="docs/source/img/synthetickit.png" width="450">
+
 # Clearbox Synthetic Kit
 
 Clearbox AI's all-in-one solution for generation and evaluation of synthetic tabular and time-series data.
