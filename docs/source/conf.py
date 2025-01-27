@@ -57,6 +57,10 @@ html_theme_options = {
 
 html_static_path = ['_static', 'img']
 
+html_css_files = [
+    'style.css',
+]
+
 html_logo = "img/cb_white_logo_compact.png"
 html_favicon = "img/favicon.ico"
 

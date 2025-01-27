@@ -14,7 +14,10 @@ body {
 footer {
   color: #646369;
 }
-
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Be Vietnam Pro", serif;
+  font-weight: 400;
+}
 .wy-nav-content-wrap {
   background-color: #fafafa;
 }
