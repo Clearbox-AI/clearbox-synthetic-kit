@@ -33,7 +33,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .wy-nav-side,
 .wy-nav-top {
-  background-color: #ffffff; //** 483a8f */
+  background-color: #ffffff !important; //** 483a8f */
 }
 
 .wy-form input[type="text"] {
