@@ -13,11 +13,11 @@
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   
+
 .. toctree::
    :maxdepth: 1
    :hidden:
-   :caption: API Reference
+   :caption: Contents
 
    api/api.rst
    wiki/main.rst
