@@ -51,16 +51,11 @@ jobs:
           echo "already_published=false" >> $GITHUB_ENV
         fi
 
-    - name: Stop if version exists
-      if: env.already_published == 'true'
-      run: |
-        echo "Version already published. Stopping workflow."
-        exit 0
-
     - name: Publish on PyPI
+      if: env.already_published == 'false'
       run: |
         pip install twine
         export TWINE_USERNAME=__token__
-        export TWINE_PASSWORD=${{ secrets.PYPI_TOKEN }}      
+        export TWINE_PASSWORD=${{ secrets.PYPI_TOKEN }}
         twine upload dist/*.whl
 
