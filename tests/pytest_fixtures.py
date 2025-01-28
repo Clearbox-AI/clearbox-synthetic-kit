@@ -1,7 +1,5 @@
 import pytest
-
-from clearbox_engine import Dataset
-
+from clearbox_synthetic.utils import Dataset
 # TODO: Add fixtures for dataset with boolean columns, datetime columns, only categorical columns
 
 # --------------------------AMES--------------------------------------------------------#
