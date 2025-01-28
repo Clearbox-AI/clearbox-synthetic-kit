@@ -42,7 +42,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .wy-side-nav-search{
-  background: #ffffff;
+  background: #ffffff !important;
 }
 
 .caption-text {
@@ -50,7 +50,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .toctree-l1 {
-  color:#333233
+  color:#333233;
 }
 
 /** This fixes the horizontal scroll on mobile */
