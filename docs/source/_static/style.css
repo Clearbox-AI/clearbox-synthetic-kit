@@ -54,7 +54,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .wy-menu-vertical .toctree-l1 > a:hover {
-  background-color: #7472b3 !important;
+  background-color: #9d9ccd !important;
 }
 
 /** This fixes the horizontal scroll on mobile */
