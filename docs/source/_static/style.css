@@ -11,9 +11,11 @@ body {
   font-family: "Be Vietnam Pro", serif;
   color: #212121;
 }
+
 footer {
   color: #646369;
 }
+
 h1, h2, h3, h4, h5, h6 {
   font-family: "Be Vietnam Pro", serif;
   font-weight: 600;
@@ -21,29 +23,21 @@ h1, h2, h3, h4, h5, h6 {
 .wy-nav-content-wrap {
   background-color: #ffffff;
 }
+
 .wy-nav-content {
   background-color: #ffffff;
   max-width: 60rem;
   min-height: 100vh;
 }
+
 .wy-nav-side,
 .wy-nav-top {
-  background-color: #483a8f;
+  background-color: #ffffff; //** 483a8f */
 }
 
 .wy-form input[type="text"] {
   border-radius: 0;
   border: none;
-}
-
-/** Typography */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: "Be Vietnam Pro", sans-serif;
 }
 
 /** This fixes the horizontal scroll on mobile */
