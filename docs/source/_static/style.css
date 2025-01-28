@@ -21,11 +21,9 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
-.caption {
-  color: #ed7737; /* Change this to your desired color */
-  font-weight: bold; /* Optional: Make it bold */
+.rst-content .caption {
+  color: #ed7737 !important;
 }
-
 .wy-nav-content-wrap {
   background-color: #ffffff;
 }
