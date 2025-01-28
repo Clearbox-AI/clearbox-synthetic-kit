@@ -1,0 +1,60 @@
+name: Publish Library to PyPI (MacOS)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install wheel setuptools
+        pip install -r requirements.txt
+
+    - name: Run Python tests
+      run: |
+        pip install pytest
+        pytest
+
+    - name: Build Python wheels
+      run: |
+        python setup.py bdist_wheel
+
+    - name: Check if version exists on PyPI
+      id: check-version
+      run: |
+        PACKAGE_NAME=$(python setup.py --name)
+        PACKAGE_VERSION=$(python setup.py --version)
+        if curl --silent -f https://pypi.org/project/${PACKAGE_NAME}/${PACKAGE_VERSION}/; then
+          echo "Version ${PACKAGE_VERSION} already exists on PyPI."
+          echo "already_published=true" >> $GITHUB_ENV
+        else
+          echo "Version ${PACKAGE_VERSION} does not exist on PyPI."
+          echo "already_published=false" >> $GITHUB_ENV
+        fi
+
+    - name: Publish on PyPI
+      run: |
+        pip install twine
+        export TWINE_USERNAME=__token__
+        export TWINE_PASSWORD=${{ secrets.PYPI_TOKEN }}      
+        twine upload dist/*.whl
+
