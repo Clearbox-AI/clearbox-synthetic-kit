@@ -49,8 +49,8 @@ h1, h2, h3, h4, h5, h6 {
   color: #e36730;
 }
 
-.toctree-l1 {
-  color:#333233;
+.toctree-l1 > a {
+  color:#333233 !important;
 }
 
 /** This fixes the horizontal scroll on mobile */
