@@ -38,7 +38,7 @@ jobs:
       run: |
         python setup.py bdist_wheel
 
-     - name: Check if version exists on PyPI
+    - name: Check if version exists on PyPI
       id: check-version
       run: |
         PACKAGE_NAME=$(python setup.py --name)
