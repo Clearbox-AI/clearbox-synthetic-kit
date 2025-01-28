@@ -81,6 +81,11 @@ Low DCR values indicate synthetic records that closely resemble specific real re
 By flagging overly similar records, DCR helps in refining synthetic data generation methods to balance privacy (ensuring records aren't too close to real data) with utility (maintaining useful patterns for analysis).\
 DCR is also useful to evaluate the generative model performance. Infact, synthetic data generation methods that produce low DCR values across the dataset might indicate overfitting to the real data. This suggests a failure to adequately generalize, which compromises privacy.
 
+> [!NOTE]
+> Computing the distances between all synthetic records and all the real records is a computationally very heavy operation.\
+> Clearbox Synthetic Kit employs [Cython](https://cython.org/) to speed up the process[^5] [^6].
+
+
 ## 4. Membership Inference Attack simulation with Clearbox Synthetic Kit
 The **Membership Inference Test**[^3] [^4]: is a critical evaluation used to estimate the risk of revealing membership information in a dataset.<br> 
 
@@ -184,3 +189,5 @@ Where N is the length of the original dataset.
 [^2]: Broken Promises of Privacy: Responding to the Surprising Failure of Anonymization [[Link](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1450006)]
 [^3]: Membership Inference on data: How To Break Anonymity of the Netflix Prize Dataset [[Link](https://arxiv.org/abs/cs/0610105)]
 [^4]: Who's Watching? De-anonymization of Netflix Reviews using Amazon Reviews [[Link](https://courses.csail.mit.edu/6.857/2018/project/Archie-Gershon-Katchoff-Zeng-Netflix.pdf)]
+[^5]: Using Cython to protect a Python codebase [[Link](https://bucharjan.cz/blog/using-cython-to-protect-a-python-codebase.html)]
+[^6]: Distributing python packages protected with Cython [[Link](https://medium.com/swlh/distributing-python-packages-protected-with-cython-40fc29d84caf)]
