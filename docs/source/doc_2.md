@@ -1,3 +1,7 @@
+<br>
+<br>
+<br>
+
 ## Clearbox Synthetic Kit
 Clearbox AI's all-in-one solution for generation and evaluation of synthetic tabular and time-series data.
 
@@ -10,7 +14,7 @@ $ pip install clearbox-synthetic-kit
 ```
 
 ## Try it out
-Take a quick look at how the generation and evaluation process with Clearbox Synthetic Kit works.
+Get a quick overview of the generation process with Clearbox Synthetic Kit.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Clearbox-AI/clearbox-synthetic-kit/blob/main/examples/tabular_data_generation.ipynb)
 
