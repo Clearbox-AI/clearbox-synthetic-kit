@@ -3,6 +3,9 @@
 *.egg
 *:Zone.Identifier
 MANIFEST
+__pycache__
+build/
+dist/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
