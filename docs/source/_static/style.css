@@ -41,6 +41,18 @@ h1, h2, h3, h4, h5, h6 {
   border: none;
 }
 
+.wy-side-nav-search{
+  background: #ffffff;
+}
+
+.caption-text {
+  color: #e36730;
+}
+
+.toctree-l1 {
+  color:#333233
+}
+
 /** This fixes the horizontal scroll on mobile */
 @media only screen and (max-width: 770px) {
   .py.class dt,
