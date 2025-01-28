@@ -1,3 +1,5 @@
+Wiki
+====
 
 .. include:: wiki_md/intro.md
    :parser: markdown
