@@ -11,6 +11,6 @@ Read more
    :maxdepth: 1
 
    preprocessor.rst
-   generation.rst
-   utility.rst
    privacy.rst
+   .. generation.rst
+   .. utility.rst
