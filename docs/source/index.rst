@@ -11,10 +11,6 @@
    :parser: markdown
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-.. toctree::
    :maxdepth: 1
    :hidden:
    :caption: Contents
