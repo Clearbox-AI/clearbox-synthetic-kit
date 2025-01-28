@@ -83,11 +83,11 @@ DCR is also useful to evaluate the generative model performance. Infact, synthet
 
 > [!NOTE]
 > Computing the distances between all synthetic records and all the real records is a computationally very heavy operation.\
-> Clearbox Synthetic Kit employs [Cython](https://cython.org/) to speed up the process[^5] [^6].
+> Clearbox Synthetic Kit employs [Cython](https://cython.org/) to speed up the process[^3] [^4].
 
 
 ## 4. Membership Inference Attack simulation with Clearbox Synthetic Kit
-The **Membership Inference Test**[^3] [^4]: is a critical evaluation used to estimate the risk of revealing membership information in a dataset.<br> 
+The **Membership Inference Test**[^5] [^6]: is a critical evaluation used to estimate the risk of revealing membership information in a dataset.<br> 
 
 If a malicious attacker manages to put his hands on an anonymized synthetic dataset and also has some prior knowledge about one or more of the records of the original dataset he may be able to infer whether the records he has information about were part of the original dataset from which the synthetic dataset was generated from, possibily disclosing sensitive information about the records.
 
@@ -187,7 +187,7 @@ Where N is the length of the original dataset.
 **References**
 [^1]: Multipurpose synthetic population for policy applications [[Link](https://publications.jrc.ec.europa.eu/repository/handle/JRC128595)]
 [^2]: Broken Promises of Privacy: Responding to the Surprising Failure of Anonymization [[Link](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1450006)]
-[^3]: Membership Inference on data: How To Break Anonymity of the Netflix Prize Dataset [[Link](https://arxiv.org/abs/cs/0610105)]
-[^4]: Who's Watching? De-anonymization of Netflix Reviews using Amazon Reviews [[Link](https://courses.csail.mit.edu/6.857/2018/project/Archie-Gershon-Katchoff-Zeng-Netflix.pdf)]
-[^5]: Using Cython to protect a Python codebase [[Link](https://bucharjan.cz/blog/using-cython-to-protect-a-python-codebase.html)]
-[^6]: Distributing python packages protected with Cython [[Link](https://medium.com/swlh/distributing-python-packages-protected-with-cython-40fc29d84caf)]
+[^3]: Using Cython to protect a Python codebase [[Link](https://bucharjan.cz/blog/using-cython-to-protect-a-python-codebase.html)]
+[^4]: Distributing python packages protected with Cython [[Link](https://medium.com/swlh/distributing-python-packages-protected-with-cython-40fc29d84caf)]
+[^5]: Membership Inference on data: How To Break Anonymity of the Netflix Prize Dataset [[Link](https://arxiv.org/abs/cs/0610105)]
+[^6]: Who's Watching? De-anonymization of Netflix Reviews using Amazon Reviews [[Link](https://courses.csail.mit.edu/6.857/2018/project/Archie-Gershon-Katchoff-Zeng-Netflix.pdf)]
