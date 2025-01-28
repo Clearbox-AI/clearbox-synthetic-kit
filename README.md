@@ -11,7 +11,7 @@ Clearbox AI's all-in-one solution for generation and evaluation of synthetic **t
 
 In addition to its data generation modules, Clearbox Synthetic Kit includes a high-speed preprocessing module to prepare data for training, as well as an evaluation package designed to assess the utility and, when necessary, the privacy level of synthetic data.
 
-Dive into the [Wiki](https://clearbox-synthetic-kit.readthedocs.io/en/latest/) section of the documentation to explore everything about the library! 🚀
+Dive into the [Wiki](https://clearbox-synthetic-kit.readthedocs.io/en/latest/wiki/main.html) section of the documentation to explore everything about the library! 🚀
 
 ## Installation
 
