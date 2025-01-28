@@ -13,7 +13,7 @@ body {
 }
 
 footer {
-  color: #333233; /**#646369*/
+  color: #646369;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -21,9 +21,6 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
-.rst-content .caption {
-  color: #ed7737 !important;
-}
 .wy-nav-content-wrap {
   background-color: #ffffff;
 }
@@ -36,7 +33,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .wy-nav-side,
 .wy-nav-top {
-  background-color: #ffffff; /** 483a8f */
+  background-color: #ffffff; //** 483a8f */
 }
 
 .wy-form input[type="text"] {
