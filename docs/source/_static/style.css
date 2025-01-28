@@ -9,7 +9,7 @@
 
 body {
   font-family: "Be Vietnam Pro", serif;
-  color: #212121;
+  color: #333233;
 }
 
 footer {
@@ -20,6 +20,12 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Be Vietnam Pro", serif;
   font-weight: 600;
 }
+
+.caption {
+  color: #ed7737; /* Change this to your desired color */
+  font-weight: bold; /* Optional: Make it bold */
+}
+
 .wy-nav-content-wrap {
   background-color: #ffffff;
 }
