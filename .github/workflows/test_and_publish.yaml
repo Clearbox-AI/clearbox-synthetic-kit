@@ -1,4 +1,4 @@
-name: Publish Library to PyPI (MacOS)
+name: Test and Publish Library to PyPI
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
       run: |
         python setup.py bdist_wheel
 
-    - name: Check if version exists on PyPI
+     - name: Check if version exists on PyPI
       id: check-version
       run: |
         PACKAGE_NAME=$(python setup.py --name)
@@ -50,6 +50,12 @@ jobs:
           echo "Version ${PACKAGE_VERSION} does not exist on PyPI."
           echo "already_published=false" >> $GITHUB_ENV
         fi
+
+    - name: Stop if version exists
+      if: env.already_published == 'true'
+      run: |
+        echo "Version already published. Stopping workflow."
+        exit 0
 
     - name: Publish on PyPI
       run: |
