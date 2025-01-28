@@ -61,7 +61,7 @@ html_css_files = [
     'style.css',
 ]
 
-html_logo = "img/synthetic_compatto_02.png"
+html_logo = "img/synthetickit_compatto_02.png"
 html_favicon = "img/favicon.ico"
 
 master_doc = 'index'  # Ensure this points to your main document
