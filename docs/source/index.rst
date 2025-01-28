@@ -6,9 +6,6 @@
 
 .. include:: doc_2.md
    :parser: markdown
-   
-.. include:: doc_3.md
-   :parser: markdown
 
 .. toctree::
    :maxdepth: 2

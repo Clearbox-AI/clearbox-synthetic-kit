@@ -1,5 +1,5 @@
 Generation
------------
+----------
 
 .. toctree::
    :maxdepth: 1
