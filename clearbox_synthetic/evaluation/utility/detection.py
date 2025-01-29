@@ -25,12 +25,6 @@ class DetectionScore:
         The synthetic dataset generated for evaluation.
     preprocessor : Preprocessor
         The preprocessor responsible for handling feature extraction and transformation.
-
-    Methods
-    -------
-    get(features_to_hide: list = []) -> dict
-        Trains a classifier to differentiate between real and synthetic data and computes 
-        the detection score, accuracy, ROC-AUC, and feature importance.
     """
 
     original_dataset: Dataset
@@ -81,7 +75,7 @@ class DetectionScore:
 
         Notes
         -----
-        These are the operational steps of the method:
+        The method operates through the following steps:
 
         1. Prepares the datasets:
             - Samples the original dataset to match the size of the synthetic dataset.
@@ -113,6 +107,8 @@ class DetectionScore:
         - A lower score means better synthetic data quality.
         - Feature importance analysis helps detect which synthetic features deviate most from real data.
 
+        Examples
+        --------
         Example of dictionary returned:
 
         .. code-block:: python

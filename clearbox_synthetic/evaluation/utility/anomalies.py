@@ -73,8 +73,10 @@ class Anomalies:
                 - `"values"`: A list of feature values for each anomaly.
                 - `"anomaly_probabilities"`: A list of anomaly probabilities for each feature.
 
-        Process
-        -------
+        Notes
+        -----
+        The method operates through the following steps:
+        
         1. Transforms the dataset using the preprocessor.
         2. Computes reconstruction errors from the engine.
         3. Sorts data points by reconstruction error (highest first).
@@ -83,12 +85,15 @@ class Anomalies:
 
         Examples
         --------
-        Example of returned dictionary:
+        Example of dictionary returned:
 
-        >>> {
-        ...     "values": [[feature_1, feature_2, ...], ...],
-        ...     "anomaly_probabilities": [[score_1, score_2, ...], ...]
-        ... }
+        .. code-block:: python
+
+            >>> {
+            ...     "values": [[feature_1, feature_2, ...], ...],
+            ...     "anomaly_probabilities": [[score_1, score_2, ...], ...]
+            ... }
+
         """
         preprocessed_data = self.preprocessor.transform(self.dataset.get_x())
         reconstruction_error = self.engine.reconstruction_error(preprocessed_data)
@@ -133,8 +138,10 @@ class Anomalies:
         Returns:
             list: A list of anomaly feature values for each instance.
 
-        Operation
-        ---------
+        Notes
+        -----
+        The method operates through the following steps:
+        
         1. Transforms the dataset to a processed format.
         2. Performs reconstruction using the engine.
         3. Computes deviation metrics:

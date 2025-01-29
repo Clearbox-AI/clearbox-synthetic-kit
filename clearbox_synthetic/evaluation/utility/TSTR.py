@@ -32,13 +32,6 @@ class TSTRScore:
     preprocessor : Preprocessor
         The preprocessor for handling data transformation. If not provided, a default 
         preprocessor based on the original dataset is used.
-
-    Methods
-    -------
-    get(features_to_hide: list = []) -> dict
-        Computes the TSTR score by training models on original and synthetic data 
-        and evaluating them on the validation dataset. Returns performance metrics 
-        and feature importance scores.
     """
 
     original_dataset: Dataset
@@ -91,8 +84,10 @@ class TSTRScore:
         dict
             A dictionary containing TSTR metrics and feature importances.
 
-        Process
-        -------
+        Notes
+        -----
+        The method operates through the following steps:
+
         1. Prepares the Data
             - Samples equal-sized subsets from original and synthetic datasets.
             - Applies feature transformations to ensure consistency.
@@ -118,26 +113,31 @@ class TSTRScore:
             - Extracts feature importance scores from both real and synthetic models.
             - Identifies which features most affect predictions.
 
-        Example of dictionary returned for regression task:
-        >>> dict
-        {
-            "task": "regression",
-            "MSE": {"training": 0.25, "synthetic": 0.27},
-            "RMSE": {"training": 0.5, "synthetic": 0.52},
-            "MAE": {"training": 0.4, "synthetic": 0.42},
-            "max_error": {"training": 1.2, "synthetic": 1.3},
-            "r2_score": {"training": 0.85, "synthetic": 0.82},
-            "score": 0.92,  # Final TSTR Score
-            "feature_importances": {
-                "training": {"age": 0.12, "income": 0.08, "education": 0.15},
-                "synthetic": {"age": 0.11, "income": 0.09, "education": 0.14}
-            }
-        }
+        > [!NOTE]
+        > A high TSTR score (>0.9) means that synthetic data is highly useful.
+        > Lower TSTR scores indicate that synthetic data does not generalize well.
 
-        Notes
-        -----
-        A high TSTR score (>0.9) means that synthetic data is highly useful.\
-        Lower TSTR scores indicate that synthetic data does not generalize well.
+        Examples
+        --------
+        Example of dictionary returned for regression task:
+
+        .. code-block:: python
+
+            >>> dict
+            {
+                "task": "regression",
+                "MSE": {"training": 0.25, "synthetic": 0.27},
+                "RMSE": {"training": 0.5, "synthetic": 0.52},
+                "MAE": {"training": 0.4, "synthetic": 0.42},
+                "max_error": {"training": 1.2, "synthetic": 1.3},
+                "r2_score": {"training": 0.85, "synthetic": 0.82},
+                "score": 0.92,  # Final TSTR Score
+                "feature_importances": {
+                    "training": {"age": 0.12, "income": 0.08, "education": 0.15},
+                    "synthetic": {"age": 0.11, "income": 0.09, "education": 0.14}
+                }
+            }
+        
         """
         n_rows = min(
             self.original_dataset.get_x().shape[0],

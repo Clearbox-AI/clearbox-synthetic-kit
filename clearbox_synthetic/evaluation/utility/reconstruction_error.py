@@ -28,12 +28,6 @@ class ReconstructionError:
         If not provided, a default preprocessor based on the original dataset is used.
     engine : TabularEngine
         The engine used to compute reconstruction errors for input data.
-
-    Methods
-    -------
-    get() -> dict
-        Computes the reconstruction error for both original and synthetic datasets 
-        and returns histogram data for comparison.
     """
 
     original_dataset: Dataset
@@ -82,8 +76,10 @@ class ReconstructionError:
             A dictionary containing bin edges and the histograms of reconstruction
             errors for both the original and synthetic datasets.
 
-        Process
-        -------
+        Notes
+        -----
+        The method operates through the following steps:
+
         1. Prepares the Data
 
         - Extracts features (``X``) and target (``Y``) from both datasets.
@@ -103,17 +99,21 @@ class ReconstructionError:
         4. Returns Histogram Data
         - Outputs bin edges and reconstruction error distributions for visualization.
 
+        > [!NOTE]
+        > A high similarity in histograms suggests that the synthetic dataset maintains feature patterns well, while large discrepancies indicate differences in feature distributions between datasets.
+        Examples
+        --------
         Example of dictionary returned:
-        >>> dict
-        {
-            "bin_edges": [0.01, 0.02, 0.03, ...],  # Center points of histogram bins
-            "original_hist": [0.12, 0.25, 0.33, ...],  # Frequency distribution for the original dataset
-            "synthetic_hist": [0.11, 0.26, 0.32, ...]  # Frequency distribution for the synthetic dataset
-        }
 
-        Notes
-        -----
-        A high similarity in histograms suggests that the synthetic dataset maintains feature patterns well, while large discrepancies indicate differences in feature distributions between datasets.
+        .. code-block:: python
+
+            >>> dict
+            {
+                "bin_edges": [0.01, 0.02, 0.03, ...],  # Center points of histogram bins
+                "original_hist": [0.12, 0.25, 0.33, ...],  # Frequency distribution for the original dataset
+                "synthetic_hist": [0.11, 0.26, 0.32, ...]  # Frequency distribution for the synthetic dataset
+            }
+
         """
         if self.original_dataset.target_column is None:
             # Transform features only

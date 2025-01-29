@@ -25,12 +25,6 @@ class MutualInformation:
     preprocessor : Preprocessor
         The preprocessor responsible for handling data transformation before computing 
         mutual information.
-
-    Methods
-    -------
-    get(features_to_hide: list = []) -> dict
-        Computes mutual information matrices for both original and synthetic datasets, 
-        compares them, and returns a similarity score.
     """
 
     original_dataset: Dataset
@@ -81,34 +75,38 @@ class MutualInformation:
             A dictionary containing mutual information matrices for the original and
                   synthetic datasets, a difference matrix, and an overall similarity score.
 
+        Examples
+        --------
+        
         Example of dictionary returned:
-        >>> dict
-        {
-            "features": ["age", "income", "education"],
-            "original_mutual_information": [
-                [1.0, 0.45, 0.32],
-                [0.45, 1.0, 0.56],
-                [0.32, 0.56, 1.0]
-            ],
-            "synthetic_mutual_information": [
-                [1.0, 0.42, 0.29],
-                [0.42, 1.0, 0.52],
-                [0.29, 0.52, 1.0]
-            ],
-            "diff_correlation_matrix": [
-                [0.0, 0.03, 0.03],
-                [0.03, 0.0, 0.04],
-                [0.03, 0.04, 0.0]
-            ],
-            "score": 0.92  # (1 - sum of differences / total feature pairs)
-        }
 
-        Notes
-        -----
-        - Mutual information values range from 0 to 1, where 0 means no dependency and 1 
-        means perfect dependency between features.
-        - Low difference matrix values and a high similarity score indicate strong alignment 
-        between the original and synthetic datasets
+        .. code-block:: python
+            
+            >>> dict
+            {
+                "features": ["age", "income", "education"],
+                "original_mutual_information": [
+                    [1.0, 0.45, 0.32],
+                    [0.45, 1.0, 0.56],
+                    [0.32, 0.56, 1.0]
+                ],
+                "synthetic_mutual_information": [
+                    [1.0, 0.42, 0.29],
+                    [0.42, 1.0, 0.52],
+                    [0.29, 0.52, 1.0]
+                ],
+                "diff_correlation_matrix": [
+                    [0.0, 0.03, 0.03],
+                    [0.03, 0.0, 0.04],
+                    [0.03, 0.04, 0.0]
+                ],
+                "score": 0.92  # (1 - sum of differences / total feature pairs)
+            }
+
+        > [!NOTE]
+        > - Mutual information values range from 0 to 1, where 0 means no dependency and 1 means perfect dependency between features.
+        > - Low difference matrix values and a high similarity score indicate strong alignment between the original and synthetic datasets
+        
         """
         # Transform and reverse transform the original dataset
         original_df = self.preprocessor.transform(

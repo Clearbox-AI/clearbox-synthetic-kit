@@ -23,12 +23,6 @@ class FeaturesComparison:
         The synthetic dataset generated for evaluation.
     preprocessor : Preprocessor
         The preprocessor responsible for handling feature extraction and transformation.
-
-    Methods
-    -------
-    get(features_to_hide: list = []) -> dict
-        Computes detailed statistics for numerical, categorical, and datetime features, 
-        comparing the original and synthetic datasets.
     """
 
     original_dataset: Dataset
@@ -76,8 +70,10 @@ class FeaturesComparison:
         dict 
             A dictionary containing the statistical comparison for each feature.
 
-        Process
-        -------
+        Notes
+        -----
+        The method operates through the following steps:
+
         1. Numerical Feature Analysis
 
             - Computes mean, standard deviation, quartiles, min/max values.
@@ -96,43 +92,45 @@ class FeaturesComparison:
 
         4. Returns a structured dictionary summarizing the differences between the original and synthetic datasets.
         
-        >>> The get method returns a dictionary in the following format:
-        {
-            "age": {
-                "type": "number",
-                "na_values": {"training": 10, "synthetic": 12},
-                "unique_values": {"training": 35, "synthetic": 34},
-                "mean": {"training": 45.2, "synthetic": 44.8},
-                "std": {"training": 12.1, "synthetic": 11.9},
-                "min": {"training": 18, "synthetic": 20},
-                "first_quartile": {"training": 30.0, "synthetic": 29.5},
-                "second_quartile": {"training": 45.0, "synthetic": 44.0},
-                "third_quartile": {"training": 60.0, "synthetic": 59.5},
-                "max": {"training": 85, "synthetic": 83}
-            },
-            "gender": {
-                "type": "categorical",
-                "na_values": {"training": 0, "synthetic": 0},
-                "unique_values": {"training": 2, "synthetic": 2},
-                "values": {
-                    "training": [{"value": "Male", "count": 550, "freq": 0.55},
-                                {"value": "Female", "count": 450, "freq": 0.45}],
-                    "synthetic": [{"value": "Male", "count": 540, "freq": 0.54},
-                                {"value": "Female", "count": 460, "freq": 0.46}]
-                }
-            },
-            "purchase_date": {
-                "type": "datetime",
-                "na_values": {"training": 5, "synthetic": 6},
-                "unique_values": {"training": 400, "synthetic": 398},
-                "min": {"training": "2015-01-01", "synthetic": "2015-01-02"},
-                "max": {"training": "2022-12-31", "synthetic": "2022-12-30"},
-                "most_frequent": {"training": "2020-06-15", "synthetic": "2020-06-16"}
-            }
-        }
+        
+         The get method returns a dictionary in the following format:
+        
+        .. code-block:: python
 
-        Notes
-        -----
+            {
+                "age": {
+                    "type": "number",
+                    "na_values": {"training": 10, "synthetic": 12},
+                    "unique_values": {"training": 35, "synthetic": 34},
+                    "mean": {"training": 45.2, "synthetic": 44.8},
+                    "std": {"training": 12.1, "synthetic": 11.9},
+                    "min": {"training": 18, "synthetic": 20},
+                    "first_quartile": {"training": 30.0, "synthetic": 29.5},
+                    "second_quartile": {"training": 45.0, "synthetic": 44.0},
+                    "third_quartile": {"training": 60.0, "synthetic": 59.5},
+                    "max": {"training": 85, "synthetic": 83}
+                },
+                "gender": {
+                    "type": "categorical",
+                    "na_values": {"training": 0, "synthetic": 0},
+                    "unique_values": {"training": 2, "synthetic": 2},
+                    "values": {
+                        "training": [{"value": "Male", "count": 550, "freq": 0.55},
+                                    {"value": "Female", "count": 450, "freq": 0.45}],
+                        "synthetic": [{"value": "Male", "count": 540, "freq": 0.54},
+                                    {"value": "Female", "count": 460, "freq": 0.46}]
+                    }
+                },
+                "purchase_date": {
+                    "type": "datetime",
+                    "na_values": {"training": 5, "synthetic": 6},
+                    "unique_values": {"training": 400, "synthetic": 398},
+                    "min": {"training": "2015-01-01", "synthetic": "2015-01-02"},
+                    "max": {"training": "2022-12-31", "synthetic": "2022-12-30"},
+                    "most_frequent": {"training": "2020-06-15", "synthetic": "2020-06-16"}
+                }
+            }
+
         - A close match in statistical properties between original and synthetic data 
         suggests a high-quality synthetic dataset.
         - Significant deviations indicate potential inconsistencies in synthetic data generation.

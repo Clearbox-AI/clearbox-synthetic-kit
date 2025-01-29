@@ -22,13 +22,6 @@ class QueryPower:
         The synthetic dataset generated for evaluation.
     preprocessor : Preprocessor
         The preprocessor responsible for handling data transformation.
-
-    Methods
-    -------
-    get() -> dict
-        Generates and runs random queries on both datasets, comparing how well the 
-        synthetic dataset preserves patterns from the original dataset. Returns a 
-        dictionary containing query results and an overall similarity score.
     """
 
     original_dataset: Dataset
@@ -76,8 +69,11 @@ class QueryPower:
             query in both datasets, and an overall score indicating the quality
             of the synthetic data.
 
-        Process
-        -------
+        Notes
+        -----
+
+        The method operates through the following steps:
+
         1. Prepares the Data
             - Samples the original dataset to match the synthetic dataset size.
             - Applies preprocessing transformations and reverse transformations to ensure consistency.
@@ -100,21 +96,27 @@ class QueryPower:
         - Calculates differences in query results between the original and synthetic datasets.
         - Aggregates the query scores into a final query power score.
 
-        Example of dictionary returned:
-        >>> dict
-        {
-            "queries": [
-                {"text": "`age` >= 35 and `gender` == 'Male'", "original_df": 320, "synthetic_df": 310},
-                {"text": "`income` <= 50000 and `education` != 'Bachelor’s'", "original_df": 280, "synthetic_df": 275}
-            ],
-            "score": 0.95
-        }
-        
-        Notes
-        -----
-        - The score represents the overall similarity between the datasets. A high score (close to 1.0) means that the synthetic dataset closely mimics real-world patterns.
-        - Queries are selected randomly and may involve numerical, categorical, 
+        > [!NOTE]
+        > - The score represents the overall similarity between the datasets. A high score (close to 1.0) means that the synthetic dataset closely mimics real-world patterns.
+        > - Queries are selected randomly and may involve numerical, categorical, 
         or logical conditions.
+
+        Examples
+        --------
+
+        Example of dictionary returned:
+
+        .. code-block:: python
+
+            >>> dict
+            {
+                "queries": [
+                    {"text": "`age` >= 35 and `gender` == 'Male'", "original_df": 320, "synthetic_df": 310},
+                    {"text": "`income` <= 50000 and `education` != 'Bachelor’s'", "original_df": 280, "synthetic_df": 275}
+                ],
+                "score": 0.95
+            }
+
         """
         query_power = {"queries": []}
 

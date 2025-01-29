@@ -37,12 +37,6 @@ class Autocorrelation:
         The synthetic dataset generated for evaluation.
     preprocessor : Preprocessor
         The preprocessor responsible for handling feature extraction and transformation.
-
-    Methods
-    -------
-    get(feature: str, id: str = None) -> dict
-        Computes the autocorrelation for a specified feature and compares it 
-        between the original and synthetic datasets.
     """
 
     original_dataset: Dataset
@@ -92,8 +86,10 @@ class Autocorrelation:
             A dictionary containing autocorrelation results and areas under the curve 
                     for both original and synthetic data.
 
-        Process
-        -------
+        Notes
+        -----
+        The method operates through the following steps:
+
         1. Extracts and preprocesses the feature from both datasets.
         2. Computes the autocorrelation curve for both the original and synthetic feature values.
         3. Normalizes the curves to ensure they are on the same scale.
@@ -101,16 +97,21 @@ class Autocorrelation:
         5. Computes the absolute difference (`diff_area`) between original and synthetic AUCs.
         6. Returns results in a structured dictionary.
 
+        Examples
+        --------
         Example of dictionary returned:
-        >>> results = autocorrelation.get(feature="temperature")
-        >>> print(results)
-        {
-            "original": "[autocorrelation values of original dataset]",
-            "original_area": 2.354,  # AUC of original dataset
-            "synthetic": "[autocorrelation values of synthetic dataset]",
-            "synthetic_area": 2.290,  # AUC of synthetic dataset
-            "diff_area": 0.064  # Difference in AUC
-        }
+
+        .. code-block:: python
+
+            >>> results = autocorrelation.get(feature="temperature")
+            >>> print(results)
+            {
+                "original": "[autocorrelation values of original dataset]",
+                "original_area": 2.354,  # AUC of original dataset
+                "synthetic": "[autocorrelation values of synthetic dataset]",
+                "synthetic_area": 2.290,  # AUC of synthetic dataset
+                "diff_area": 0.064  # Difference in AUC
+            }
 
         """
         # Process original data
