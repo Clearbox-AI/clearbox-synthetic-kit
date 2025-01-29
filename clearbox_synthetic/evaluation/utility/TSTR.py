@@ -21,11 +21,24 @@ class TSTRScore:
     """
     A class to calculate the Train on Synthetic Test on Real (TSTR) score using XGBoost models.
 
-    Attributes:
-        original_dataset (Dataset): The original dataset.
-        synthetic_dataset (Dataset): The synthetic dataset.
-        validation_dataset (Dataset): The validation dataset used for testing.
-        preprocessor (Preprocessor): The preprocessor for handling data transformation.
+    Attributes
+    ----------
+    original_dataset : Dataset
+        The original dataset containing real-world data.
+    synthetic_dataset : Dataset
+        The synthetic dataset generated for evaluation.
+    validation_dataset : Dataset
+        The validation dataset used for model testing.
+    preprocessor : Preprocessor
+        The preprocessor for handling data transformation. If not provided, a default 
+        preprocessor based on the original dataset is used.
+
+    Methods
+    -------
+    get(features_to_hide: list = []) -> dict
+        Computes the TSTR score by training models on original and synthetic data 
+        and evaluating them on the validation dataset. Returns performance metrics 
+        and feature importance scores.
     """
 
     original_dataset: Dataset
@@ -40,15 +53,19 @@ class TSTRScore:
         preprocessor: Preprocessor = None,
     ) -> None:
         """
-        Initializes the TSTRScore class.
+        Initializes the TSTRScore class with both original and synthetic datasets.
 
-        Args:
-            original_dataset (Dataset): The original dataset object.
-            synthetic_dataset (Dataset): The synthetic dataset object.
-            validation_dataset (Dataset): The validation dataset object.
-            preprocessor (Preprocessor, optional): The preprocessor for data transformation.
-                                                   Defaults to None, using a default preprocessor
-                                                   for the original dataset.
+        Parameters
+        ----------
+        original_dataset : Dataset
+            The original dataset containing real-world data.
+        synthetic_dataset : Dataset
+            The synthetic dataset generated for evaluation.
+        validation_dataset : Dataset
+            The validation dataset used for model testing.
+        preprocessor : Preprocessor, optional
+            The preprocessor for handling data transformation. If None, a default preprocessor
+            based on the original dataset is used. Default is None.
         """
         self.original_dataset = original_dataset
         self.synthetic_dataset = synthetic_dataset
@@ -60,15 +77,67 @@ class TSTRScore:
     def get(self, features_to_hide: list = []) -> dict:
         """
         Calculates the TSTR score by training XGBoost models on original and synthetic datasets
-        and evaluating them on the validation dataset. The method returns metrics for both
-        regression and classification tasks.
+        and evaluating them on the validation dataset. The method returns metrics for either
+        regression or classification tasks.
 
-        Args:
-            features_to_hide (list, optional): A list of features to exclude from the feature
-                                               importance calculations. Defaults to [].
+        Parameters
+        ----------
+        features_to_hide : list, optional
+            List of features to exclude from the feature importance calculations. 
+            Defaults to an empty list.
 
-        Returns:
-            dict: A dictionary containing TSTR metrics and feature importances.
+        Returns
+        -------
+        dict
+            A dictionary containing TSTR metrics and feature importances.
+
+        Process
+        -------
+        1. Prepares the Data
+            - Samples equal-sized subsets from original and synthetic datasets.
+            - Applies feature transformations to ensure consistency.
+            - Prepares training and testing datasets.
+
+        2. Trains Models for Regression or Classification
+            - Regression models (XGBRegressor) are trained on real and synthetic data.
+            - Classification models (XGBClassifier) are trained using label-encoded targets.
+
+        3. Computes Performance Metrics
+            - Calculates MSE, RMSE, MAE, R² score for regression.
+            - Computes accuracy, precision, recall, F1 score for classification.
+
+        4. Compares Model Performance
+            - The difference in performance between real and synthetic models is analyzed.
+            - If performance on synthetic data is close to real data, the synthetic dataset is high quality.
+
+        5. Computes TSTR Score
+            - The score is calculated based on the difference between real and synthetic models' errors.
+            - If TSTR score is high (~1.0), the synthetic dataset is very realistic.
+
+        6. Determines Feature Importance
+            - Extracts feature importance scores from both real and synthetic models.
+            - Identifies which features most affect predictions.
+
+        Example of dictionary returned for regression task:
+        >>> dict
+        {
+            "task": "regression",
+            "MSE": {"training": 0.25, "synthetic": 0.27},
+            "RMSE": {"training": 0.5, "synthetic": 0.52},
+            "MAE": {"training": 0.4, "synthetic": 0.42},
+            "max_error": {"training": 1.2, "synthetic": 1.3},
+            "r2_score": {"training": 0.85, "synthetic": 0.82},
+            "score": 0.92,  # Final TSTR Score
+            "feature_importances": {
+                "training": {"age": 0.12, "income": 0.08, "education": 0.15},
+                "synthetic": {"age": 0.11, "income": 0.09, "education": 0.14}
+            }
+        }
+
+        Notes
+        -----
+        A high TSTR score (>0.9) means that synthetic data is highly useful.\
+        Lower TSTR scores indicate that synthetic data does not generalize well.
         """
         n_rows = min(
             self.original_dataset.get_x().shape[0],

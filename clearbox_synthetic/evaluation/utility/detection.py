@@ -17,10 +17,20 @@ class DetectionScore:
     for evaluating the quality of a synthetic dataset by training a classifier to 
     distinguish between original and synthetic data.
 
-    Attributes:
-        original_dataset (Dataset): The original dataset.
-        synthetic_dataset (Dataset): The synthetic dataset.
-        preprocessor (Preprocessor): The preprocessor for handling the datasets.
+    Attributes
+    ----------
+    original_dataset : Dataset
+        The original dataset containing real-world data.
+    synthetic_dataset : Dataset
+        The synthetic dataset generated for evaluation.
+    preprocessor : Preprocessor
+        The preprocessor responsible for handling feature extraction and transformation.
+
+    Methods
+    -------
+    get(features_to_hide: list = []) -> dict
+        Trains a classifier to differentiate between real and synthetic data and computes 
+        the detection score, accuracy, ROC-AUC, and feature importance.
     """
 
     original_dataset: Dataset
@@ -34,13 +44,17 @@ class DetectionScore:
         preprocessor: Preprocessor = None,
     ) -> None:
         """
-        Initializes the DetectionScore class.
+        Initializes the DetectionScore class with both original and synthetic datasets.
 
-        Args:
-            original_dataset (Dataset): The original dataset object.
-            synthetic_dataset (Dataset): The synthetic dataset object.
-            preprocessor (Preprocessor, optional): Preprocessor for handling the datasets.
-                                                   Defaults to None.
+        Parameters
+        ----------
+        original_dataset : Dataset
+            The original dataset containing real-world data.
+        synthetic_dataset : Dataset
+            The synthetic dataset generated for evaluation.
+        preprocessor : Preprocessor, optional
+            The preprocessor responsible for handling feature extraction and transformation.
+            If None, a default preprocessor is used. Default is None.
         """
         self.original_dataset = original_dataset
         self.synthetic_dataset = synthetic_dataset
@@ -54,13 +68,59 @@ class DetectionScore:
         original and synthetic data. The lower the model's accuracy, the higher the quality
         of the synthetic data.
 
-        Args:
-            features_to_hide (list, optional): List of features to exclude from importance 
-                                               analysis. Defaults to [].
+        Parameters
+        ----------
+        features_to_hide : list, optional
+            List of features to exclude from importance analysis. Defaults to an empty list.
 
-        Returns:
-            dict: A dictionary containing accuracy, ROC AUC score, detection score, and 
-                  feature importances.
+        Returns
+        -------
+        dict
+            A dictionary containing accuracy, ROC AUC score, detection score, and 
+                    feature importances.
+
+        Process
+        -------
+        1. Prepares the datasets:
+            - Samples the original dataset to match the size of the synthetic dataset.
+            - Preprocesses both datasets to ensure consistent feature representation.
+            - Labels original data as `0` and synthetic data as `1`.
+        
+        2. Builds a classification model:
+            - Uses XGBoost to train a model that classifies data points as either real or synthetic.
+            - Splits the data into training and test sets.
+            - Trains the model using a 33% test split.
+
+        3. Computes Evaluation Metrics:
+            - Accuracy: Measures classification correctness.
+            - ROC-AUC Score: Measures the model’s discriminatory power.
+            - Detection Score
+            
+        4. Extracts Feature Importances:
+            - Identifies which features contribute most to distinguishing real vs. synthetic data.
+            - Helps detect which synthetic features deviate from real-world patterns.
+
+        Notes
+        -----
+        The detection score is calculated as:
+
+        .. code-block:: python
+
+            detection_score["score"] = (1 - detection_score["ROC_AUC"]) * 2
+
+        - If `ROC_AUC <= 0.5`, the synthetic data is considered indistinguishable (`score = 1`).
+        - A lower score means better synthetic data quality.
+        - Feature importance analysis helps detect which synthetic features deviate most from real data.
+
+        Example of dictionary returned:
+        >>> detection_results = detection_score.get()
+        >>> print(detection_results)
+        {
+            "accuracy": 0.85,   # How often the model classifies correctly
+            "ROC_AUC": 0.90,   # The ability to distinguish real vs synthetic
+            "score": 0.2,     # The final detection score (lower = better)
+            "feature_importances": {"feature_1": 0.34, "feature_2": 0.21, ...} 
+        }
         """
         import xgboost as xgb
         from sklearn.model_selection import train_test_split

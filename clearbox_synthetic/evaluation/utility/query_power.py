@@ -1,6 +1,6 @@
 """
 The QueryPower class assesses the quality of a synthetic dataset
-by running queries that compare it to the original dataset. The closer the query results
+by running randomized queries that compare it to the original dataset. The closer the query results
 are between both datasets, the higher the quality of the synthetic data.
 """
 
@@ -14,10 +14,21 @@ class QueryPower:
     A class to evaluate the quality of a synthetic dataset by running comparative
     queries against the original dataset.
 
-    Attributes:
-        original_dataset (Dataset): The original dataset.
-        synthetic_dataset (Dataset): The synthetic dataset.
-        preprocessor (Preprocessor): The preprocessor for handling data transformation.
+    Attributes
+    ----------
+    original_dataset : Dataset
+        The original dataset containing real-world data.
+    synthetic_dataset : Dataset
+        The synthetic dataset generated for evaluation.
+    preprocessor : Preprocessor
+        The preprocessor responsible for handling data transformation.
+
+    Methods
+    -------
+    get() -> dict
+        Generates and runs random queries on both datasets, comparing how well the 
+        synthetic dataset preserves patterns from the original dataset. Returns a 
+        dictionary containing query results and an overall similarity score.
     """
 
     original_dataset: Dataset
@@ -31,14 +42,18 @@ class QueryPower:
         preprocessor: Preprocessor = None,
     ) -> None:
         """
-        Initializes the QueryPower class.
+        Initializes the QueryPower class with both original and synthetic datasets.
 
-        Args:
-            original_dataset (Dataset): The original dataset object.
-            synthetic_dataset (Dataset): The synthetic dataset object.
-            preprocessor (Preprocessor, optional): The preprocessor for data transformation.
-                                                   Defaults to None, using a default 
-                                                   preprocessor for the original dataset.
+        Parameters
+        ----------
+        original_dataset : Dataset
+            The original dataset containing real-world data.
+        synthetic_dataset : Dataset
+            The synthetic dataset generated for evaluation.
+        preprocessor : Preprocessor, optional
+            The preprocessor responsible for handling data transformation.
+            If None, a default preprocessor based on the original dataset is used.
+            Default is None.
         """
         self.original_dataset = original_dataset
         self.synthetic_dataset = synthetic_dataset
@@ -48,16 +63,58 @@ class QueryPower:
 
     def get(self) -> dict:
         """
-        Generates and runs queries to compare the original and synthetic datasets.
+        Generates and runs randomized queries to compare the original and synthetic datasets, and calculates a query power score.
 
         This method creates random queries that filter data from both datasets.
         The similarity between the sizes of the filtered results is used to score
         the quality of the synthetic data.
 
-        Returns:
-            dict: A dictionary containing query texts, the number of matches for each
-                  query in both datasets, and an overall score indicating the quality
-                  of the synthetic data.
+        Returns
+        -------
+        dict 
+            A dictionary containing query texts, the number of matches for each
+            query in both datasets, and an overall score indicating the quality
+            of the synthetic data.
+
+        Process
+        -------
+        1. Prepares the Data
+            - Samples the original dataset to match the synthetic dataset size.
+            - Applies preprocessing transformations and reverse transformations to ensure consistency.
+        
+        2. Extracts Feature Types
+        - Identifies numerical, categorical, and datetime features.
+        - Removes datetime features, which are not used for queries.
+        
+        3. Defines Query Components
+        - Numerical feature queries use quantiles (<=, >=).
+        - Categorical feature queries use equality (==) or inequality (!=).
+        - Logical operators (AND) combine multiple conditions.
+        
+        4. Generates Up to 5 Random Queries
+        - Randomly selects two features for each query.
+        - Constructs query conditions based on the feature type.
+        - Runs the same query on both datasets and counts matching records.
+        
+        5. Computes Query Score
+        - Calculates differences in query results between the original and synthetic datasets.
+        - Aggregates the query scores into a final query power score.
+
+        Example of dictionary returned:
+        >>> dict
+        {
+            "queries": [
+                {"text": "`age` >= 35 and `gender` == 'Male'", "original_df": 320, "synthetic_df": 310},
+                {"text": "`income` <= 50000 and `education` != 'Bachelor’s'", "original_df": 280, "synthetic_df": 275}
+            ],
+            "score": 0.95
+        }
+        
+        Notes
+        -----
+        - The score represents the overall similarity between the datasets. A high score (close to 1.0) means that the synthetic dataset closely mimics real-world patterns.
+        - Queries are selected randomly and may involve numerical, categorical, 
+        or logical conditions.
         """
         query_power = {"queries": []}
 
