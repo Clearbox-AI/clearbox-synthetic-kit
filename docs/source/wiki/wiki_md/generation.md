@@ -10,7 +10,7 @@ This framework is particularly useful in applications such as:
 - Data augmentation: Expanding datasets for training machine learning models.
 - Feature learning: Extracting latent representations for clustering and classification.
 
-1. TabularEngine and TimeSeriesEngine
+#### 1. TabularEngine and TimeSeriesEngine
 
 The `TabularEngine` class integrates a Variational Autoencoder and an optional Diffusion Model to process and generate tabular datasets. 
 
@@ -22,7 +22,7 @@ They also allows latent space sampling to explore variations in the data before 
 
 The `train()` method starts the training of the generative model selected on tabular data, applying an optimizer and updating model parameters. The method supports early stopping and progress tracking.
 
-2. LabeledSynthesizer and UnlabeledSynthesizer
+#### 2. LabeledSynthesizer and UnlabeledSynthesizer
 
 The Synthesizer classes are dedicated to generate brand-new synthetic data by leveraging a trained `TabularEngine` or `TimeSeriesEngine`.\
 The `LabeledSynthesizer` is specialized in generating labeld data, while the `UnlabeledSynthesizer` generates synthetic data without labels.
