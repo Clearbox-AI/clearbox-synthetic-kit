@@ -42,15 +42,24 @@ class LabeledSynthesizer(Synthesizer):
         Generates a single synthetic instance by shuffling selected columns based on distances
         in the latent space.
 
-        Args:
-            new_samples (pd.DataFrame): DataFrame to store generated samples.
-            encoded (np.ndarray): Encoded representation of the dataset.
-            X (np.ndarray): Original dataset features.
-            reshuffle_indexes (np.ndarray): Indexes used to reshuffle columns.
-            index (int): Index of the current instance being generated.
-            sampled_index (int): Index of the sampled instance from the original dataset.
-            n_sampling_points (int, optional): Number of sampling points for shuffling. Defaults to 5.
-            hybrid_columns (List, optional): List of hybrid columns. Defaults to an empty list.
+        Parameters
+        ----------
+        new_samples : pd.DataFrame
+            DataFrame to store generated samples.
+        encoded : np.ndarray
+            Encoded representation of the dataset.
+        X : np.ndarray
+            Original dataset features.
+        reshuffle_indexes : np.ndarray
+            Indexes used to reshuffle columns.
+        index : int
+            Index of the current instance being generated.
+        sampled_index : int
+            Index of the sampled instance from the original dataset.
+        n_sampling_points : int, optional, default=5
+            Number of sampling points for shuffling.
+        hybrid_columns : List, optional, default=[]
+            List of hybrid columns.
         """
         encoded_instance = encoded[sampled_index, :]
         distances = ((encoded - encoded_instance) ** 2).sum(axis=1) ** 0.5
