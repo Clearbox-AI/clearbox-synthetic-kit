@@ -1,3 +1,6 @@
+<br>
+<br>
+<br>
 The `Engine` and `Synthesizer` modules are the core of Clearbox Synthetic Kit. 🚀
 
 These classes provide a comprehensive framework for training VAEs on **tabular** and **time-series data**, performing latent space encoding, and generating synthetic labeled/unlabeled datasets.\
