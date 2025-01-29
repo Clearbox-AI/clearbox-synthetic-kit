@@ -1,5 +1,5 @@
 """
-This module defines the LabeledSynthesizer class, which extends the Synthesizer class to generate
+This module defines the ``LabeledSynthesizer`` class, which extends the Synthesizer class to generate
 new labeled instances from an existing dataset using various techniques, including shuffling and
 reconstruction. The class provides methods for generating synthetic samples while considering
 specific constraints, such as hybrid columns and discarded features.
@@ -15,12 +15,16 @@ from .synthesizer import Synthesizer
 
 class LabeledSynthesizer(Synthesizer):
     """
-    LabeledSynthesizer generates synthetic labeled data from a pre-trained Engine instance and an existing dataset using
-    sampling and shuffling techniques. It supports hybrid column handling, latent space noise
-    injection, and column-specific rules for sample generation.
+    Generates synthetic labeled data from a pre-trained Engine instance and an existing dataset 
+    using sampling and shuffling techniques. 
 
-    Attributes:
-        sampled_indexes (np.ndarray): The indexes of the sampled instances from the original dataset.
+    This synthesizer supports hybrid column handling, latent space noise injection, and 
+    column-specific rules for sample generation.
+
+    Attributes
+    ----------
+    sampled_indexes : np.ndarray
+        The indexes of the sampled instances from the original dataset.
     """
 
     def _generate_instance(
@@ -78,16 +82,25 @@ class LabeledSynthesizer(Synthesizer):
         """
         Generates synthetic samples based on the original dataset and given constraints.
 
-        Args:
-            has_header (bool, optional): If the generated samples should have a header. Defaults to None.
-            points (list, optional): Specific points to use for sampling. Defaults to None.
-            n_sampling_points (int, optional): Number of points for sampling. Defaults to 5.
-            hybrid_columns (list, optional): List of hybrid columns to consider. Defaults to an empty list.
-            latent_noise (float, optional): Noise to add to the latent space representation. Defaults to 0.0.
-            Y (np.ndarray, optional): Target values. Defaults to None.
+        Parameters
+        ----------
+        has_header : bool, optional
+            Whether the generated samples should include a header. Defaults to None.
+        points : list, optional
+            Specific points to use for sampling. Defaults to None.
+        n_sampling_points : int, optional
+            Number of points for sampling. Defaults to 5.
+        hybrid_columns : list, optional
+            List of hybrid columns to consider. Defaults to an empty list.
+        latent_noise : float, optional
+            Noise to add to the latent space representation. Defaults to 0.0.
+        Y : np.ndarray, optional
+            Target values. Defaults to None.
 
-        Returns:
-            pd.DataFrame: DataFrame containing the generated synthetic samples.
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame containing the generated synthetic samples.
         """
         X = self.dataset.get_x()
 
