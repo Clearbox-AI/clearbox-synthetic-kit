@@ -15,7 +15,7 @@ coverage.xml
 *,cover
 *.log
 .git
-clearbox_engine/test/*
+clearbox_synhtetic.utils/test/*
 build/*
 dist/*
 tests/*
