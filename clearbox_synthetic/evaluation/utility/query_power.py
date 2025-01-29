@@ -1,5 +1,5 @@
 """
-The QueryPower class assesses the quality of a synthetic dataset
+The ``QueryPower`` class assesses the quality of a synthetic dataset
 by running randomized queries that compare it to the original dataset. The closer the query results
 are between both datasets, the higher the quality of the synthetic data.
 """
@@ -75,31 +75,35 @@ class QueryPower:
         The method operates through the following steps:
 
         1. Prepares the Data
+
             - Samples the original dataset to match the synthetic dataset size.
             - Applies preprocessing transformations and reverse transformations to ensure consistency.
         
         2. Extracts Feature Types
-        - Identifies numerical, categorical, and datetime features.
-        - Removes datetime features, which are not used for queries.
+
+            - Identifies numerical, categorical, and datetime features.
+            - Removes datetime features, which are not used for queries.
         
         3. Defines Query Components
-        - Numerical feature queries use quantiles (<=, >=).
-        - Categorical feature queries use equality (==) or inequality (!=).
-        - Logical operators (AND) combine multiple conditions.
+
+            - Numerical feature queries use quantiles (<=, >=).
+            - Categorical feature queries use equality (==) or inequality (!=).
+            - Logical operators (AND) combine multiple conditions.
         
         4. Generates Up to 5 Random Queries
-        - Randomly selects two features for each query.
-        - Constructs query conditions based on the feature type.
-        - Runs the same query on both datasets and counts matching records.
+
+            - Randomly selects two features for each query.
+            - Constructs query conditions based on the feature type.
+            - Runs the same query on both datasets and counts matching records.
         
         5. Computes Query Score
-        - Calculates differences in query results between the original and synthetic datasets.
-        - Aggregates the query scores into a final query power score.
 
-        > [!NOTE]
-        > - The score represents the overall similarity between the datasets. A high score (close to 1.0) means that the synthetic dataset closely mimics real-world patterns.
-        > - Queries are selected randomly and may involve numerical, categorical, 
-        or logical conditions.
+            - Calculates differences in query results between the original and synthetic datasets.
+            - Aggregates the query scores into a final query power score.
+
+        .. note::
+            - The score represents the overall similarity between the datasets. A high score (close to 1.0) means that the synthetic dataset closely mimics real-world patterns.
+            - Queries are selected randomly and may involve numerical, categorical, or logical conditions.
 
         Examples
         --------
@@ -108,7 +112,6 @@ class QueryPower:
 
         .. code-block:: python
 
-            >>> dict
             {
                 "queries": [
                     {"text": "`age` >= 35 and `gender` == 'Male'", "original_df": 320, "synthetic_df": 310},

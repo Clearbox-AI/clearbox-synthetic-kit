@@ -1,5 +1,5 @@
 """
-The ReconstructionError class calculates the reconstruction
+The ``ReconstructionError`` class calculates the reconstruction
 error for both original and synthetic datasets using a specified TabularEngine.
 The reconstruction error histograms are generated to compare the quality of synthetic data.
 """
@@ -82,32 +82,36 @@ class ReconstructionError:
 
         1. Prepares the Data
 
-        - Extracts features (``X``) and target (``Y``) from both datasets.
-        - If the dataset has a target column, it applies:
-            - One-hot encoding for categorical targets (classification problems).
-            - Normalization for continuous targets (regression problems).
-        - Applies preprocessing transformations to ensure feature consistency.
+            - Extracts features (``X``) and target (``Y``) from both datasets.
+            - If the dataset has a target column, it applies:
+                - One-hot encoding for categorical targets (classification problems).
+                - Normalization for continuous targets (regression problems).
+            - Applies preprocessing transformations to ensure feature consistency.
         
         2. Computes Reconstruction Error
-        - Passes the transformed features (``X``) and target (``Y``) to the TabularEngine.
-        - Calculates reconstruction error for both datasets.
+
+            - Passes the transformed features (``X``) and target (``Y``) to the TabularEngine.
+            - Calculates reconstruction error for both datasets.
 
         3. Generates Reconstruction Error Histograms
-        - Creates bin edges for histogram visualization.
-        - Computes histogram values for original and synthetic datasets.
-        - Normalizes the histograms to ensure density comparisons.
-        4. Returns Histogram Data
-        - Outputs bin edges and reconstruction error distributions for visualization.
 
-        > [!NOTE]
-        > A high similarity in histograms suggests that the synthetic dataset maintains feature patterns well, while large discrepancies indicate differences in feature distributions between datasets.
+            - Creates bin edges for histogram visualization.
+            - Computes histogram values for original and synthetic datasets.
+            - Normalizes the histograms to ensure density comparisons.
+
+        4. Returns Histogram Data
+
+            - Outputs bin edges and reconstruction error distributions for visualization.
+
+        .. note::
+            A high similarity in histograms suggests that the synthetic dataset maintains feature patterns well, while large discrepancies indicate differences in feature distributions between datasets.
+
         Examples
         --------
         Example of dictionary returned:
 
         .. code-block:: python
 
-            >>> dict
             {
                 "bin_edges": [0.01, 0.02, 0.03, ...],  # Center points of histogram bins
                 "original_hist": [0.12, 0.25, 0.33, ...],  # Frequency distribution for the original dataset

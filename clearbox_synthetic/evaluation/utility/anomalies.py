@@ -1,5 +1,5 @@
 """
-The Anomalies class detects anomalies (who would have ever imagined...) in tabular data using
+The ``Anomalies`` class detects anomalies (who would have ever imagined...) in tabular data using
 an engine that computes reconstruction errors, a dataset for the input data, 
 and a preprocessor for transforming the data.
 
@@ -89,10 +89,10 @@ class Anomalies:
 
         .. code-block:: python
 
-            >>> {
-            ...     "values": [[feature_1, feature_2, ...], ...],
-            ...     "anomaly_probabilities": [[score_1, score_2, ...], ...]
-            ... }
+            {
+                "values": [[feature_1, feature_2, ...], ...],
+                "anomaly_probabilities": [[score_1, score_2, ...], ...]
+            }
 
         """
         preprocessed_data = self.preprocessor.transform(self.dataset.get_x())
@@ -145,8 +145,8 @@ class Anomalies:
         1. Transforms the dataset to a processed format.
         2. Performs reconstruction using the engine.
         3. Computes deviation metrics:
-            - For numerical features: Uses a Gaussian probability model to compute anomaly likelihood.
-            - For categorical features: Compares reconstructed categorical values with original values.
+        - For numerical features: Uses a Gaussian probability model to compute anomaly likelihood.
+        - For categorical features: Compares reconstructed categorical values with original values.
         4. Formats results into a structured DataFrame.
         """
         preprocessed_data = self.preprocessor.transform(X)

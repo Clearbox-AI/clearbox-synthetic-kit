@@ -1,5 +1,5 @@
 """
-The FeaturesComparison class compares the statistical
+The ``FeaturesComparison`` class compares the statistical
 properties of features between an original dataset and a synthetic dataset. It
 provides detailed statistics for numerical, categorical, and datetime features.
 """
@@ -86,6 +86,7 @@ class FeaturesComparison:
             - Identifies the most frequent categories and their relative frequency.
 
         3. Datetime Feature Analysis
+
             - Compares date ranges (min/max).
             - Identifies most common timestamps.
             - Tracks missing datetime values.
@@ -131,8 +132,7 @@ class FeaturesComparison:
                 }
             }
 
-        - A close match in statistical properties between original and synthetic data 
-        suggests a high-quality synthetic dataset.
+        - A close match in statistical properties between original and synthetic data suggests a high-quality synthetic dataset.
         - Significant deviations indicate potential inconsistencies in synthetic data generation.
         """
         features_comparison = {}

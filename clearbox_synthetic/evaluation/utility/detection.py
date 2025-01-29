@@ -1,5 +1,5 @@
 """
-The DetectionScore class computes a detection score
+The ``DetectionScore`` class computes a detection score
 for evaluating the quality of a synthetic dataset by training a classifier to 
 distinguish between original and synthetic data.
 """

@@ -23,20 +23,20 @@ This approach is essential for understanding the quality and reliability of synt
 2. Computes Performance Metrics for Both Regression and Classification
 
     Regression Tasks:
-
-        - Mean Squared Error (MSE)
-        - Root Mean Squared Error (RMSE)
-        - Mean Absolute Error (MAE)
-        - Max Error
-        - R² Score (Goodness of fit)
+    
+    - Mean Squared Error (MSE)
+    - Root Mean Squared Error (RMSE)
+    - Mean Absolute Error (MAE)
+    - Max Error
+    - R² Score (Goodness of fit)
 
     Classification Tasks:
 
-        - Accuracy
-        - Precision
-        - Recall
-        - F1 Score
-        - Support (Class distribution)
+    - Accuracy
+    - Precision
+    - Recall
+    - F1 Score
+    - Support (Class distribution)
 
 3. Provides a Unified TSTR Score
 

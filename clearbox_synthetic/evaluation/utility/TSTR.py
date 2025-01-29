@@ -1,5 +1,5 @@
 """
-The TSTRScore class calculates the Train on Synthetic Test on Real (TSTR) score
+The ``TSTRScore`` class calculates the Train on Synthetic Test on Real (TSTR) score
 for both regression and classification tasks using XGBoost models. The class compares the performance of
 models trained on original and synthetic datasets.
 """
@@ -113,17 +113,16 @@ class TSTRScore:
             - Extracts feature importance scores from both real and synthetic models.
             - Identifies which features most affect predictions.
 
-        > [!NOTE]
-        > A high TSTR score (>0.9) means that synthetic data is highly useful.
-        > Lower TSTR scores indicate that synthetic data does not generalize well.
-
+        .. note::
+            A high TSTR score (>0.9) means that synthetic data is highly useful.
+            Lower TSTR scores indicate that synthetic data does not generalize well.
+    
         Examples
         --------
         Example of dictionary returned for regression task:
 
         .. code-block:: python
 
-            >>> dict
             {
                 "task": "regression",
                 "MSE": {"training": 0.25, "synthetic": 0.27},

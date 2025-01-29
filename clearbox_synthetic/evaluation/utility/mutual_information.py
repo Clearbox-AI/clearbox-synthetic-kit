@@ -1,5 +1,5 @@
 """
-The MutualInformation module provides a robust method for assessing the 
+The ``MutualInformation`` module provides a robust method for assessing the 
 statistical similarity of feature relationships between original and synthetic datasets. 
 By computing mutual information scores and comparing feature dependencies, it ensures 
 that synthetic data maintains meaningful structure while remaining privacy-compliant.
@@ -82,7 +82,6 @@ class MutualInformation:
 
         .. code-block:: python
             
-            >>> dict
             {
                 "features": ["age", "income", "education"],
                 "original_mutual_information": [
@@ -103,9 +102,9 @@ class MutualInformation:
                 "score": 0.92  # (1 - sum of differences / total feature pairs)
             }
 
-        > [!NOTE]
-        > - Mutual information values range from 0 to 1, where 0 means no dependency and 1 means perfect dependency between features.
-        > - Low difference matrix values and a high similarity score indicate strong alignment between the original and synthetic datasets
+        .. note::
+            - Mutual information values range from 0 to 1, where 0 means no dependency and 1 means perfect dependency between features.
+            - Low difference matrix values and a high similarity score indicate strong alignment between the original and synthetic datasets
         
         """
         # Transform and reverse transform the original dataset

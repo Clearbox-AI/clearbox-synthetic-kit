@@ -1,5 +1,5 @@
 """
-The Autocorrelation class provides a tool for validating synthetic time-series data. 
+The ``Autocorrelation`` class provides a tool for validating synthetic time-series data. 
 By measuring how well synthetic datasets preserve temporal dependencies, it ensures 
 that models trained on synthetic data generalize well to real-world scenarios.
 """
