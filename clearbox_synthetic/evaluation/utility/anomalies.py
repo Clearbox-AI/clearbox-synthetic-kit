@@ -30,13 +30,6 @@ class Anomalies:
         The preprocessor used to transform and standardize the dataset.
     engine : TabularEngine
         The engine responsible for computing reconstruction errors to identify anomalies.
-
-    Methods
-    -------
-    detect(n: int = 10) -> dict
-        Detects anomalies based on reconstruction errors and returns the top `n` anomalies.
-    get_anomaly_features(X: pd.DataFrame) -> list
-        Computes anomaly feature scores based on reconstruction errors for each record in the dataset.
     """
     dataset: Dataset
     preprocessor: Preprocessor
@@ -77,8 +70,8 @@ class Anomalies:
         -------
         dict
             A dictionary containing:
-                - "values": A list of feature values for each anomaly.
-                - "anomaly_probabilities": A list of anomaly probabilities for each feature.
+                - `"values"`: A list of feature values for each anomaly.
+                - `"anomaly_probabilities"`: A list of anomaly probabilities for each feature.
 
         Process
         -------
@@ -86,16 +79,16 @@ class Anomalies:
         2. Computes reconstruction errors from the engine.
         3. Sorts data points by reconstruction error (highest first).
         4. Extracts feature values and anomaly probabilities.
-        5. Returns a structured dictionary with:
-            - ``"values"``: The actual feature values of detected anomalies.
-            - ``"anomaly_probabilities"``: Computed anomaly probabilities for each feature.
+        5. Returns a structured dictionary.
 
-        Example of dictionary returned:
-        >>> dict
-        {
-            "values": [[feature_1, feature_2, ...], ...],
-            "anomaly_probabilities": [[score_1, score_2, ...], ...]
-        }
+        Examples
+        --------
+        Example of returned dictionary:
+
+        >>> {
+        ...     "values": [[feature_1, feature_2, ...], ...],
+        ...     "anomaly_probabilities": [[score_1, score_2, ...], ...]
+        ... }
         """
         preprocessed_data = self.preprocessor.transform(self.dataset.get_x())
         reconstruction_error = self.engine.reconstruction_error(preprocessed_data)

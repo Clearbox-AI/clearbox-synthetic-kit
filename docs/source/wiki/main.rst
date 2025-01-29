@@ -12,5 +12,6 @@ Read more
 
    preprocessor.rst
    privacy.rst
+   utility.rst
    .. generation.rst
-   .. utility.rst
+   
