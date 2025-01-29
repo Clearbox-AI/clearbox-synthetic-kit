@@ -3,9 +3,9 @@ API Reference
 
 .. image:: ../img/doc.png
    :alt: doc_img
-   :width: 200px
-   :align: right
-   
+   :width: 100px
+   :align: left
+
 Here you can find detailed documentation about every class and function that make up Clearbox Synthetic Kit.
 
 .. toctree::
