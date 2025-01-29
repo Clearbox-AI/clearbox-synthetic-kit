@@ -13,7 +13,7 @@ from clearbox_synthetic.generation import TabularEngine
 
 class ReconstructionError:
     """
-    The ReconstructionError class calculates the reconstruction
+    A class to calculate the reconstruction
     error for both original and synthetic datasets using a specified TabularEngine.
     The reconstruction error histograms are generated to compare the quality of synthetic data.
 
@@ -84,8 +84,10 @@ class ReconstructionError:
 
             - Extracts features (``X``) and target (``Y``) from both datasets.
             - If the dataset has a target column, it applies:
+
                 - One-hot encoding for categorical targets (classification problems).
                 - Normalization for continuous targets (regression problems).
+
             - Applies preprocessing transformations to ensure feature consistency.
         
         2. Computes Reconstruction Error
@@ -103,8 +105,8 @@ class ReconstructionError:
 
             - Outputs bin edges and reconstruction error distributions for visualization.
 
-        .. note::
-            A high similarity in histograms suggests that the synthetic dataset maintains feature patterns well, while large discrepancies indicate differences in feature distributions between datasets.
+            .. note::
+                A high similarity in histograms suggests that the synthetic dataset maintains feature patterns well, while large discrepancies indicate differences in feature distributions between datasets.
 
         Examples
         --------

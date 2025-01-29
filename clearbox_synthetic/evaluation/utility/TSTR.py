@@ -89,27 +89,33 @@ class TSTRScore:
         The method operates through the following steps:
 
         1. Prepares the Data
+
             - Samples equal-sized subsets from original and synthetic datasets.
             - Applies feature transformations to ensure consistency.
             - Prepares training and testing datasets.
 
         2. Trains Models for Regression or Classification
+
             - Regression models (XGBRegressor) are trained on real and synthetic data.
             - Classification models (XGBClassifier) are trained using label-encoded targets.
 
         3. Computes Performance Metrics
+
             - Calculates MSE, RMSE, MAE, R² score for regression.
             - Computes accuracy, precision, recall, F1 score for classification.
 
         4. Compares Model Performance
+
             - The difference in performance between real and synthetic models is analyzed.
             - If performance on synthetic data is close to real data, the synthetic dataset is high quality.
 
         5. Computes TSTR Score
+
             - The score is calculated based on the difference between real and synthetic models' errors.
             - If TSTR score is high (~1.0), the synthetic dataset is very realistic.
 
         6. Determines Feature Importance
+        
             - Extracts feature importance scores from both real and synthetic models.
             - Identifies which features most affect predictions.
 

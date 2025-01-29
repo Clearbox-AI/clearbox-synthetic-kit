@@ -94,7 +94,7 @@ class FeaturesComparison:
         4. Returns a structured dictionary summarizing the differences between the original and synthetic datasets.
         
         
-         The get method returns a dictionary in the following format:
+        The ``get()`` method returns a dictionary in the following format:
         
         .. code-block:: python
 
@@ -132,8 +132,9 @@ class FeaturesComparison:
                 }
             }
 
-        - A close match in statistical properties between original and synthetic data suggests a high-quality synthetic dataset.
-        - Significant deviations indicate potential inconsistencies in synthetic data generation.
+        .. note::
+            - A close match in statistical properties between original and synthetic data suggests a high-quality synthetic dataset.
+            - Significant deviations indicate potential inconsistencies in synthetic data generation.
         """
         features_comparison = {}
 

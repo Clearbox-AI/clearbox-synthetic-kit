@@ -69,9 +69,7 @@ class Anomalies:
         Returns
         -------
         dict
-            A dictionary containing:
-                - `"values"`: A list of feature values for each anomaly.
-                - `"anomaly_probabilities"`: A list of anomaly probabilities for each feature.
+            A dictionary containing a list of feature values for each anomaly and a list of anomaly probabilities for each feature.
 
         Notes
         -----

@@ -13,7 +13,7 @@ from clearbox_synthetic.utils.preprocessor.preprocessor import Preprocessor
 
 class DetectionScore:
     """
-    The DetectionScore class computes a detection score
+    The ``DetectionScore`` class computes a detection score
     for evaluating the quality of a synthetic dataset by training a classifier to 
     distinguish between original and synthetic data.
 
@@ -70,29 +70,32 @@ class DetectionScore:
         Returns
         -------
         dict
-            A dictionary containing accuracy, ROC AUC score, detection score, and 
-                    feature importances.
+            A dictionary containing accuracy, ROC AUC score, detection score, and feature importances.
 
         Notes
         -----
         The method operates through the following steps:
 
         1. Prepares the datasets:
+
             - Samples the original dataset to match the size of the synthetic dataset.
             - Preprocesses both datasets to ensure consistent feature representation.
             - Labels original data as `0` and synthetic data as `1`.
         
         2. Builds a classification model:
+
             - Uses XGBoost to train a model that classifies data points as either real or synthetic.
             - Splits the data into training and test sets.
             - Trains the model using a 33% test split.
 
         3. Computes Evaluation Metrics:
+
             - Accuracy: Measures classification correctness.
             - ROC-AUC Score: Measures the model’s discriminatory power.
             - Detection Score
             
         4. Extracts Feature Importances:
+        
             - Identifies which features contribute most to distinguishing real vs. synthetic data.
             - Helps detect which synthetic features deviate from real-world patterns.
 

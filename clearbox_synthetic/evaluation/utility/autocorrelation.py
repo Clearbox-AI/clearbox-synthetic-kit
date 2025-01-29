@@ -83,8 +83,7 @@ class Autocorrelation:
         Returns
         -------
         dict
-            A dictionary containing autocorrelation results and areas under the curve 
-                    for both original and synthetic data.
+            A dictionary containing autocorrelation results and areas under the curve for both original and synthetic data.
 
         Notes
         -----

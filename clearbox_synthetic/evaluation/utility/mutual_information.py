@@ -72,8 +72,7 @@ class MutualInformation:
         Returns
         -------
         dict 
-            A dictionary containing mutual information matrices for the original and
-                  synthetic datasets, a difference matrix, and an overall similarity score.
+            A dictionary containing mutual information matrices for the original and synthetic datasets, a difference matrix, and an overall similarity score.
 
         Examples
         --------

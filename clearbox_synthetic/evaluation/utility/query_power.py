@@ -101,9 +101,9 @@ class QueryPower:
             - Calculates differences in query results between the original and synthetic datasets.
             - Aggregates the query scores into a final query power score.
 
-        .. note::
-            - The score represents the overall similarity between the datasets. A high score (close to 1.0) means that the synthetic dataset closely mimics real-world patterns.
-            - Queries are selected randomly and may involve numerical, categorical, or logical conditions.
+            .. note::
+                - The score represents the overall similarity between the datasets. A high score (close to 1.0) means that the synthetic dataset closely mimics real-world patterns.
+                - Queries are selected randomly and may involve numerical, categorical, or logical conditions.
 
         Examples
         --------
