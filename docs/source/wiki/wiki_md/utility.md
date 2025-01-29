@@ -1,4 +1,3 @@
-# Utility evaluation
 A synthetic dataset must accurately capture the statistical properties and patterns of the original data to remain useful for downstream tasks such as machine learning, analytics, and decision-making.
 
 Assessing the utility of a synthetic dataset is crucial to ensure that it remains a viable alternative to real data. Poorly generated synthetic data can lead to biased models, incorrect predictions, and misleading insights, ultimately defeating its purpose. By evaluating utility, organizations can determine whether a synthetic dataset retains the necessary statistical integrity, predictive power, and representativeness required for their specific use cases.
