@@ -5,7 +5,50 @@ Assessing the utility of a synthetic dataset is crucial to ensure that it remain
 
 In the following sections, we will explore methodologies for assessing synthetic data utility integrated in Clearbox Synthetic Kit, from statistical fidelity metrics to machine learning performance benchmarks, ensuring that synthetic data is both privacy-preserving and functionally robust.
 
-## Anomalies
+## 1. Train on Synthetic, Test on Real
+The Train on Synthetic, Test on Real (TSTR) Score is a widely used metric for evaluating the utility of synthetic data. It assesses how well a machine learning model trained on synthetic data generalizes to real-world data.
+
+The TSTRScore class implements this metric using ``XGBoost`` models for both regression and classification tasks. It provides a performance comparison between models trained on original data and those trained on synthetic data, evaluating their effectiveness on a real validation dataset.
+
+This approach is essential for understanding the quality and reliability of synthetic datasets in real-world applications.
+
+#### 1.1 Key functionalities
+1. Evaluates Model Performance on Synthetic vs. Real Data
+    The module compares:
+    - A model trained on real data vs. tested on real data.
+    - A model trained on synthetic data vs. tested on real data.
+    - The closer the results, the higher the quality of the synthetic dataset.
+
+2. Computes Performance Metrics for Both Regression and Classification
+    Regression Tasks:
+        - Mean Squared Error (MSE)
+        - Root Mean Squared Error (RMSE)
+        - Mean Absolute Error (MAE)
+        - Max Error
+        - R² Score (Goodness of fit)
+    Classification Tasks:
+        - Accuracy
+        - Precision
+        - Recall
+        - F1 Score
+        - Support (Class distribution)
+
+3. Provides a Unified TSTR Score
+    The final score indicates how well synthetic data generalizes to real-world data.\
+    If TSTR score is high (~1.0), it means synthetic data closely resembles real data.\
+    A low TSTR score (~0.0) suggests poor synthetic data quality.
+
+4. Computes Feature Importances
+    Identifies which features contribute most to model predictions.\
+    Helps analyze feature distribution differences between synthetic and real datasets.\
+    Supports feature exclusion, allowing users to hide specific features from analysis.
+
+5. Preprocesses Data for Consistency
+    Applies feature transformations for structured comparison.\
+    Ensures numerical and categorical features are properly formatted.\
+    Supports label encoding for classification tasks.
+
+## 2. Anomalies
 
 The `Anomalies` module provides a systematic approach for detecting anomalies in tabular data. It leverages a combination of:
 
@@ -17,7 +60,7 @@ This module is particularly useful in fraud detection, quality control, security
 
 The `Anomalies` class provides a structured framework for detecting anomalies in datasets. 
 
-#### Key functionalities
+#### 2.1 Key functionalities
 1. Detecting Anomalies Using Reconstruction Errors
     Uses the `TabularEngine` model to compute reconstruction errors with the assumption that higher reconstruction errors indicate higher anomaly likelihood. It thene extracts top-N most anomalous data points based on this error.
 2. Feature Transformation for Anomaly Detection
@@ -28,11 +71,11 @@ The `Anomalies` class provides a structured framework for detecting anomalies in
 4. Configurable Detection Mechanism
     Users can specify the number of anomalies (n) to retrieve. The `Anomalies` class returns a dictionary containing feature values and computed anomaly probabilities.
 
-## Autocorrelation
+## 3. Autocorrelation
 
 The `Autocorrelation` module provides tools for computing and comparing the autocorrelation between an original dataset and a synthetic dataset. This functionality is essential in evaluating the temporal consistency of synthetic data and ensuring that the synthetic time series maintain the same time-dependent patterns as the real dataset.
 
-#### Key functionalities
+#### 3.1 Key functionalities
 1. Computes Autocorrelation of Time-Series Features
     It determines the autocorrelation function (ACF) for a given feature and normalizes results to ensure comparability.
 2. Compares Autocorrelation Between Original and Synthetic Data
@@ -45,12 +88,12 @@ The `Autocorrelation` module provides tools for computing and comparing the auto
 4. Handles Sequence-Based Grouping
     It supports grouped time-series analysis for multivariate time series, where data is divided based on an identifier (``id``), ensuring correct indexing and alignment before computing autocorrelation.
 
-## Detection score
+## 4. Detection score
 The `DetectionScore` module provides a powerful method to evaluate the quality of synthetic datasets by training a machine learning model to distinguish between real and synthetic data. The main idea is:
 - If a classifier can easily separate synthetic data from real data, the synthetic dataset likely contains artifacts, biases, or unrealistic patterns.
 - If the classifier struggles to differentiate between real and synthetic data (i.e., detection score is low), it suggests that the synthetic data is high quality and closely resembles the original dataset.
 
-#### Key functionalities
+#### 4.1 Key functionalities
 1. Evaluates the Realism of Synthetic Data
     The DetectionScore module plays a crucial role in evaluating the realism of synthetic datasets. It employs a binary classification approach to assess how easily a model can differentiate between real and synthetic data. If the classifier achieves high accuracy, it indicates that the synthetic dataset is easily distinguishable from real data, suggesting low quality. Conversely, if the accuracy is low, it implies that the synthetic dataset is indistinguishable from real data, which is a desirable outcome indicating high fidelity to the original data.
 2. Computes Performance Metrics
@@ -62,12 +105,12 @@ The `DetectionScore` module provides a powerful method to evaluate the quality o
 5. Configurable Feature Exclusion
     To offer further flexibility, the module allows users to exclude specific features from the detection test. This capability is particularly useful when focusing on key attributes while avoiding bias from known sensitive fields that may otherwise disproportionately influence the classification process.
 
-## Features comparison
+## 5. Features comparison
 The `FeaturesComparison` module provides a structured approach to analyzing and comparing the statistical properties of features in an original dataset and a synthetic dataset. By evaluating differences in numerical, categorical, and datetime features, this module helps assess the accuracy and reliability of synthetic data generation methods.
 
 This functionality is particularly useful in data quality assessment, machine learning model validation, and privacy-preserving synthetic data evaluation.
 
-#### Key functionalities
+#### 5.1 Key functionalities
 1. Statistical Comparison of Synthetic and Original Features
     The module enables a detailed statistical comparison of features between the real dataset and the synthetic dataset. By examining descriptive statistics, it provides insights into how well the synthetic dataset replicates the real data’s distribution.
 
@@ -119,13 +162,13 @@ This functionality is particularly useful in data quality assessment, machine le
     - Certain features contain sensitive information.
     - Some variables are not relevant to the comparison.
 
-## Mutual information
+## 6. Mutual information
 
 The `MutualInformation` module provides a method for evaluating the statistical similarity between an original dataset and a synthetic dataset by computing mutual information scores for feature pairs. This comparison helps determine how well the relationships between features are preserved in the synthetic dataset.
 
 Mutual information measures how much knowing the value of one feature reduces the uncertainty of another, making it particularly useful for identifying dependencies between variables. By comparing mutual information matrices of original vs. synthetic data, this module provides insights into how well feature relationships are maintained in synthetic datasets.
 
-#### Key functionalities
+#### 6.1 Key functionalities
 1. Evaluates Mutual Information Between Features
     The module computes mutual information scores for feature pairs in both the original dataset and the synthetic dataset. Mutual information quantifies the dependency between two variables, helping assess whether synthetic data preserves important statistical relationships from the real dataset.
 
@@ -144,10 +187,10 @@ Mutual information measures how much knowing the value of one feature reduces th
     - Numerical values are binned into discrete ranges for comparison.
     - Categorical features are filled with default values before computing mutual information.
 
-## Query power
+## 7. Query power
 The `QueryPower` module evaluates the quality of a synthetic dataset by running randomized queries that compare it to the original dataset. The goal is to assess how closely the synthetic dataset mimics the statistical properties of the real data by checking whether queries return similar results from both datasets. If query results from the synthetic dataset match those from the original dataset, it indicates that statistical patterns are well-preserved.
 
-#### Key functionalities
+#### 7.1 Key functionalities
 1. Randomized Query-Based Evaluation of Synthetic Data
     The module runs randomly generated queries on both datasets and compares the number of matching records. If both datasets return similar results, it indicates that the synthetic dataset maintains the same statistical properties as the real data.
 
@@ -173,10 +216,10 @@ The `QueryPower` module evaluates the quality of a synthetic dataset by running 
     - Removes datetime features, as they are typically not suitable for direct query-based evaluation.
     - Applies data transformations before querying.
 
-## Reconstruction error
+## 8. Reconstruction error
 The ReconstructionError module provides a method for evaluating the quality of a synthetic dataset by calculating the reconstruction error using a `TabularEngine`. Reconstruction error measures how well the synthetic data captures the patterns in the original dataset. If the error distribution of the synthetic dataset closely matches the original dataset, it suggests that the synthetic data faithfully represents the original data's structure.
 
-#### Key functionalities
+#### 8..1 Key functionalities
 1. Computes Reconstruction Error for Original and Synthetic Data
     The module calculates the reconstruction error for both the original dataset and the synthetic dataset using a TabularEngine. A low reconstruction error indicates that the dataset maintains the original feature relationships and distributions, while a high error suggests deviations or inconsistencies.
 
@@ -187,46 +230,3 @@ The ReconstructionError module provides a method for evaluating the quality of a
     For classification datasets, it one-hot encodes categorical target variables to ensure a proper comparison between original and synthetic datasets.
 4. Uses a Preprocessing Pipeline for Feature Transformation
     The module applies feature transformations before computing reconstruction error. It ensures consistency between original and synthetic datasets by using a standardized preprocessing pipeline.
-
-## Train on Synthetic, Test on Real
-The Train on Synthetic, Test on Real (TSTR) Score is a widely used metric for evaluating the utility of synthetic data. It assesses how well a machine learning model trained on synthetic data generalizes to real-world data.
-
-The TSTRScore class implements this metric using ``XGBoost`` models for both regression and classification tasks. It provides a performance comparison between models trained on original data and those trained on synthetic data, evaluating their effectiveness on a real validation dataset.
-
-This approach is essential for understanding the quality and reliability of synthetic datasets in real-world applications.
-
-#### Key functionalities
-1. Evaluates Model Performance on Synthetic vs. Real Data
-    The module compares:
-    - A model trained on real data vs. tested on real data.
-    - A model trained on synthetic data vs. tested on real data.
-    - The closer the results, the higher the quality of the synthetic dataset.
-
-2. Computes Performance Metrics for Both Regression and Classification
-    Regression Tasks:
-        - Mean Squared Error (MSE)
-        - Root Mean Squared Error (RMSE)
-        - Mean Absolute Error (MAE)
-        - Max Error
-        - R² Score (Goodness of fit)
-    Classification Tasks:
-        - Accuracy
-        - Precision
-        - Recall
-        - F1 Score
-        - Support (Class distribution)
-
-3. Provides a Unified TSTR Score
-    The final score indicates how well synthetic data generalizes to real-world data.\
-    If TSTR score is high (~1.0), it means synthetic data closely resembles real data.\
-    A low TSTR score (~0.0) suggests poor synthetic data quality.
-
-4. Computes Feature Importances
-    Identifies which features contribute most to model predictions.\
-    Helps analyze feature distribution differences between synthetic and real datasets.\
-    Supports feature exclusion, allowing users to hide specific features from analysis.\
-
-5. Preprocesses Data for Consistency
-    Applies feature transformations for structured comparison.\
-    Ensures numerical and categorical features are properly formatted.\
-    Supports label encoding for classification tasks.\

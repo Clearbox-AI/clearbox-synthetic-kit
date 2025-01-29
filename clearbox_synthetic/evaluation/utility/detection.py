@@ -79,8 +79,10 @@ class DetectionScore:
             A dictionary containing accuracy, ROC AUC score, detection score, and 
                     feature importances.
 
-        Process
-        -------
+        Notes
+        -----
+        These are the operational steps of the method:
+
         1. Prepares the datasets:
             - Samples the original dataset to match the size of the synthetic dataset.
             - Preprocesses both datasets to ensure consistent feature representation.
@@ -100,27 +102,30 @@ class DetectionScore:
             - Identifies which features contribute most to distinguishing real vs. synthetic data.
             - Helps detect which synthetic features deviate from real-world patterns.
 
-        Notes
-        -----
+        
         The detection score is calculated as:
 
         .. code-block:: python
 
             detection_score["score"] = (1 - detection_score["ROC_AUC"]) * 2
 
-        - If `ROC_AUC <= 0.5`, the synthetic data is considered indistinguishable (`score = 1`).
+        - If ``ROC_AUC <= 0.5``, the synthetic data is considered indistinguishable (``score = 1``).
         - A lower score means better synthetic data quality.
         - Feature importance analysis helps detect which synthetic features deviate most from real data.
 
         Example of dictionary returned:
-        >>> detection_results = detection_score.get()
-        >>> print(detection_results)
-        {
-            "accuracy": 0.85,   # How often the model classifies correctly
-            "ROC_AUC": 0.90,   # The ability to distinguish real vs synthetic
-            "score": 0.2,     # The final detection score (lower = better)
-            "feature_importances": {"feature_1": 0.34, "feature_2": 0.21, ...} 
-        }
+
+        .. code-block:: python
+
+            >>> detection_results = detection_score.get()
+            >>> print(detection_results)
+            {
+                "accuracy": 0.85,   # How often the model classifies correctly
+                "ROC_AUC": 0.90,   # The ability to distinguish real vs synthetic
+                "score": 0.2,     # The final detection score (lower = better)
+                "feature_importances": {"feature_1": 0.34, "feature_2": 0.21, ...} 
+            }
+
         """
         import xgboost as xgb
         from sklearn.model_selection import train_test_split
