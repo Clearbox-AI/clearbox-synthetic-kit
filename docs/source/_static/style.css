@@ -33,7 +33,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .wy-nav-side,
 .wy-nav-top {
-  background-color: #ffffff !important; //** 483a8f */
+  background-color: #ffffff !important;
 }
 
 .wy-form input[type="text"] {
@@ -50,12 +50,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .toctree-l1 > a {
-  color:#333233 !important;
+  color:#473b8b !important; /* #333233 */
+}
+
+.toctree-l1:hover > a {
+  color:#473b8b !important; /* #333233 */
 }
 
 .wy-menu-vertical .toctree-l1 > a:hover {
   background-color: #9d9ccd !important;
 }
+
+
+/* li.toctree-l1 a.reference.internal { */
+  /* color: #473b8b !important; Change color for clickable internal references */
+/* } */
+
+/* a.reference.internal:hover { */
+  /* color: #8477cb; Change the text color to purple on hover */
+/* }  */
 
 /** This fixes the horizontal scroll on mobile */
 @media only screen and (max-width: 770px) {
