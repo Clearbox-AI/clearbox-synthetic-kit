@@ -11,7 +11,7 @@ Clearbox AI's all-in-one solution for generation and evaluation of synthetic **t
 
 In addition to its data generation modules, Clearbox Synthetic Kit includes a high-speed preprocessing module to prepare data for training, as well as an evaluation package designed to assess the utility and, when necessary, the privacy level of synthetic data.
 
-Dive into the [Wiki](https://clearbox-synthetic-kit.readthedocs.io/en/latest/) section of the documentation to explore everything about the library! 🚀
+Dive into the [Wiki](https://clearbox-synthetic-kit.readthedocs.io/en/latest/wiki/main.html) section of the documentation to explore everything about the library! 🚀
 
 ## Installation
 
@@ -29,6 +29,6 @@ Find other examples [here](https://github.com/Clearbox-AI/clearbox-synthetic-kit
 ---
 
 ### Contacts
-<img src="https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/email.svg" alt="Email" width="20" height="20"> &nbsp; &#8203;`info@clearbox.ai`
+<img src="https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/email.svg" alt="Email" width="20" height="20"> &nbsp; <a href="mailto:info@clearbox.ai"> &#8203;`info@clearbox.ai` </a>
 
-<img src="https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/website.svg" alt="Website" width="20" height="20">&nbsp; <a href="https://clearbox.ai" target="_blank">`https://clearbox.ai`</a>
+<img src="https://github.com/Clearbox-AI/clearbox-synthetic-kit/blob/main/docs/source/img/website.svg" alt="Website" width="20" height="20">&nbsp; <a href="https://clearbox.ai" target="_blank">`www.clearbox.ai`</a>

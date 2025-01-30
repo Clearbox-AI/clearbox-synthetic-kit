@@ -1,6 +1,7 @@
 """
-The Autocorrelation class provides functionality to compute and compare the autocorrelation 
-between original and synthetic datasets.
+The ``Autocorrelation`` class provides a tool for validating synthetic time-series data. 
+By measuring how well synthetic datasets preserve temporal dependencies, it ensures 
+that models trained on synthetic data generalize well to real-world scenarios.
 """
 
 import json
@@ -28,10 +29,14 @@ class Autocorrelation:
     """
     Provides functionality to compute and compare the autocorrelation between original and synthetic datasets.
 
-    Attributes:
-        original_dataset (Dataset): The original dataset object.
-        synthetic_dataset (Dataset): The synthetic dataset object.
-        preprocessor (Preprocessor): Preprocessor for handling the dataset.
+    Attributes
+    ----------
+    original_dataset : Dataset
+        The original dataset containing real-world time-series data.
+    synthetic_dataset : Dataset
+        The synthetic dataset generated for evaluation.
+    preprocessor : Preprocessor
+        The preprocessor responsible for handling feature extraction and transformation.
     """
 
     original_dataset: Dataset
@@ -45,13 +50,17 @@ class Autocorrelation:
         preprocessor: Preprocessor = None,
     ) -> None:
         """
-        Initializes the Autocorrelation class.
+        Initializes the Autocorrelation class with the original and synthetic datasets.
 
-        Args:
-            original_dataset (Dataset): The original dataset object.
-            synthetic_dataset (Dataset): The synthetic dataset object.
-            preprocessor (Preprocessor, optional): Preprocessor for handling the dataset. 
-                                                   Defaults to None.
+        Parameters
+        ----------
+        original_dataset : Dataset
+            The original dataset containing real-world time-series data.
+        synthetic_dataset : Dataset
+            The synthetic dataset generated for evaluation.
+        preprocessor : Preprocessor, optional
+            The preprocessor responsible for handling feature extraction and transformation.
+            If None, a default preprocessor is used. Default is None
         """
         self.original_dataset = original_dataset
         self.synthetic_dataset = synthetic_dataset
@@ -64,14 +73,45 @@ class Autocorrelation:
         Computes the autocorrelation for a specified feature and compares it 
         between the original and synthetic datasets.
 
-        Args:
-            feature (str): The feature for which autocorrelation is computed.
-            id (str, optional): Identifier for grouping data (used for sequence analysis). 
-                                Defaults to None.
+        Parameters
+        ----------
+        feature : str
+            The feature for which autocorrelation is computed.
+        id : str, optional
+            Identifier for grouping data (used for sequence-based analysis). Defaults to None.
 
-        Returns:
-            dict: A dictionary containing autocorrelation results and areas under the curve 
-                  for both original and synthetic data.
+        Returns
+        -------
+        dict
+            A dictionary containing autocorrelation results and areas under the curve for both original and synthetic data.
+
+        Notes
+        -----
+        The method operates through the following steps:
+
+        1. Extracts and preprocesses the feature from both datasets.
+        2. Computes the autocorrelation curve for both the original and synthetic feature values.
+        3. Normalizes the curves to ensure they are on the same scale.
+        4. Calculates the area under the autocorrelation curve (AUC) using numerical integration.
+        5. Computes the absolute difference (`diff_area`) between original and synthetic AUCs.
+        6. Returns results in a structured dictionary.
+
+        Examples
+        --------
+        Example of dictionary returned:
+
+        .. code-block:: python
+
+            >>> results = autocorrelation.get(feature="temperature")
+            >>> print(results)
+            {
+                "original": "[autocorrelation values of original dataset]",
+                "original_area": 2.354,  # AUC of original dataset
+                "synthetic": "[autocorrelation values of synthetic dataset]",
+                "synthetic_area": 2.290,  # AUC of synthetic dataset
+                "diff_area": 0.064  # Difference in AUC
+            }
+
         """
         # Process original data
         original_data = self.original_dataset.data.copy()

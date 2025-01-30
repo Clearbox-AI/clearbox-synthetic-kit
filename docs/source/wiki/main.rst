@@ -1,6 +1,11 @@
 Wiki
 ====
 
+.. image:: ../img/explanations.png
+   :alt: wiki_img
+   :width: 420px
+   :align: right
+
 .. include:: wiki_md/intro.md
    :parser: markdown
 
@@ -12,5 +17,6 @@ Read more
 
    preprocessor.rst
    generation.rst
-   utility.rst
    privacy.rst
+   utility.rst
+   

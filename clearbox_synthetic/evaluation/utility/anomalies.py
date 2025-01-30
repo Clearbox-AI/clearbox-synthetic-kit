@@ -1,7 +1,9 @@
 """
-The Anomalies class detects anomalies (who would have ever imagined...) in tabular data using
+The ``Anomalies`` class detects anomalies (who would have ever imagined...) in tabular data using
 an engine that computes reconstruction errors, a dataset for the input data, 
 and a preprocessor for transforming the data.
+
+By leveraging reconstruction error analysis, categorical embeddings, and probabilistic scoring, it identifies outliers and unusual data points with high precision. 
 """
 
 import scipy.sparse
@@ -15,14 +17,19 @@ from clearbox_synthetic.generation import TabularEngine
 
 
 class Anomalies:
-    """The Anomalies class detects anomalies (who would have ever imagined...) in tabular data using
-        an engine that computes reconstruction errors, a dataset for the input data, 
-        and a preprocessor for transforming the data.
+    """
+    The Anomalies class detects anomalies (who would have ever imagined...) in tabular data using
+    an engine that computes reconstruction errors, a dataset for the input data, 
+    and a preprocessor for transforming the data.
 
-    Attributes:
-        dataset (Dataset): The dataset object containing the data.
-        preprocessor (Preprocessor): The preprocessor object used to transform the data.
-        engine (TabularEngine): The engine object used to compute reconstruction errors.
+    Attributes
+    ----------
+    dataset : Dataset
+        The dataset object containing tabular data to analyze.
+    preprocessor : Preprocessor
+        The preprocessor used to transform and standardize the dataset.
+    engine : TabularEngine
+        The engine responsible for computing reconstruction errors to identify anomalies.
     """
     dataset: Dataset
     preprocessor: Preprocessor
@@ -31,14 +38,19 @@ class Anomalies:
     def __init__(
         self, dataset: Dataset, engine: TabularEngine, preprocessor: Preprocessor = None
     ):
-        """Initializes the Anomalies class with a dataset, engine, and optional preprocessor.
-
-        Args:
-            dataset (Dataset): The dataset object containing the data.
-            engine (TabularEngine): The engine object used to compute reconstruction errors.
-            preprocessor (Preprocessor, optional): The preprocessor object to transform data. If not provided,
-                a default preprocessor is created using the dataset.
         """
+        Initializes the Anomalies class with a dataset, engine, and optional preprocessor.
+
+        Parameters
+        ----------
+        dataset : Dataset
+            The dataset object containing the data.
+        engine : TabularEngine
+            The engine object used to compute reconstruction errors.
+        preprocessor : Preprocessor, optional
+            The preprocessor object to transform data. If not provided, a default preprocessor
+            is created using the dataset.
+    """
         self.dataset = dataset
         self.preprocessor = (
             preprocessor if preprocessor is not None else Preprocessor(dataset)
@@ -46,15 +58,40 @@ class Anomalies:
         self.engine = engine
 
     def detect(self, n: int = 10):
-        """Detects anomalies in the dataset based on reconstruction error.
+        """
+        Detects anomalies in the dataset based on reconstruction error.
 
-        Args:
-            n (int, optional): The number of top anomalies to detect. Defaults to 10.
+        Parameters
+        ----------
+        n : int, optional
+            The number of top anomalies to detect. Defaults to 10.
 
-        Returns:
-            dict: A dictionary containing:
-                - "values": A list of feature values for each anomaly.
-                - "anomaly_probabilities": A list of anomaly probabilities for each feature.
+        Returns
+        -------
+        dict
+            A dictionary containing a list of feature values for each anomaly and a list of anomaly probabilities for each feature.
+
+        Notes
+        -----
+        The method operates through the following steps:
+        
+        1. Transforms the dataset using the preprocessor.
+        2. Computes reconstruction errors from the engine.
+        3. Sorts data points by reconstruction error (highest first).
+        4. Extracts feature values and anomaly probabilities.
+        5. Returns a structured dictionary.
+
+        Examples
+        --------
+        Example of dictionary returned:
+
+        .. code-block:: python
+
+            {
+                "values": [[feature_1, feature_2, ...], ...],
+                "anomaly_probabilities": [[score_1, score_2, ...], ...]
+            }
+
         """
         preprocessed_data = self.preprocessor.transform(self.dataset.get_x())
         reconstruction_error = self.engine.reconstruction_error(preprocessed_data)
@@ -90,13 +127,25 @@ class Anomalies:
         return anomalies
 
     def get_anomaly_features(self, X: pd.DataFrame) -> list:
-        """Calculates anomaly features for the given data.
+        """
+        Calculates anomaly scores for each feature of detected anomalies.
 
         Args:
             X (pd.DataFrame): The data for which anomaly features need to be computed.
 
         Returns:
             list: A list of anomaly feature values for each instance.
+
+        Notes
+        -----
+        The method operates through the following steps:
+        
+        1. Transforms the dataset to a processed format.
+        2. Performs reconstruction using the engine.
+        3. Computes deviation metrics:
+        - For numerical features: Uses a Gaussian probability model to compute anomaly likelihood.
+        - For categorical features: Compares reconstructed categorical values with original values.
+        4. Formats results into a structured DataFrame.
         """
         preprocessed_data = self.preprocessor.transform(X)
         recon_x, _, _ = self.engine.apply(preprocessed_data)

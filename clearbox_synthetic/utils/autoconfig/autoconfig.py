@@ -1,6 +1,6 @@
 """
 This module provides functionality for automatically configuring and searching
-optimal parameters for a tabular data engine. The main class, `Autoconfig`, is
+optimal parameters for a tabular data engine. The main class, ``Autoconfig``, is
 used to perform grid search over various model architectures and batch sizes 
 to find the best configuration based on reconstruction loss.
 """
@@ -13,14 +13,19 @@ import numpy as np
 
 
 def learning_rule(training_rows_size: int):
-    """Determines the learning rate, number of epochs, and batch size based on the
+    """
+    Determines the learning rate, number of epochs, and batch size based on the
     size of the training data.
 
-    Args:
-        training_rows_size (int): The number of rows in the training dataset.
+    Parameters
+    ----------
+    training_rows_size : int
+        The number of rows in the training dataset.
 
-    Returns:
-        tuple: A tuple containing (learning_rate, epochs, batch_size).
+    Returns
+    -------
+    Tuple[int, int, int]
+        A tuple containing (learning_rate, epochs, batch_size).
     """
     if training_rows_size < 1000:
         model_epochs = 1000
@@ -41,13 +46,19 @@ def learning_rule(training_rows_size: int):
 
 
 class Autoconfig:
-    """Class for automatically configuring and searching optimal parameters for a tabular engine.
+    """
+    A class for automatically configuring and searching optimal parameters for a tabular engine.
 
-    Attributes:
-        train_ds (np.ndarray): The training dataset.
-        y_train_ds (np.ndarray, optional): The target values for the training dataset.
-        numerical_features_sizes (int): The size of ordinal features.
-        categorical_features_sizes (List): The sizes of categorical features.
+    Attributes
+    ----------
+    train_ds : np.ndarray
+        The training dataset.
+    y_train_ds : np.ndarray, optional
+        The target values for the training dataset.
+    numerical_features_sizes : int
+        The size of ordinal features.
+    categorical_features_sizes : List
+        The sizes of categorical features.
     """
 
     def __init__(
@@ -57,15 +68,20 @@ class Autoconfig:
         categorical_features_sizes: List,
         y_train_ds: np.ndarray = None,
     ):
-        """Initializes the Autoconfig class, splits the data into training and test sets,
+        """
+        Initializes the ``Autoconfig`` class, splits the data into training and test sets, 
         and sets feature sizes.
 
-        Args:
-            train_ds (np.ndarray): The complete dataset for training.
-            numerical_features_sizes (int): The size of ordinal features.
-            categorical_features_sizes (List): The sizes of categorical features.
-            y_train_ds (np.ndarray, optional): The target values for the training dataset.
-                Defaults to None.
+        Parameters
+        ----------
+        train_ds : np.ndarray
+            The complete dataset for training.
+        numerical_features_sizes : int
+            The size of ordinal features.
+        categorical_features_sizes : List
+            The sizes of categorical features.
+        y_train_ds : np.ndarray, optional
+            The target values for the training dataset. Defaults to None.
         """
         splitted_train_ds = np.split(
             train_ds, [math.ceil(train_ds.shape[0] * 0.8)], axis=0
@@ -85,14 +101,17 @@ class Autoconfig:
         self.categorical_features_sizes = categorical_features_sizes
 
     def grid_search(self):
-        """Performs a grid search to find the optimal model configuration.
+        """
+        Performs a grid search to find the optimal model configuration.
 
-        The grid search iterates over different model architectures and batch
-        sizes, fitting the model using multiple threads, and evaluates each model
-        to determine the configuration with the lowest mean reconstruction loss.
+        The grid search iterates over different model architectures and batch sizes, 
+        fitting the model using multiple threads, and evaluates each model to determine 
+        the configuration with the lowest mean reconstruction loss.
 
-        Returns:
-            list: The optimal configuration (architecture and batch size) based on
+        Returns
+        -------
+        list
+            The optimal configuration (architecture and batch size) based on 
             the evaluation loss.
         """
         from clearbox_synthetic.generation.engine.tabular_engine import TabularEngine

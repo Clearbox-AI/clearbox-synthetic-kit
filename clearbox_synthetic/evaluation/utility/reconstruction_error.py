@@ -1,5 +1,5 @@
 """
-The ReconstructionError class calculates the reconstruction
+The ``ReconstructionError`` class calculates the reconstruction
 error for both original and synthetic datasets using a specified TabularEngine.
 The reconstruction error histograms are generated to compare the quality of synthetic data.
 """
@@ -13,15 +13,21 @@ from clearbox_synthetic.generation import TabularEngine
 
 class ReconstructionError:
     """
-    The ReconstructionError class calculates the reconstruction
+    A class to calculate the reconstruction
     error for both original and synthetic datasets using a specified TabularEngine.
     The reconstruction error histograms are generated to compare the quality of synthetic data.
 
-    Attributes:
-        original_dataset (Dataset): The original dataset.
-        synthetic_dataset (Dataset): The synthetic dataset.
-        preprocessor (Preprocessor): The preprocessor for handling data transformation.
-        engine (TabularEngine): The engine used for calculating reconstruction error.
+    Attributes
+    ----------
+    original_dataset : Dataset
+        The original dataset containing real-world data.
+    synthetic_dataset : Dataset
+        The synthetic dataset generated for evaluation.
+    preprocessor : Preprocessor
+        The preprocessor responsible for handling data transformation.
+        If not provided, a default preprocessor based on the original dataset is used.
+    engine : TabularEngine
+        The engine used to compute reconstruction errors for input data.
     """
 
     original_dataset: Dataset
@@ -36,15 +42,20 @@ class ReconstructionError:
         preprocessor: Preprocessor = None,
     ) -> None:
         """
-        Initializes the ReconstructionError class.
+        Initializes the ReconstructionError class with both original and synthetic datasets.
 
-        Args:
-            original_dataset (Dataset): The original dataset object.
-            synthetic_dataset (Dataset): The synthetic dataset object.
-            engine (TabularEngine): The engine used to compute reconstruction error.
-            preprocessor (Preprocessor, optional): The preprocessor for data transformation.
-                                                   Defaults to None, using a default 
-                                                   preprocessor for the original dataset.
+        Parameters
+        ----------
+        original_dataset : Dataset
+            The original dataset containing real-world data.
+        synthetic_dataset : Dataset
+            The synthetic dataset generated for evaluation.
+        engine : TabularEngine
+            The engine used to compute reconstruction errors.
+        preprocessor : Preprocessor, optional
+            The preprocessor responsible for handling data transformation.
+            If None, a default preprocessor based on the original dataset is used. 
+            Default is None.
         """
         self.original_dataset = original_dataset
         self.synthetic_dataset = synthetic_dataset
@@ -59,9 +70,56 @@ class ReconstructionError:
         and synthetic datasets. The histograms allow for a comparison of how well the
         synthetic data replicates the original data's distribution.
 
-        Returns:
-            dict: A dictionary containing bin edges and the histograms of reconstruction
-                  errors for both the original and synthetic datasets.
+        Returns
+        -------
+        dict
+            A dictionary containing bin edges and the histograms of reconstruction
+            errors for both the original and synthetic datasets.
+
+        Notes
+        -----
+        The method operates through the following steps:
+
+        1. Prepares the Data
+
+            - Extracts features (``X``) and target (``Y``) from both datasets.
+            - If the dataset has a target column, it applies:
+
+                - One-hot encoding for categorical targets (classification problems).
+                - Normalization for continuous targets (regression problems).
+
+            - Applies preprocessing transformations to ensure feature consistency.
+        
+        2. Computes Reconstruction Error
+
+            - Passes the transformed features (``X``) and target (``Y``) to the TabularEngine.
+            - Calculates reconstruction error for both datasets.
+
+        3. Generates Reconstruction Error Histograms
+
+            - Creates bin edges for histogram visualization.
+            - Computes histogram values for original and synthetic datasets.
+            - Normalizes the histograms to ensure density comparisons.
+
+        4. Returns Histogram Data
+
+            - Outputs bin edges and reconstruction error distributions for visualization.
+
+            .. note::
+                A high similarity in histograms suggests that the synthetic dataset maintains feature patterns well, while large discrepancies indicate differences in feature distributions between datasets.
+
+        Examples
+        --------
+        Example of dictionary returned:
+
+        .. code-block:: python
+
+            {
+                "bin_edges": [0.01, 0.02, 0.03, ...],  # Center points of histogram bins
+                "original_hist": [0.12, 0.25, 0.33, ...],  # Frequency distribution for the original dataset
+                "synthetic_hist": [0.11, 0.26, 0.32, ...]  # Frequency distribution for the synthetic dataset
+            }
+
         """
         if self.original_dataset.target_column is None:
             # Transform features only

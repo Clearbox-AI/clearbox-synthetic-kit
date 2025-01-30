@@ -15,16 +15,21 @@ from .engine import EngineInterface
 
 class TimeSeriesEngine(EngineInterface):
     """
-    TimeSeriesEngine manages training and evaluation of a time series 
-    model using VAE (Variational Autoencoder). It handles 
-    model initialization, training, evaluation, and model saving functionalities.
+    Manages training and evaluation of a time series model using a Variational Autoencoder (VAE). 
+    It handles model initialization, training, evaluation, and saving functionalities.
 
-    Attributes:
-        model (TimeSeriesVAE): The Variational Autoencoder model for time series.
-        params (FrozenDict): The parameters of the model.
-        search_params (Dict): The training parameters.
-        architecture (Dict): The architecture details of the model.
-        hashed_architecture (str): A hashed string representation of the model architecture.
+    Attributes
+    ----------
+    model : TimeSeriesVAE
+        The Variational Autoencoder model for time series data.
+    params : FrozenDict
+        The parameters of the model.
+    search_params : Dict
+        The training parameters.
+    architecture : Dict
+        The architecture details of the model.
+    hashed_architecture : str
+        A hashed string representation of the model architecture.
     """
 
     def __init__(
@@ -43,18 +48,28 @@ class TimeSeriesEngine(EngineInterface):
         """
         Initializes the TimeSeriesEngine with the given parameters and validates the license.
 
-        Args:
-            license_key (str): License key for validating the engine.
-            layers_size (Sequence[int]): List of sizes for the hidden layers.
-            feature_sizes (Sequence[int]): Sizes of the input features.
-            max_sequence_length (Sequence[int]): Maximum length of the input sequences.
-            num_heads (Sequence[int]): Number of self attention heads.
-            y_shape (Sequence[int], optional): Shape of the target variable. Defaults to [0].
-            params (FrozenDict, optional): Model parameters. Defaults to None.
-            train_params (Dict, optional): Training parameters. Defaults to None.
-            train_loss (Dict, optional): Training loss information. Defaults to None.
-            val_loss (Dict, optional): Validation loss information. Defaults to None.
-            privacy_budget (float, optional): Privacy budget for the model. Defaults to 1.0.
+        Parameters
+        ----------
+        layers_size : Sequence[int]
+            List of sizes for the hidden layers.
+        feature_sizes : Sequence[int]
+            Sizes of the input features.
+        max_sequence_length : Sequence[int]
+            Maximum length of the input sequences.
+        num_heads : Sequence[int]
+            Number of self-attention heads.
+        y_shape : Sequence[int], optional
+            Shape of the target variable. Defaults to [0].
+        params : FrozenDict, optional
+            Model parameters. Defaults to None.
+        train_params : Dict, optional
+            Training parameters. Defaults to None.
+        train_loss : Dict, optional
+            Training loss information. Defaults to None.
+        val_loss : Dict, optional
+            Validation loss information. Defaults to None.
+        privacy_budget : float, optional
+            Privacy budget for the model. Defaults to 1.0.
         """
         
         rng = random.PRNGKey(0)
@@ -109,12 +124,17 @@ class TimeSeriesEngine(EngineInterface):
         """
         Applies the model to the input data.
 
-        Args:
-            x (np.ndarray): Input data.
-            y (np.ndarray, optional): Target data. Defaults to None.
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data.
+        y : np.ndarray, optional
+            Target data. Defaults to None.
 
-        Returns:
-            Tuple: Model's output.
+        Returns
+        -------
+        Tuple
+            The model's output.
         """
         return self.model.apply({"params": self.params}, x, y)
 
@@ -122,25 +142,35 @@ class TimeSeriesEngine(EngineInterface):
         """
         Encodes the input data into the latent space.
 
-        Args:
-            x (np.ndarray): Input data.
-            y (np.ndarray, optional): Target data. Defaults to None.
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data.
+        y : np.ndarray, optional
+            Target data. Defaults to None.
 
-        Returns:
-            np.ndarray: Encoded data.
+        Returns
+        -------
+        np.ndarray
+            Encoded data.
         """
         return self.model.apply({"params": self.params}, x, y, method=self.model.encode)
 
     def decode(self, z: np.ndarray, y: np.ndarray = None) -> np.ndarray:
         """
-        Decodes the latent space representation into original space.
+        Decodes the latent space representation into the original space.
 
-        Args:
-            z (np.ndarray): Latent space representation.
-            y (np.ndarray, optional): Target data. Defaults to None.
+        Parameters
+        ----------
+        z : np.ndarray
+            Latent space representation.
+        y : np.ndarray, optional
+            Target data. Defaults to None.
 
-        Returns:
-            np.ndarray: Decoded data.
+        Returns
+        -------
+        np.ndarray
+            Decoded data.
         """
         return self.model.apply({"params": self.params}, z, y, method=self.model.decode)
 
@@ -158,15 +188,24 @@ class TimeSeriesEngine(EngineInterface):
         """
         Trains the model on the provided dataset.
 
-        Args:
-            train_ds (np.ndarray): Training dataset.
-            y_train_ds (np.ndarray, optional): Target values for the training dataset. Defaults to None.
-            epochs (int, optional): Number of epochs. Defaults to 20.
-            batch_size (int, optional): Size of each training batch. Defaults to 128.
-            learning_rate (float, optional): Learning rate for the optimizer. Defaults to 1e-2.
-            val_ds (np.ndarray, optional): Validation dataset. Defaults to None.
-            y_val_ds (np.ndarray, optional): Target values for the validation dataset. Defaults to None.
-            patience (int, optional): Number of epochs to wait before early stopping. Defaults to 4.
+        Parameters
+        ----------
+        train_ds : np.ndarray
+            Training dataset.
+        y_train_ds : np.ndarray, optional
+            Target values for the training dataset. Defaults to None.
+        epochs : int, optional
+            Number of training epochs. Defaults to 20.
+        batch_size : int, optional
+            Size of each training batch. Defaults to 128.
+        learning_rate : float, optional
+            Learning rate for the optimizer. Defaults to 1e-2.
+        val_ds : np.ndarray, optional
+            Validation dataset. Defaults to None.
+        y_val_ds : np.ndarray, optional
+            Target values for the validation dataset. Defaults to None.
+        patience : int, optional
+            Number of epochs to wait before early stopping. Defaults to 4.
         """
         weight_decay = self.search_params["weight_decay"]
 
@@ -245,9 +284,12 @@ class TimeSeriesEngine(EngineInterface):
         """
         Saves the model architecture and parameters.
 
-        Args:
-            architecture_filename (str): Filename to save the architecture.
-            sd_filename (str): Filename to save the state dictionary.
+        Parameters
+        ----------
+        architecture_filename : str
+            Filename to save the model architecture.
+        sd_filename : str
+            Filename to save the state dictionary.
         """
         state_dict = serialization.to_state_dict(self.params)
         np.save(sd_filename, state_dict)
@@ -258,12 +300,17 @@ class TimeSeriesEngine(EngineInterface):
         """
         Computes the reconstruction error for the input data.
 
-        Args:
-            x (np.ndarray): Input data.
-            y (np.ndarray, optional): Target data. Defaults to None.
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data.
+        y : np.ndarray, optional
+            Target data. Defaults to None.
 
-        Returns:
-            np.ndarray: Reconstruction error for each instance.
+        Returns
+        -------
+        np.ndarray
+            Reconstruction error for each instance.
         """
         instances = np.hstack([x, y]) if y is not None else x
         reconstruction_error = np.empty(shape=instances.shape[0])
@@ -285,15 +332,23 @@ class TimeSeriesEngine(EngineInterface):
         """
         Samples data from the latent space close to the given input.
 
-        Args:
-            x (np.ndarray): Input data.
-            ds (np.ndarray): Dataset to sample from.
-            y (np.ndarray, optional): Target data for the input. Defaults to None.
-            y_ds (np.ndarray, optional): Target data for the dataset. Defaults to None.
-            n_samples (int, optional): Number of samples to generate. Defaults to 100.
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data.
+        ds : np.ndarray
+            Dataset to sample from.
+        y : np.ndarray, optional
+            Target data for the input. Defaults to None.
+        y_ds : np.ndarray, optional
+            Target data for the dataset. Defaults to None.
+        n_samples : int, optional
+            Number of samples to generate. Defaults to 100.
 
-        Returns:
-            Tuple[np.ndarray, np.ndarray]: Sampled data and their indices.
+        Returns
+        -------
+        Tuple[np.ndarray, np.ndarray]
+            Sampled data and their indices.
         """
         n_samples = min(n_samples, ds.shape[0] - 1)
         encoded_ds = self.encode(ds, y_ds)[0]
@@ -303,16 +358,3 @@ class TimeSeriesEngine(EngineInterface):
         encoded_samples = encoded_ds[idx]
 
         return encoded_samples, idx
-
-    def save(self, architecture_filename: str, sd_filename: str):
-        """
-        Saves the model's parameters and architecture.
-
-        Args:
-            architecture_filename (str): File to save the architecture.
-            sd_filename (str): File to save the model's parameters.
-        """
-        state_dict = serialization.to_state_dict(self.params)
-        np.save(sd_filename, state_dict)
-        # with open(architecture_filename, "w") as f:
-        #     json.dump(self.architecture, f)

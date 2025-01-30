@@ -1,4 +1,3 @@
-# Privacy evaluation
 ## 1. Synthetic data as Privacy Enhancing Technology
 In an era where data fuels innovation, the challenge of balancing data utility with privacy has become increasingly critical. Synthetic data has emerged as a transformative privacy-enhancing technology (PET) that offers a powerful solution to this challenge. By simulating artificial yet realistic datasets, synthetic data provides a way to anonymize sensitive information while preserving the statistical properties of the original data[^1].
 

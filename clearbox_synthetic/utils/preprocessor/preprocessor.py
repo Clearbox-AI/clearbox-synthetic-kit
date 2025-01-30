@@ -1,5 +1,5 @@
 """
-This module provides the Preprocessor class for preprocessing tabular and time-series data. It includes 
+This module provides the ``Preprocessor`` class for preprocessing tabular and time-series data. It includes 
 functionality for encoding categorical variables, handling missing values, and feature selection.
 """
 

@@ -7,7 +7,7 @@ autocorrelation between synthetic and orignial dataset, detection score of a cla
 distinguish between original and synthetic data and more.
 
 
-TSTScore
+TSTRScore
 ~~~~~~~~
 .. automodule:: clearbox_synthetic.evaluation.utility.TSTR
    :members:

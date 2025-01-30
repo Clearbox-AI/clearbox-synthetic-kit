@@ -1,5 +1,5 @@
 """
-This module defines the UnlabeledSynthesizer class, which generates synthetic unlabeled data
+This module defines the ``UnlabeledSynthesizer`` class, which generates synthetic unlabeled data
 based on an encoded representation of a dataset.
 """
 
@@ -13,11 +13,12 @@ from ...utils.preprocessor.preprocessor import _create_series
 
 class UnlabeledSynthesizer(Synthesizer):
     """
-    The UnlabeledSynthesizer class generates synthetic unlabeled data
-    using a pre-trained engine and a specified dataset.
+    Generates synthetic unlabeled data using a pre-trained engine and a specified dataset.
 
-    Attributes:
-        sampled_indexes (np.ndarray): Indices of sampled instances from the dataset.
+    Attributes
+    ----------
+    sampled_indexes : np.ndarray
+        Indices of sampled instances from the dataset.
     """
 
     def _generate_instance(
@@ -32,17 +33,26 @@ class UnlabeledSynthesizer(Synthesizer):
         hybrid_columns: List = [],
     ):
         """
-        Generate a single instance of synthetic data by reshuffling columns based on similarity.
+        Generates a single instance of synthetic data by reshuffling columns based on similarity.
 
-        Args:
-            new_samples (pd.DataFrame): DataFrame to store generated samples.
-            encoded (np.ndarray): Encoded representation of the dataset.
-            X (np.ndarray): Original dataset.
-            reshuffle_indexes (np.ndarray): Indexes used for reshuffling columns.
-            index (int): Index of the sample to generate.
-            sampled_index (int): Index of the sampled instance from the dataset.
-            n_sampling_points (int): Number of sampling points for similarity calculation.
-            hybrid_columns (List): Columns treated as hybrid features.
+        Parameters
+        ----------
+        new_samples : pd.DataFrame
+            DataFrame to store generated samples.
+        encoded : np.ndarray
+            Encoded representation of the dataset.
+        X : np.ndarray
+            Original dataset.
+        reshuffle_indexes : np.ndarray
+            Indexes used for reshuffling columns.
+        index : int
+            Index of the sample to generate.
+        sampled_index : int
+            Index of the sampled instance from the dataset.
+        n_sampling_points : int, optional
+            Number of sampling points for similarity calculation. Defaults to 5.
+        hybrid_columns : List, optional
+            List of hybrid columns to consider. Defaults to an empty list.
         """
         encoded_instance = encoded[sampled_index, :]
         distances = np.sqrt(((encoded - encoded_instance) ** 2).sum(axis=1))
@@ -66,17 +76,25 @@ class UnlabeledSynthesizer(Synthesizer):
         latent_noise=0.0,
     ):
         """
-        Generate synthetic data based on the encoded representation of the dataset.
+        Generates synthetic data based on the encoded representation of the dataset.
 
-        Args:
-            has_header (bool, optional): Whether the generated data should include headers. Defaults to None.
-            points (list, optional): List of points to sample from. Defaults to None.
-            n_sampling_points (int, optional): Number of sampling points for similarity calculation. Defaults to 5.
-            hybrid_columns (list, optional): List of columns to treat as hybrid features. Defaults to an empty list.
-            latent_noise (float, optional): Amount of noise to add to the latent space. Defaults to 0.0.
+        Parameters
+        ----------
+        has_header : bool, optional
+            Whether the generated data should include headers. Defaults to None.
+        points : list, optional
+            List of points to sample from. Defaults to None.
+        n_sampling_points : int, optional
+            Number of sampling points for similarity calculation. Defaults to 5.
+        hybrid_columns : list, optional
+            List of columns to treat as hybrid features. Defaults to an empty list.
+        latent_noise : float, optional
+            Amount of noise to add to the latent space. Defaults to 0.0.
 
-        Returns:
-            pd.DataFrame: Generated synthetic data.
+        Returns
+        -------
+        pd.DataFrame
+            Generated synthetic data.
         """
         X = self.dataset.get_x()
 
