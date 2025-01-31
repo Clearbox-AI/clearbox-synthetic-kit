@@ -22,7 +22,7 @@ $ pip install clearbox-synthetic-kit
 ## Try it out
 Get a quick overview of the generation process with Clearbox Synthetic Kit.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Clearbox-AI/clearbox-synthetic-kit/blob/main/examples/tabular_data/tabular_data_generation.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Clearbox-AI/clearbox-synthetic-kit/blob/main/examples/tabular_data/tabular_generation.ipynb)
 
 Find other examples [here](https://github.com/Clearbox-AI/clearbox-synthetic-kit/tree/main/examples).
 
