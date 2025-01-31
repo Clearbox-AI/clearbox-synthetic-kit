@@ -52,7 +52,8 @@ exclude_patterns = ['diffusion.py',
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     "logo_only": True,
-    "style_nav_header_background": "#483a8f",
+    # "style_nav_header_background": "#483a8f",
+    "prev_next_buttons_location": None  # Removes "Previous" and "Next" buttons
 }
 
 html_static_path = ['_static', 'img']
