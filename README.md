@@ -19,6 +19,9 @@ Dive into the [Wiki](https://clearbox-synthetic-kit.readthedocs.io/en/latest/wik
 $ pip install clearbox-synthetic-kit
 ```
 
+> [!IMPORTANT]
+> The current version of clearbox-synthetic-kit works <ins>only</ins> on Linux and MacOS
+
 ## Try it out
 Get a quick overview of the generation process with Clearbox Synthetic Kit.
 
