@@ -9,7 +9,7 @@ copyright = '2025, Clearbox-AI'
 author = 'Clearbox-AI'
 
 html_js_files = [
-    'mathjax.js',  # Manually include MathJax
+    'custom.js',  # Manually include MathJax and open links in new tab
 ]
 
 extensions = [
