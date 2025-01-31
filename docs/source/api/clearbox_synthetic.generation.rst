@@ -4,7 +4,7 @@ Generation
 .. image:: ../img/boxes_team.png
    :alt: generation_img
    :width: 200px
-   :align: center
+   :align: left
 
 .. toctree::
    :maxdepth: 1
