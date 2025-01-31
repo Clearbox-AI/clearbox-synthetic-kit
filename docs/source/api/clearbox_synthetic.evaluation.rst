@@ -4,7 +4,6 @@ Evaluation
 .. image:: ../img/report_guy.png
    :alt: utils_img
    :width: 150px
-   :align: left
 
 .. toctree::
    :maxdepth: 1
