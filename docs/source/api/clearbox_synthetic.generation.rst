@@ -3,8 +3,8 @@ Generation
 
 .. image:: ../img/boxes_team.png
    :alt: generation_img
-   :width: 150px
-   :align: right
+   :width: 200px
+   :align: center
 
 .. toctree::
    :maxdepth: 1

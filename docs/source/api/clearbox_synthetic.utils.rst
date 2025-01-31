@@ -4,7 +4,7 @@ Utils
 .. image:: ../img/boxes_guy.png
    :alt: utils_img
    :width: 150px
-   :align: right
+   :align: center
 
 .. toctree::
    :maxdepth: 1
