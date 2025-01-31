@@ -10,10 +10,12 @@
 body {
   font-family: "Be Vietnam Pro", serif;
   color: #333233;
+  flex: 1;  /* Pushes the footer to the bottom */
 }
 
 footer {
   color: #646369;
+  margin-top: auto;
 }
 
 h1, h2, h3, h4, h5, h6 {
