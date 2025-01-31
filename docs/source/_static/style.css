@@ -7,6 +7,17 @@
   font-style: normal;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.document {
+  min-height: 100vh;  /* Ensure the document covers the full viewport height */
+  display: flex;
+  flex-direction: column;
+}
+
 body {
   font-family: "Be Vietnam Pro", serif;
   color: #333233;
