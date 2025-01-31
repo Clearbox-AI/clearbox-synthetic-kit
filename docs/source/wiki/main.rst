@@ -17,6 +17,6 @@ Read more
 
    preprocessor.rst
    generation.rst
-   privacy.rst
    utility.rst
+   privacy.rst
    
