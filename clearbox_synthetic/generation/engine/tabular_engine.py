@@ -152,7 +152,7 @@ class TabularEngine(EngineInterface):
         gpu_devices = [device for device in jax.devices() if device.device_kind == 'Gpu']
         if not gpu_devices:
             print("No GPU detected. Forcing JAX to use CPU.")
-            os.environ['JAX_PLATFORM_NAME'] = 'cpu'
+            os.environ['JAX_PLATFORMS'] = 'cpu'
 
     def apply(self, x: np.ndarray, y: np.ndarray = None) -> Tuple:
         """Applies the model to the input data.
