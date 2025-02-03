@@ -1,8 +1,10 @@
+import os
 import json
 import optax
 import numpy as np
 import equinox as eqx
 from typing import Sequence, Tuple, Callable, Dict
+import jax
 from jax import random
 from flax.core.frozen_dict import FrozenDict
 from flax import serialization
@@ -84,7 +86,8 @@ class TabularEngine(EngineInterface):
         model_type : str, optional
             Type of model ('VAE' or 'Diffusion'). Defaults to 'VAE'.
         """
-
+        self._configure_jax_device()
+        
         self.model_type = model_type
 
         rng = random.PRNGKey(0)
@@ -144,6 +147,12 @@ class TabularEngine(EngineInterface):
             "categorical_feature_sizes": categorical_feature_sizes,
         }
         self.hashed_architecture = json.dumps(self.architecture)
+
+    def _configure_jax_device(self):
+        gpu_devices = [device for device in jax.devices() if device.device_kind == 'Gpu']
+        if not gpu_devices:
+            print("No GPU detected. Forcing JAX to use CPU.")
+            os.environ['JAX_PLATFORM_NAME'] = 'cpu'
 
     def apply(self, x: np.ndarray, y: np.ndarray = None) -> Tuple:
         """Applies the model to the input data.
