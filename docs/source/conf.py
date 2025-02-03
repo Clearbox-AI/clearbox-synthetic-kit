@@ -26,6 +26,7 @@ myst_enable_extensions = [
     "html_image", # Allows html images format conversion
     "dollarmath",  # Enables $...$ and $$...$$ syntax for math
     "amsmath", # Enables support for amsmath-style math blocks
+    "footnotes",
 ]
 myst_links_external_new_tab = True
 
