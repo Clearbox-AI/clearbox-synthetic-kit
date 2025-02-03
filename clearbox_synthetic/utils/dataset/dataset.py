@@ -1076,13 +1076,11 @@ class Dataset(BaseModel):
         ------
         Generally, Machine Learning algorithms don't perform well when the input numerical attributes have very
         different scales. Note that scaling the target values is generally not required.
+        
         There are two ways to scale the numeric values:
-        * min-max (normalization): values are shifted and rescaled so that they end up ranging from 0 to 1. We do this
-        subtracting the minimum and dividing by the maximum minus the minimum;
-        * standard: first it subtracts the mean value (so standardized values always have a zero mean), and then
-        it divides by the variance so that the resulting distribution has unit variance. Unlike min-max scaling,
-        standardization does not bound values to a specific range, which may be a problem for some algorithms but is
-        much less affected by outliers.
+
+            - min-max (normalization): values are shifted and rescaled so that they end up ranging from 0 to 1. We do thissubtracting the minimum and dividing by the maximum minus the minimum;
+            - standard: first it subtracts the mean value (so standardized values always have a zero mean), and then it divides by the variance so that the resulting distribution has unit variance. Unlike min-max scaling, standardization does not bound values to a specific range, which may be a problem for some algorithms but is much less affected by outliers.
         """
         if strategy == "min-max":
             min_val = self.data[column].min()

@@ -9,7 +9,7 @@ copyright = '2025, Clearbox-AI'
 author = 'Clearbox-AI'
 
 html_js_files = [
-    'mathjax.js',  # Manually include MathJax
+    'custom.js',  # Manually include MathJax and open links in new tab
 ]
 
 extensions = [
@@ -26,6 +26,7 @@ myst_enable_extensions = [
     "html_image", # Allows html images format conversion
     "dollarmath",  # Enables $...$ and $$...$$ syntax for math
     "amsmath", # Enables support for amsmath-style math blocks
+    "footnotes",
 ]
 myst_links_external_new_tab = True
 
@@ -52,7 +53,8 @@ exclude_patterns = ['diffusion.py',
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     "logo_only": True,
-    "style_nav_header_background": "#483a8f",
+    # "style_nav_header_background": "#483a8f",
+    "prev_next_buttons_location": None  # Removes "Previous" and "Next" buttons
 }
 
 html_static_path = ['_static', 'img']

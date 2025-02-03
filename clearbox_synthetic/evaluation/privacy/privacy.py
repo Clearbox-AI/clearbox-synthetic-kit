@@ -1,6 +1,6 @@
 """
 This module provides tools and classes for evaluating privacy metrics in synthetic datasets. 
-It includes methods to compute Distance to the Closest Record (DCR), analyze duplicates, 
+It includes methods to compute Distance to Closest Record (DCR), analyze duplicates, 
 and assess risks associated with membership inference. 
 
 The module leverages advanced parallelization and customizable configurations for 
@@ -612,10 +612,11 @@ def dcr_histogram(
     -------
     Dict
         A dict containing the following items:
-            * bins, histogram bins detected as string labels.
+
+            - bins, histogram bins detected as string labels.
               The first bin/label is 0 (duplicates/clones), then the format is [inf_edge, sup_edge).
-            * count, histogram values for each bin in bins
-            * bins_edge_without_zero, the bin edges as returned by the np.histogram function without 0.
+            - count, histogram values for each bin in bins
+            - bins_edge_without_zero, the bin edges as returned by the np.histogram function without 0.
     """
     range_bins_with_zero = ["0.0"]
     number_of_dcr_zeros = number_of_dcr_equals_to_zero(distances_to_closest_record)
@@ -647,7 +648,7 @@ def dcr_histogram(
 
 def validation_dcr_test(dcr_synth_train: np.ndarray, dcr_synth_validation: np.ndarray):
     """
-    _summary_
+    A class to compute the percentage of synthetic rows closer to the training dataset than to the validation dataset.
 
     Parameters
     ----------
@@ -725,12 +726,13 @@ def training_metrics(
     -------
     dict
         A dictionary containing metrics for the training dataset:
-        - "training_duplicates": The number of duplicate rows in the training dataset.
-        - "training_duplicates_percentage": The percentage of duplicate rows in the training dataset.
-        - "training_unique_duplicates": The number of unique duplicate rows in the training dataset.
-        - "training_unique_duplicates_percentage": The percentage of unique duplicate rows in the training dataset.
-        - "dcr_train_train_stats" (optional): Statistical summary of the DCR values if `full_analysis` is True.
-        - "dcr_train_train_hist" (optional): Histogram of the DCR values if `full_analysis` is True.
+
+            - "training_duplicates": The number of duplicate rows in the training dataset.
+            - "training_duplicates_percentage": The percentage of duplicate rows in the training dataset.
+            - "training_unique_duplicates": The number of unique duplicate rows in the training dataset.
+            - "training_unique_duplicates_percentage": The percentage of unique duplicate rows in the training dataset.
+            - "dcr_train_train_stats" (optional): Statistical summary of the DCR values if `full_analysis` is True.
+            - "dcr_train_train_hist" (optional): Histogram of the DCR values if `full_analysis` is True.
 
     Notes
     -----
@@ -798,12 +800,13 @@ def synthetic_metrics(
     -------
     dict
         A dictionary containing metrics for the synthetic dataset:
-        - "synthetic_duplicates": The number of duplicate rows in the synthetic dataset.
-        - "synthetic_duplicates_percentage": The percentage of duplicate rows in the synthetic dataset.
-        - "synthetic_unique_duplicates": The number of unique duplicate rows in the synthetic dataset.
-        - "synthetic_unique_duplicates_percentage": The percentage of unique duplicate rows in the synthetic dataset.
-        - "dcr_synth_synth_stats" (optional): Statistical summary of the DCR values if `full_analysis` is True.
-        - "dcr_synth_synth_hist" (optional): Histogram of the DCR values if `full_analysis` is True.
+
+            - "synthetic_duplicates": The number of duplicate rows in the synthetic dataset.
+            - "synthetic_duplicates_percentage": The percentage of duplicate rows in the synthetic dataset.
+            - "synthetic_unique_duplicates": The number of unique duplicate rows in the synthetic dataset.
+            - "synthetic_unique_duplicates_percentage": The percentage of unique duplicate rows in the synthetic dataset.
+            - "dcr_synth_synth_stats" (optional): Statistical summary of the DCR values if `full_analysis` is True.
+            - "dcr_synth_synth_hist" (optional): Histogram of the DCR values if `full_analysis` is True.
 
     Notes
     -----
@@ -875,14 +878,19 @@ def synthetic_training_metrics(
     -------
     tuple
         A tuple containing:
-        - dcr_synth_train : np.ndarray
-        The Distance to the Closest Record (DCR) between the synthetic and training datasets.
-        - synth_train_metrics_dict : dict
-        A dictionary containing:
-        - "synth_train_clones": The number of synthetic records that are identical to training records.
-        - "synth_train_clones_percentage": The percentage of synthetic records that are clones of training records.
-        - "dcr_synth_train_stats": Statistical summary of the DCR values.
-        - "dcr_synth_train_hist": Histogram of the DCR values.
+
+            - dcr_synth_train : np.ndarray
+
+                The Distance to the Closest Record (DCR) between the synthetic and training datasets.
+
+            - synth_train_metrics_dict : dict
+
+                A dictionary containing:
+
+                    - "synth_train_clones": The number of synthetic records that are identical to training records.
+                    - "synth_train_clones_percentage": The percentage of synthetic records that are clones of training records.
+                    - "dcr_synth_train_stats": Statistical summary of the DCR values.
+                    - "dcr_synth_train_hist": Histogram of the DCR values.
 
     Notes
     -----
@@ -962,16 +970,13 @@ def synthetic_holdout_metrics(
     -------
     dict
         A dictionary containing the following metrics:
-        - "dcr_synth_holdout_stats": Statistics (mean, min, max, etc.) of DCR between synthetic
-        and holdout datasets.
-        - "dcr_synth_holdout_hist": Histogram of DCR values between synthetic and holdout datasets.
-        - "synth_holdout_test": Percentage of synthetic data that is closer to the training data
-        than to the holdout data.
-        - "synth_holdout_test_warnings": Warnings related to the DCR comparison test.
-        - "dcr_synth_train_stats": (Optional) Statistics of DCR between synthetic and training
-        datasets if test_sampling is enabled.
-        - "dcr_synth_train_hist": (Optional) Histogram of DCR values between synthetic and training
-        datasets if test_sampling is enabled.
+
+            - "dcr_synth_holdout_stats": Statistics (mean, min, max, etc.) of DCR between synthetic and holdout datasets.
+            - "dcr_synth_holdout_hist": Histogram of DCR values between synthetic and holdout datasets.
+            - "synth_holdout_test": Percentage of synthetic data that is closer to the training data than to the holdout data.
+            - "synth_holdout_test_warnings": Warnings related to the DCR comparison test.
+            - "dcr_synth_train_stats": (Optional) Statistics of DCR between synthetic and training datasets if test_sampling is enabled.
+            - "dcr_synth_train_hist": (Optional) Histogram of DCR values between synthetic and training datasets if test_sampling is enabled.
 
     Notes
     -----
@@ -1082,16 +1087,14 @@ def membership_inference_test(
     -------
     dict
         A dictionary containing the following keys:
-        - "adversary_distance_thresholds": List of distance thresholds used for
-        precision calculations.
-        - "adversary_precisions": List of precision scores for each distance threshold.
-        - "membership_inference_mean_risk_score": A float value representing the
-        mean risk score, ranging from 0 to 1, with higher values indicating
-        higher risk.
+
+            - "adversary_distance_thresholds": List of distance thresholds used for precision calculations.
+            - "adversary_precisions": List of precision scores for each distance threshold.
+            - "membership_inference_mean_risk_score": A float value representing the mean risk score, ranging from 0 to 1, with higher values indicating higher risk.
 
     Notes
     -----
-    The `membership_inference_mean_risk_score` is calculated as twice the difference
+    The ``membership_inference_mean_risk_score`` is calculated as twice the difference
     between the mean adversary precision and 0.5, clipped to a minimum of 0. This score
     estimates how effectively an adversary can differentiate between members and
     non-members of the training data based on the synthetic data.

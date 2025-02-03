@@ -1,8 +1,10 @@
+import os
 import json
 import optax
 import numpy as np
 import equinox as eqx
 from typing import Sequence, Tuple, Callable, Dict
+import jax
 from jax import random
 from flax.core.frozen_dict import FrozenDict
 from flax import serialization
@@ -15,16 +17,24 @@ from .engine import EngineInterface
 
 
 class TabularEngine(EngineInterface):
-    """This class integrates the TabularVAE and TabularDiffusion models to enable training, evaluation, and inference
-        for tabular datasets.
+    """
+    This class integrates the ``TabularVAE`` and ``TabularDiffusion`` models to enable training, 
+    evaluation, and inference for tabular datasets.
 
-    Attributes:
-        model (TabularVAE): The Variational Autoencoder model.
-        diffusion_model (TabularDiffusion): The Diffusion Model for additional training.
-        params (FrozenDict): The model parameters.
-        search_params (Dict): Training parameters.
-        architecture (Dict): The architecture configuration of the model.
-        hashed_architecture (str): A hashed string representation of the architecture.
+    Attributes
+    ----------
+    model : TabularVAE
+        The Variational Autoencoder model.
+    diffusion_model : TabularDiffusion
+        The Diffusion Model for additional training.
+    params : FrozenDict
+        The model parameters.
+    search_params : Dict
+        Training parameters.
+    architecture : Dict
+        The architecture configuration of the model.
+    hashed_architecture : str
+        A hashed string representation of the architecture.
     """
 
     model: TabularVAE
@@ -48,21 +58,36 @@ class TabularEngine(EngineInterface):
         privacy_budget: float = 1.0,
         model_type: str = 'VAE',
     ):
-        """Initializes the TabularEngine.
-
-        Args:
-            layers_size (Sequence[int]): The sizes of the hidden layers.
-            numerical_feature_sizes (Sequence[int]): Sizes of ordinal features.
-            categorical_feature_sizes (Sequence[int]): Sizes of categorical features.
-            x_shape (Sequence[int]): Shape of the input data.
-            y_shape (Sequence[int], optional): Shape of the target data. Defaults to [0].
-            params (FrozenDict, optional): Model parameters. Defaults to None.
-            train_params (Dict, optional): Training parameters. Defaults to None.
-            train_loss (Dict, optional): Training loss details. Defaults to None.
-            val_loss (Dict, optional): Validation loss details. Defaults to None.
-            privacy_budget (float, optional): The privacy budget. Defaults to 1.0.
-            model_type (str, optional): Type of model ('VAE' or 'Diffusion'). Defaults to 'VAE'.
         """
+        Initializes the TabularEngine.
+
+        Parameters
+        ----------
+        layers_size : Sequence[int]
+            The sizes of the hidden layers.
+        numerical_feature_sizes : Sequence[int]
+            Sizes of ordinal features.
+        categorical_feature_sizes : Sequence[int]
+            Sizes of categorical features.
+        x_shape : Sequence[int]
+            Shape of the input data.
+        y_shape : Sequence[int], optional
+            Shape of the target data. Defaults to [0].
+        params : FrozenDict, optional
+            Model parameters. Defaults to None.
+        train_params : Dict, optional
+            Training parameters. Defaults to None.
+        train_loss : Dict, optional
+            Training loss details. Defaults to None.
+        val_loss : Dict, optional
+            Validation loss details. Defaults to None.
+        privacy_budget : float, optional
+            The privacy budget. Defaults to 1.0.
+        model_type : str, optional
+            Type of model ('VAE' or 'Diffusion'). Defaults to 'VAE'.
+        """
+        self._configure_jax_device()
+        
         self.model_type = model_type
 
         rng = random.PRNGKey(0)
@@ -123,6 +148,12 @@ class TabularEngine(EngineInterface):
         }
         self.hashed_architecture = json.dumps(self.architecture)
 
+    def _configure_jax_device(self):
+        gpu_devices = [device for device in jax.devices() if device.device_kind == 'Gpu']
+        if not gpu_devices:
+            print("No GPU detected. Forcing JAX to use CPU.")
+            os.environ['JAX_PLATFORM_NAME'] = 'cpu'
+
     def apply(self, x: np.ndarray, y: np.ndarray = None) -> Tuple:
         """Applies the model to the input data.
 
@@ -136,26 +167,38 @@ class TabularEngine(EngineInterface):
         return self.model.apply({"params": self.params}, x, y)
 
     def encode(self, x: np.ndarray, y: np.ndarray = None) -> np.ndarray:
-        """Encodes the input data into the latent space.
+        """
+        Encodes the input data into the latent space.
 
-        Args:
-            x (np.ndarray): The input data.
-            y (np.ndarray, optional): The target data. Defaults to None.
+        Parameters
+        ----------
+        x : np.ndarray
+            The input data.
+        y : np.ndarray, optional
+            The target data. Defaults to None.
 
-        Returns:
-            np.ndarray: The encoded representation.
+        Returns
+        -------
+        np.ndarray
+            The encoded representation.
         """
         return self.model.apply({"params": self.params}, x, y, method=self.model.encode)
 
     def decode(self, z: np.ndarray, y: np.ndarray = None) -> np.ndarray:
-        """Decodes the latent representation back into the original space.
+        """
+        Decodes the latent representation back into the original space.
 
-        Args:
-            z (np.ndarray): The latent representation.
-            y (np.ndarray, optional): The target data. Defaults to None.
+        Parameters
+        ----------
+        z : np.ndarray
+            The latent representation.
+        y : np.ndarray, optional
+            The target data. Defaults to None.
 
-        Returns:
-            np.ndarray: The decoded data.
+        Returns
+        -------
+        np.ndarray
+            The decoded data.
         """
         return self.model.apply({"params": self.params}, z, y, method=self.model.decode)
 
@@ -170,17 +213,27 @@ class TabularEngine(EngineInterface):
         y_val_ds: np.ndarray = None,
         patience: int = 4,
     ):
-        """Trains the model on the provided dataset.
+        """
+        Trains the model on the provided dataset.
 
-        Args:
-            train_ds (np.ndarray): The training dataset.
-            y_train_ds (np.ndarray, optional): The target values for the training dataset. Defaults to None.
-            epochs (int): The number of training epochs.
-            batch_size (int): The batch size for training.
-            learning_rate (float): The learning rate for the optimizer.
-            val_ds (np.ndarray, optional): The validation dataset. Defaults to None.
-            y_val_ds (np.ndarray, optional): The target values for the validation dataset. Defaults to None.
-            patience (int): The number of epochs to wait for improvement before stopping early.
+        Parameters
+        ----------
+        train_ds : np.ndarray
+            The training dataset.
+        y_train_ds : np.ndarray, optional
+            The target values for the training dataset. Defaults to None.
+        epochs : int, optional
+            The number of training epochs. Defaults to 20.
+        batch_size : int, optional
+            The batch size for training. Defaults to 128.
+        learning_rate : float, optional
+            The learning rate for the optimizer. Defaults to 1e-2.
+        val_ds : np.ndarray, optional
+            The validation dataset. Defaults to None.
+        y_val_ds : np.ndarray, optional
+            The target values for the validation dataset. Defaults to None.
+        patience : int, optional
+            The number of epochs to wait for improvement before stopping early. Defaults to 4.
         """
         weight_decay = self.search_params["weight_decay"]
         state = train_state.TrainState.create(
@@ -240,28 +293,40 @@ class TabularEngine(EngineInterface):
                                      batch_size = batch_size)
 
     def evaluate(self, test_ds: np.ndarray, y_test_ds: np.ndarray = None) -> Dict:
-        """Evaluates the model on the test dataset.
+        """
+        Evaluates the model on the test dataset.
 
-        Args:
-            test_ds (np.ndarray): The test dataset.
-            y_test_ds (np.ndarray, optional): The target values for the test dataset. Defaults to None.
+        Parameters
+        ----------
+        test_ds : np.ndarray
+            The test dataset.
+        y_test_ds : np.ndarray, optional
+            The target values for the test dataset. Defaults to None.
 
-        Returns:
-            Dict: Evaluation metrics.
+        Returns
+        -------
+        Dict
+            Evaluation metrics.
         """
         test_loader = np.hstack([test_ds, y_test_ds]) if y_test_ds is not None else np.hstack([test_ds])
         metrics = eval(self.hashed_architecture, self.params, test_loader, self.search_params)
         return metrics
 
     def reconstruction_error(self, x: np.ndarray, y: np.ndarray = None) -> np.ndarray:
-        """Computes the reconstruction error for the input data.
+        """
+        Computes the reconstruction error for the input data.
 
-        Args:
-            x (np.ndarray): The input data.
-            y (np.ndarray, optional): The target data. Defaults to None.
+        Parameters
+        ----------
+        x : np.ndarray
+            The input data.
+        y : np.ndarray, optional
+            The target data. Defaults to None.
 
-        Returns:
-            np.ndarray: The reconstruction error for each instance.
+        Returns
+        -------
+        np.ndarray
+            The reconstruction error for each instance.
         """
         instances = np.hstack([x, y]) if y is not None else x
         reconstruction_error = []
@@ -275,17 +340,26 @@ class TabularEngine(EngineInterface):
     def sample_from_latent_space(
         self, x: np.ndarray, ds: np.ndarray, y: np.ndarray = None, y_ds: np.ndarray = None, n_samples: int = 100
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """Samples from the latent space around the given data point.
+        """
+        Samples from the latent space around the given data point.
 
-        Args:
-            x (np.ndarray): The data point to sample around.
-            ds (np.ndarray): The dataset to sample from.
-            y (np.ndarray, optional): The target values for x. Defaults to None.
-            y_ds (np.ndarray, optional): The target values for ds. Defaults to None.
-            n_samples (int, optional): The number of samples to generate. Defaults to 100.
+        Parameters
+        ----------
+        x : np.ndarray
+            The data point to sample around.
+        ds : np.ndarray
+            The dataset to sample from.
+        y : np.ndarray, optional
+            The target values for `x`. Defaults to None.
+        y_ds : np.ndarray, optional
+            The target values for `ds`. Defaults to None.
+        n_samples : int, optional
+            The number of samples to generate. Defaults to 100.
 
-        Returns:
-            Tuple[np.ndarray, np.ndarray]: The sampled data and the corresponding indices.
+        Returns
+        -------
+        Tuple[np.ndarray, np.ndarray]
+            The sampled data and the corresponding indices.
         """
         n_samples = min(n_samples, ds.shape[0] - 1)
         encoded_ds = self.encode(ds, y_ds)[0]
@@ -296,11 +370,15 @@ class TabularEngine(EngineInterface):
         return encoded_samples, idx
 
     def save(self, architecture_filename: str, sd_filename: str):
-        """Saves the model architecture and parameters to files.
+        """
+        Saves the model architecture and parameters to files.
 
-        Args:
-            architecture_filename (str): The file path to save the model architecture.
-            sd_filename (str): The file path to save the model parameters.
+        Parameters
+        ----------
+        architecture_filename : str
+            The file path to save the model architecture.
+        sd_filename : str
+            The file path to save the model parameters.
         """
         state_dict = serialization.to_state_dict(self.params)
         np.save(sd_filename, state_dict)
