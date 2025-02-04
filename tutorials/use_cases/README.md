@@ -1,6 +1,6 @@
 # Synthetic Data Use Case
 
-This repository contains Jupyter notebooks demonstrating various applications of synthetic data across different domains. 
+This repository contains Jupyter notebooks demonstrating various applications of synthetic data across different domains. \
 Synthetic data enables privacy-preserving analytics, data augmentation, and robust machine learning model development.
 
 ## 🔹 Use Cases
