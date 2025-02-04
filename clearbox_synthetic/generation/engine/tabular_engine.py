@@ -86,7 +86,7 @@ class TabularEngine(EngineInterface):
         model_type : str, optional
             Type of model ('VAE' or 'Diffusion'). Defaults to 'VAE'.
         """
-        self._configure_jax_device()
+        self._enforce_cpu_if_no_gpu()
         
         self.model_type = model_type
 
@@ -148,11 +148,23 @@ class TabularEngine(EngineInterface):
         }
         self.hashed_architecture = json.dumps(self.architecture)
 
-    def _configure_jax_device(self):
-        gpu_devices = [device for device in jax.devices() if device.device_kind == 'Gpu']
-        if not gpu_devices:
-            print("No GPU detected. Forcing JAX to use CPU.")
+    def _enforce_cpu_if_no_gpu():
+        try:
+            import jax
+            
+            # Check if all devices are CPU
+            all_cpu = all(device.platform == 'cpu' for device in jax.devices())
+            
+            if all_cpu:
+                os.environ['JAX_PLATFORMS'] = 'cpu'
+                print("All devices are CPU. JAX is set to CPU mode.")
+            else:
+                print("🚀 GPU detected. JAX will utilize GPU devices.")
+                
+        except Exception as e:
+            # In case of any errors with JAX initialization, fall back to CPU
             os.environ['JAX_PLATFORMS'] = 'cpu'
+            print(f"⚠️ An error occurred: {e}. Defaulting to CPU.")
 
     def apply(self, x: np.ndarray, y: np.ndarray = None) -> Tuple:
         """Applies the model to the input data.
