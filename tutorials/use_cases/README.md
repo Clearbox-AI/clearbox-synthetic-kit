@@ -7,7 +7,7 @@ Synthetic data enables privacy-preserving analytics, data augmentation, and robu
 
 | Use Case | Description | Colab Notebook
 | :---:  | :---:  | :---:  |
-| Data Augmentation | How to improve model performance on an imbalanced dataset | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Clearbox-AI/clearbox-synthetic-kit/blob/main/tutorials/use_cases/1_tabular_data_augmentation_with_synthetic_kit.ipynb)
+| Data Augmentation | How to improve model performance on an imbalanced dataset | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Clearbox-AI/clearbox-synthetic-kit/blob/develop/tutorials/use_cases/1_tabular_data_augmentation_with_synthetic_kit.ipynb)
 
 
 More notebooks to come!
