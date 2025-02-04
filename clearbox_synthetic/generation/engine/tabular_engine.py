@@ -161,10 +161,10 @@ class TabularEngine(EngineInterface):
             else:
                 print("🚀 GPU detected. JAX will utilize GPU devices.")
                 
-        except Exception as e:
-            # In case of any errors with JAX initialization, fall back to CPU
-            os.environ['JAX_PLATFORMS'] = 'cpu'
-            print(f"⚠️ An error occurred: {e}. Defaulting to CPU.")
+        # except Exception as e:
+        #     # In case of any errors with JAX initialization, fall back to CPU
+        #     os.environ['JAX_PLATFORMS'] = 'cpu'
+        #     print(f"⚠️ An error occurred: {e}. Defaulting to CPU.")
 
     def apply(self, x: np.ndarray, y: np.ndarray = None) -> Tuple:
         """Applies the model to the input data.
