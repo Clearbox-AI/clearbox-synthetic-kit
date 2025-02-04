@@ -148,7 +148,7 @@ class TabularEngine(EngineInterface):
         }
         self.hashed_architecture = json.dumps(self.architecture)
 
-    def _enforce_cpu_if_no_gpu():
+    def _enforce_cpu_if_no_gpu(self):
         try:
             import jax
             
