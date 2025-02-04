@@ -149,17 +149,17 @@ class TabularEngine(EngineInterface):
         self.hashed_architecture = json.dumps(self.architecture)
 
     def _enforce_cpu_if_no_gpu(self):
-        try:
-            import jax
-            
-            # Check if all devices are CPU
-            all_cpu = all(device.platform == 'cpu' for device in jax.devices())
-            
-            if all_cpu:
-                os.environ['JAX_PLATFORMS'] = 'cpu'
-                print("All devices are CPU. JAX is set to CPU mode.")
-            else:
-                print("🚀 GPU detected. JAX will utilize GPU devices.")
+        # try:
+        import jax
+        
+        # Check if all devices are CPU
+        all_cpu = all(device.platform == 'cpu' for device in jax.devices())
+        
+        if all_cpu:
+            os.environ['JAX_PLATFORMS'] = 'cpu'
+            print("All devices are CPU. JAX is set to CPU mode.")
+        else:
+            print("🚀 GPU detected. JAX will utilize GPU devices.")
                 
         # except Exception as e:
         #     # In case of any errors with JAX initialization, fall back to CPU
