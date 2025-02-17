@@ -14,7 +14,8 @@ from loguru import logger
 
 from datetime import datetime
 from typing import List, Dict, Set, Tuple, Union, Optional, IO, Callable, Any, ClassVar
-from pydantic import BaseModel, field_validator, ConfigDict, FieldValidationInfo
+from pydantic import BaseModel, field_validator, ConfigDict
+from pydantic_core.core_schema import ValidationInfo
 from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder, LabelEncoder
 
 DTYPES_MAP = {"b": bool, "i": int, "u": int, "f": float, "c": float, "O": str, "S": str}
@@ -69,7 +70,7 @@ class Dataset(BaseModel):
         return v or datetime.now()
 
     @field_validator("target_column", mode="before")
-    def validate_target_column(cls, v, info: FieldValidationInfo):
+    def validate_target_column(cls, v, info: ValidationInfo):
         data = info.data.get("data")  # Access the field "data" from the ValidationInfo object
         if v is not None and isinstance(v, str) and data is not None and v not in data.columns:
             raise ValueError(f"'{v}' is not a column of the dataset.")
@@ -86,7 +87,7 @@ class Dataset(BaseModel):
         return v
 
     @field_validator("sequence_index", mode="before")
-    def validate_sequence_index(cls, v, info: FieldValidationInfo):
+    def validate_sequence_index(cls, v, info: ValidationInfo):
         data = info.data.get("data")
         if v is not None and isinstance(v, str) and data is not None and v not in data.columns:
             raise ValueError(f"'{v}' is not a column of the dataset.")
@@ -95,7 +96,7 @@ class Dataset(BaseModel):
         return v
 
     @field_validator("bounds", mode="before")
-    def validate_bounds(cls, v, info: FieldValidationInfo):
+    def validate_bounds(cls, v, info: ValidationInfo):
         data = info.data.get("data")
         if data is None:
             raise ValueError("Data attribute is missing; cannot validate bounds.")
@@ -111,7 +112,7 @@ class Dataset(BaseModel):
         return v
 
     @field_validator("column_types", mode="before")
-    def validate_column_types(cls, v, info: FieldValidationInfo):
+    def validate_column_types(cls, v, info: ValidationInfo):
         data = info.data.get("data")
         if v:
             if data is not None and set(v.keys()) != set(data.columns):
@@ -119,7 +120,7 @@ class Dataset(BaseModel):
         return v
 
     @field_validator("regression", mode="before")
-    def validate_regression(cls, v, info: FieldValidationInfo):
+    def validate_regression(cls, v, info: ValidationInfo):
         return v or False
     
     @classmethod
