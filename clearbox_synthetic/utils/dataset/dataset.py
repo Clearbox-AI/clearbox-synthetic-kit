@@ -305,6 +305,56 @@ class Dataset(BaseModel):
             regression=regression,
         )
 
+    @classmethod
+    def from_dataframe(
+        cls,
+        data: pd.DataFrame,
+        timestamp: datetime = None,
+        target_column: Union[int, str, Tuple] = None,
+        sequence_index: Union[int, str] = None,
+        group_by: Union[int, str] = None,
+        column_types: Dict[str, str] = None,
+        name: str = None,
+        bounds: Dict = None,
+        regression: bool = False,
+        drop_target_na_rows: bool = True,
+    ) -> "Dataset":
+        """
+        Create a Dataframe objest from a pandas.DataFrame
+        """
+        # Check if target_column is in data
+        if target_column is not None and target_column not in data:
+            logger.warning(
+                f"Target column '{target_column}' is not a column in the dataset, target_column set as None (Unlabeled Dataset) "
+            )
+            target_column = None
+
+        # Drop target column null rows
+        if target_column and drop_target_na_rows:
+            target_column_na_values = data[target_column].isnull().sum()
+            if target_column_na_values > 0:
+                logger.info(
+                    f"There are {target_column_na_values} rows containing na value in the target column, they will be dropped."
+                )
+                data.dropna(subset=[target_column], inplace=True)
+                if len(data.index) == 0:
+                    raise ValueError(
+                        "After removing the rows containing na value in the target column, the dataset is empty."
+                    )
+        
+        # Return the Dataset class
+        return cls(
+            timestamp=timestamp,
+            data=data,
+            target_column=target_column,
+            sequence_index=sequence_index,
+            group_by=group_by,
+            column_types=column_types,
+            name=name,
+            bounds=bounds,
+            regression=regression,
+        )
+
     def to_csv(self, path: str):
         """
         Generate and save a csv file starting from the dataset.
