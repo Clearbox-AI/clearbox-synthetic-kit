@@ -393,7 +393,7 @@ class Dataset(BaseModel):
         )
 
         if self.target_column: 
-            if X.regression:
+            if self.regression:
                 Y = self.get_normalized_y()
             else:
                 Y = self.get_one_hot_encoded_y()
