@@ -3,7 +3,7 @@ import json
 import optax
 import numpy as np
 import equinox as eqx
-from typing import Sequence, Tuple, Callable, Dict
+from typing import Sequence, Callable, Dict, List, Tuple, Literal
 import jax
 from jax import random
 from flax.core.frozen_dict import FrozenDict
@@ -11,10 +11,12 @@ from flax import serialization
 from flax.training import train_state
 from tqdm import trange
 from loguru import logger
+
+from clearbox_preprocessor import Preprocessor
+from ...utils import Dataset
 from ..VAE.tabular_vae import TabularVAE, train_step, eval
 from ..diffusion.tabular_diffusion import TabularDiffusion
 from .engine import EngineInterface
-
 
 class TabularEngine(EngineInterface):
     """
@@ -36,7 +38,7 @@ class TabularEngine(EngineInterface):
     hashed_architecture : str
         A hashed string representation of the architecture.
     """
-
+    X: Dataset
     model: TabularVAE
     diffusion_model: TabularDiffusion
     params: FrozenDict
@@ -46,17 +48,22 @@ class TabularEngine(EngineInterface):
 
     def __init__(
         self,
-        layers_size: Sequence[int],
-        numerical_feature_sizes: Sequence[int],
-        categorical_feature_sizes: Sequence[int],
-        x_shape: Sequence[int],
-        y_shape: Sequence[int] = [0],
+        dataset: Dataset,
+        layers_size: Sequence[int] = 50,
         params: FrozenDict = None,
         train_params: Dict = None,
-        train_loss: Dict = None,
-        val_loss: Dict = None,
         privacy_budget: float = 1.0,
         model_type: str = 'VAE',
+        discarding_threshold: float = 0.9, 
+        get_discarded_info: bool = False,
+        excluded_col: List = [],
+        time: str = None,
+        missing_values_threshold: float = 0.999,
+        n_bins: int = 0,
+        scaling: Literal["none", "normalize", "standardize", "quantile"] = "none", 
+        num_fill_null : Literal["interpolate","forward", "backward", "min", "max", "mean", "zero", "one"] = "mean",
+        cat_labels_threshold: float = 0.01,
+        unseen_labels = 'ignore',
     ):
         """
         Initializes the TabularEngine.
@@ -65,22 +72,10 @@ class TabularEngine(EngineInterface):
         ----------
         layers_size : Sequence[int]
             The sizes of the hidden layers.
-        numerical_feature_sizes : Sequence[int]
-            Sizes of ordinal features.
-        categorical_feature_sizes : Sequence[int]
-            Sizes of categorical features.
-        x_shape : Sequence[int]
-            Shape of the input data.
-        y_shape : Sequence[int], optional
-            Shape of the target data. Defaults to [0].
         params : FrozenDict, optional
             Model parameters. Defaults to None.
         train_params : Dict, optional
             Training parameters. Defaults to None.
-        train_loss : Dict, optional
-            Training loss details. Defaults to None.
-        val_loss : Dict, optional
-            Validation loss details. Defaults to None.
         privacy_budget : float, optional
             The privacy budget. Defaults to 1.0.
         model_type : str, optional
@@ -93,13 +88,38 @@ class TabularEngine(EngineInterface):
         rng = random.PRNGKey(0)
         rng, key = random.split(rng)
 
+        X, Y = dataset.get_x_y()
+        if Y:
+            y_shape=Y[0].shape  
+        else:
+            y_shape = [0]
+
+        self.preprocessor = Preprocessor(
+            X,
+            discarding_threshold,
+            get_discarded_info,
+            excluded_col,
+            time,
+            missing_values_threshold,
+            n_bins,
+            scaling,
+            num_fill_null,
+            cat_labels_threshold,
+            unseen_labels,
+        ) 
+        X_train = self.preprocessor.transform(X)
+
+        x_shape = X_train[0].shape   
+
+        numerical_feature_sizes, categorical_feature_sizes = self.preprocessor.get_features_sizes()
+
         if model_type != 'VAE':
             layers_size = [int(x_shape[0])]
         if train_params is None:
             if model_type == 'VAE':
                 beta = 0
                 alpha = 0.1
-            else:
+            elif model_type =='Diffusion':
                 beta = 0
                 alpha = 0
             train_params = {
@@ -218,8 +238,7 @@ class TabularEngine(EngineInterface):
 
     def fit(
         self,
-        train_ds: np.ndarray,
-        y_train_ds: np.ndarray = None,
+        dataset: Dataset,
         epochs: int = 20,
         batch_size: int = 128,
         learning_rate: float = 1e-2,
@@ -232,10 +251,8 @@ class TabularEngine(EngineInterface):
 
         Parameters
         ----------
-        train_ds : np.ndarray
+        dataset : Dataset
             The training dataset.
-        y_train_ds : np.ndarray, optional
-            The target values for the training dataset. Defaults to None.
         epochs : int, optional
             The number of training epochs. Defaults to 20.
         batch_size : int, optional
@@ -256,6 +273,9 @@ class TabularEngine(EngineInterface):
             tx=optax.adamw(learning_rate=learning_rate, weight_decay=weight_decay),
         )
 
+        X, y_train_ds = dataset.get_x_y()
+        train_ds = self.preprocessor.transform(X)
+        
         train_loader = np.hstack([train_ds, y_train_ds]) if y_train_ds is not None else np.hstack([train_ds])
         metrics_train = None
         metrics_val = None
@@ -306,22 +326,26 @@ class TabularEngine(EngineInterface):
                                      lr = learning_rate, 
                                      batch_size = batch_size)
 
-    def evaluate(self, test_ds: np.ndarray, y_test_ds: np.ndarray = None) -> Dict:
+    def evaluate(
+        self, 
+        dataset: Dataset,
+    ) -> Dict:
         """
         Evaluates the model on the test dataset.
 
         Parameters
         ----------
-        test_ds : np.ndarray
+        dataset : Dataset
             The test dataset.
-        y_test_ds : np.ndarray, optional
-            The target values for the test dataset. Defaults to None.
 
         Returns
         -------
         Dict
             Evaluation metrics.
         """
+        X, y_test_ds = dataset.get_x_y()
+        test_ds = self.preprocessor.transform(X)
+
         test_loader = np.hstack([test_ds, y_test_ds]) if y_test_ds is not None else np.hstack([test_ds])
         metrics = eval(self.hashed_architecture, self.params, test_loader, self.search_params)
         return metrics

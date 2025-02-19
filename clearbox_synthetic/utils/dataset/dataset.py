@@ -383,6 +383,25 @@ class Dataset(BaseModel):
             [column for column in self.columns() if column != self.target_column]
         )
 
+    def get_x_y(self):
+        """
+        Return all column of the dataset except the target column (y) and the target column separately
+
+        """
+        X = self.subset(
+            [column for column in self.columns() if column != self.target_column]
+        )
+
+        if self.target_column: 
+            if X.regression:
+                Y = self.get_normalized_y()
+            else:
+                Y = self.get_one_hot_encoded_y()
+        else:
+            Y = None
+        
+        return X, Y
+
     def get_group_by(self) -> pd.Series:
         """
         Return the sequence index of the dataset.
