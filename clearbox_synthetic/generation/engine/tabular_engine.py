@@ -341,26 +341,22 @@ class TabularEngine(EngineInterface):
                                      lr = learning_rate, 
                                      batch_size = batch_size)
 
-    def evaluate(
-        self, 
-        dataset: Dataset,
-    ) -> Dict:
+    def evaluate(self, test_ds: np.ndarray, y_test_ds: np.ndarray = None) -> Dict:
         """
         Evaluates the model on the test dataset.
 
         Parameters
         ----------
-        dataset : Dataset
+        test_ds : np.ndarray
             The test dataset.
+        y_test_ds : np.ndarray, optional
+            The target values for the test dataset. Defaults to None.
 
         Returns
         -------
         Dict
             Evaluation metrics.
         """
-        X, y_test_ds = dataset.get_x_y()
-        test_ds = self.preprocessor.transform(X)
-
         test_loader = np.hstack([test_ds, y_test_ds]) if y_test_ds is not None else np.hstack([test_ds])
         metrics = eval(self.hashed_architecture, self.params, test_loader, self.search_params)
         return metrics
