@@ -43,11 +43,19 @@ jobs:
       run: |
         PACKAGE_NAME=$(python setup.py --name)
         PACKAGE_VERSION=$(python setup.py --version)
-        if curl --silent -f https://pypi.org/project/${PACKAGE_NAME}/${PACKAGE_VERSION}/; then
-          echo "Version ${PACKAGE_VERSION} already exists on PyPI."
-          echo "already_published=true" >> $GITHUB_ENV
+        
+        RESPONSE=$(curl --silent --fail https://pypi.org/pypi/${PACKAGE_NAME}/json || echo "not found")
+        
+        if echo "$RESPONSE" | grep -q '"releases"'; then
+          if echo "$RESPONSE" | jq -e ".releases | has(\"$PACKAGE_VERSION\")" >/dev/null; then
+            echo "Version ${PACKAGE_VERSION} already exists on PyPI."
+            echo "already_published=true" >> $GITHUB_ENV
+          else
+            echo "Version ${PACKAGE_VERSION} does not exist on PyPI."
+            echo "already_published=false" >> $GITHUB_ENV
+          fi
         else
-          echo "Version ${PACKAGE_VERSION} does not exist on PyPI."
+          echo "Package does not exist on PyPI."
           echo "already_published=false" >> $GITHUB_ENV
         fi
 
