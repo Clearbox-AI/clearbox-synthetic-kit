@@ -16,22 +16,22 @@ import sys
 import os
 
 ####################
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
-preprocessor_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../preprocessor/clearbox-preprocessor"))
-sys.path.append(preprocessor_path)
-from clearbox_preprocessor import Preprocessor
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
+# preprocessor_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../preprocessor/clearbox-preprocessor"))
+# sys.path.append(preprocessor_path)
+# from clearbox_preprocessor import Preprocessor
 
-from clearbox_synthetic.utils import Dataset
-from clearbox_synthetic.generation.VAE.tabular_vae import TabularVAE, train_step, eval
-from clearbox_synthetic.generation.diffusion.tabular_diffusion import TabularDiffusion
-from clearbox_synthetic.generation.engine.engine import EngineInterface
+# from clearbox_synthetic.utils import Dataset
+# from clearbox_synthetic.generation.VAE.tabular_vae import TabularVAE, train_step, eval
+# from clearbox_synthetic.generation.diffusion.tabular_diffusion import TabularDiffusion
+# from clearbox_synthetic.generation.engine.engine import EngineInterface
 ####################
 
-# from clearbox_preprocessor import Preprocessor
-# from ...utils import Dataset
-# from ..VAE.tabular_vae import TabularVAE, train_step, eval
-# from ..diffusion.tabular_diffusion import TabularDiffusion
-# from .engine import EngineInterface
+from clearbox_preprocessor import Preprocessor
+from ...utils import Dataset
+from ..VAE.tabular_vae import TabularVAE, train_step, eval
+from ..diffusion.tabular_diffusion import TabularDiffusion
+from .engine import EngineInterface
 
 class TabularEngine(EngineInterface):
     """
@@ -64,7 +64,7 @@ class TabularEngine(EngineInterface):
     def __init__(
         self,
         dataset: Dataset,
-        layers_size: Sequence[int] = 50,
+        layers_size: Sequence[int] = [50],
         params: FrozenDict = None,
         train_params: Dict = None,
         privacy_budget: float = 1.0,
@@ -124,7 +124,7 @@ class TabularEngine(EngineInterface):
         ) 
         X_train = self.preprocessor.transform(X)
 
-        x_shape = X_train.shape[1]
+        x_shape = X_train.to_numpy[0].shape
 
         numerical_feature_sizes, categorical_feature_sizes = self.preprocessor.get_features_sizes()
 
@@ -440,36 +440,36 @@ class TabularEngine(EngineInterface):
         with open(architecture_filename, "w") as f:
             json.dump(self.architecture, f)
 
-if __name__=="__main__":
-    import pandas as pd
-    data = {"a": [1, 2, 3, 4, 5], 
-            "b": [6, 7, 8, 9, 10], 
-            "c":["s1", "s2", "s1", "s3", "s2"],
-            "income": ["<=50K", "<=50K", ">50K", ">50K", "<=50K"]}
-    df = pd.DataFrame(data)
+# if __name__=="__main__":
+#     import pandas as pd
+#     data = {"a": [1, 2, 3, 4, 5], 
+#             "b": [6, 7, 8, 9, 10], 
+#             "c":["s1", "s2", "s1", "s3", "s2"],
+#             "income": ["<=50K", "<=50K", ">50K", ">50K", "<=50K"]}
+#     df = pd.DataFrame(data)
 
-    train_dataset = Dataset.from_dataframe(
-        df,
-        target_column="income",
-        regression=False
-    )
+#     train_dataset = Dataset.from_dataframe(
+#         df,
+#         target_column="income",
+#         regression=False
+#     )
 
-    X, Y = train_dataset.get_x_y()
-    if Y is not None:
-        y_shape=Y[0].shape  
-    else:
-        y_shape = [0]
+#     X, Y = train_dataset.get_x_y()
+#     if Y is not None:
+#         y_shape=Y[0].shape  
+#     else:
+#         y_shape = [0]
 
-    preprocessor = Preprocessor(
-        X
-    ) 
-    X_train = preprocessor.transform(X)
-    # print(X_train)
-    # print(X_train.shape[1])
-    # x_shape = X_train[0].shape  
+#     preprocessor = Preprocessor(
+#         X
+#     ) 
+#     X_train = preprocessor.transform(X)
+#     # print(X_train)
+#     # print(X_train.shape[1])
+#     # x_shape = X_train[0].shape  
 
-    engine = TabularEngine(
-    train_dataset,
-    get_discarded_info=True,
-    scaling = 'standardize',
-    )
+#     engine = TabularEngine(
+#     train_dataset,
+#     get_discarded_info=True,
+#     scaling = 'standardize',
+#     )
