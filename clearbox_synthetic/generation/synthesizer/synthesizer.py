@@ -9,7 +9,8 @@ import numpy as np
 import pandas as pd
 import scipy
 
-from clearbox_synthetic.utils import Dataset, Preprocessor
+from clearbox_preprocessor import Preprocessor
+from clearbox_synthetic.utils import Dataset#, Preprocessor
 from clearbox_synthetic.generation import TabularEngine
 
 
@@ -31,18 +32,20 @@ class Synthesizer(metaclass=abc.ABCMeta):
         """
         return hasattr(subclass, "generate") and callable(subclass.fit)
 
-    def __init__(self, dataset: Dataset, engine: TabularEngine, preprocessor: Preprocessor = None):
+    def __init__(self, dataset: Dataset, engine: TabularEngine):
         """
         Initialize the Synthesizer.
 
         Args:
             dataset (Dataset): The dataset to be used for generating synthetic data.
             engine (TabularEngine): The engine used for data synthesis.
-            preprocessor (Preprocessor, optional): The preprocessor for transforming data.
-                Defaults to None, in which case a new Preprocessor is created.
         """
         self.dataset = dataset
-        self.preprocessor = preprocessor if preprocessor is not None else Preprocessor(dataset)
+        if hasattr(engine,"preprocessor"):
+            self.preprocessor = engine.preprocessor  
+        else:
+            X, _ = dataset.get_x_y()
+            self.preprocessor = Preprocessor(X, sclaing="standardize")
         self.engine = engine
         self.sampled_indexes = None
 
