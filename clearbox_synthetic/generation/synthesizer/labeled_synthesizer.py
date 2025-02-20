@@ -133,7 +133,7 @@ class LabeledSynthesizer(Synthesizer):
         data = self.dataset.get_x()
         preprocessed_data = self.preprocessor.transform(data)
 
-        _, encoded, _ = self.engine.apply(preprocessed_data, Y)
+        _, encoded, _ = self.engine.apply(preprocessed_data.to_numpy(), Y)
         encoded = encoded + latent_noise * np.random.randn(*encoded.shape)
 
         new_samples = pd.DataFrame(
