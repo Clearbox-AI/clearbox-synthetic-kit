@@ -124,7 +124,7 @@ class TabularEngine(EngineInterface):
         ) 
         X_train = self.preprocessor.transform(X)
 
-        x_shape = X_train.to_numpy[0].shape
+        x_shape = X_train.to_numpy()[0].shape
 
         numerical_feature_sizes, categorical_feature_sizes = self.preprocessor.get_features_sizes()
 
