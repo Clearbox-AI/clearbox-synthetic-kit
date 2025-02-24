@@ -2,6 +2,7 @@ import os
 import json
 import optax
 import numpy as np
+import pandas as pd
 import equinox as eqx
 from typing import Sequence, Callable, Dict, List, Tuple, Literal
 import jax
@@ -9,7 +10,7 @@ from jax import random
 from flax.core.frozen_dict import FrozenDict
 from flax import serialization
 from flax.training import train_state
-from tqdm import trange
+from tqdm import tqdm, trange
 from loguru import logger
 
 import sys
@@ -32,6 +33,42 @@ from ...utils import Dataset
 from ..VAE.tabular_vae import TabularVAE, train_step, eval
 from ..diffusion.tabular_diffusion import TabularDiffusion
 from .engine import EngineInterface
+
+def _process_categorical(df: pd.DataFrame, input_feats: List, target: List) -> Tuple[Dict, Dict, pd.Index]:
+    """
+    Preprocesses categorical features, generates embedding rules, and bins numerical features.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame.
+        input_feats (List): List of input feature column names.
+        target (List): List of target feature column names.
+
+    Returns:
+        Tuple: A dictionary of preprocessing rules, numerical binning information, and processed column names.
+    """
+    input_cat = [i for i in input_feats if df[i].dtype == 'object' or df[i].nunique() < 4]
+    input_num = [i for i in input_feats if df[i].dtype != 'object' and df[i].nunique() >= 4]
+    sub = df[input_cat + target]
+    bins_num = {}
+    for i in input_num:
+        low = np.quantile(df[i].fillna(0), 0.01)
+        high = np.quantile(df[i].fillna(0), 0.99)
+        newco = pd.cut(np.clip(df[i], low, high), 3)
+        bins_num[i] = newco.cat.categories
+        sub = pd.concat([newco, sub], axis=1)
+    
+    for i in input_cat:
+        sub[i] = sub[i].fillna('NaN')
+        
+    sub = sub.sample(n=min(5000, df.shape[0]), replace=False, random_state=42)
+    dupli = sub.drop_duplicates(subset=input_feats)
+    prepro_dict = {}
+    print('Processing embedding rules:')
+    for i in tqdm(range(dupli.shape[0])):
+        mask = (sub.iloc[:, :-1] == dupli.iloc[i, :-1]).sum(axis=1) == len(input_feats)
+        prepro_dict[dupli.iloc[i, :-1].to_string(index=False)] = sub[mask][target[0]].value_counts(dropna=False)
+    
+    return prepro_dict, bins_num, dupli.columns
 
 class TabularEngine(EngineInterface):
     """
@@ -69,6 +106,7 @@ class TabularEngine(EngineInterface):
         train_params: Dict = None,
         privacy_budget: float = 1.0,
         model_type: str = 'VAE',
+        rules: Dict = {},
         discarding_threshold: float = 0.9, 
         get_discarded_info: bool = False,
         excluded_col: List = [],
@@ -95,11 +133,22 @@ class TabularEngine(EngineInterface):
             The privacy budget. Defaults to 1.0.
         model_type : str, optional
             Type of model ('VAE' or 'Diffusion'). Defaults to 'VAE'.
+        rules : Dict, optional
+            Rules for embedding and transformations. Defaults to {}.
         """
         self._enforce_cpu_if_no_gpu()
         
         self.model_type = model_type
+        self.rules = rules
+        self.emb_rules = {}
 
+        for w in [i for i in rules.keys() if 'embed_category' in rules[i][0]]:
+            self.emb_rules[w] = _process_categorical(X, rules[w][1], rules[w][2])
+            X = X.drop(w, axis=1)
+
+        for w in [i for i in rules.keys() if 'sum' in rules[i][0]]:
+            X = X.drop(w, axis=1)
+            
         rng = random.PRNGKey(0)
         rng, key = random.split(rng)
 

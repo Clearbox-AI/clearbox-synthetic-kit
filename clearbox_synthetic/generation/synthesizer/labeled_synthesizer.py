@@ -183,25 +183,25 @@ class LabeledSynthesizer(Synthesizer):
             vaedf.index = new_samples.index
 
             to_fill = [
-                i for i in hybrid_columns if i not in discarded_columns + list(self.preprocessor.rules.keys())
+                i for i in hybrid_columns if i not in discarded_columns + list(self.engine.rules.keys())
             ]
             for i in to_fill:
                 new_samples[i] = vaedf[i]
 
         for w in [
-            i for i in self.preprocessor.rules.keys() if "embed_category" in self.preprocessor.rules[i][0]
+            i for i in self.engine.rules.keys() if "embed_category" in self.engine.rules[i][0]
         ]:
             column = _create_series(
-                self.preprocessor.emb_rules[w][0],
-                self.preprocessor.emb_rules[w][1],
-                self.preprocessor.emb_rules[w][2],
+                self.engine.emb_rules[w][0],
+                self.engine.emb_rules[w][1],
+                self.engine.emb_rules[w][2],
                 new_samples,
             )
             new_samples[w] = column
 
-        for w in [i for i in self.preprocessor.rules.keys() if "sum" in self.preprocessor.rules[i][0]]:
+        for w in [i for i in self.engine.rules.keys() if "sum" in self.engine.rules[i][0]]:
             column = pd.Series(np.zeros(new_samples.shape[0]))
-            for w1 in self.preprocessor.rules[w][1]:
+            for w1 in self.engine.rules[w][1]:
                 column += w1[0] * new_samples[w1[1]]
             new_samples[w] = column
 
