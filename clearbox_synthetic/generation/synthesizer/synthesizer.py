@@ -101,8 +101,7 @@ class Synthesizer(metaclass=abc.ABCMeta):
 
         e = np.hstack([numerical_features_sampled, categorical_features_sampled])
         # return self.preprocessor.inverse_preprocessor(e)
-        df_e = self.preprocessor.inverse_transform(pd.DataFrame(e, columns=preprocessed_x.columns))
-        return df_e.to_numpy()
+        return self.preprocessor.inverse_transform(pd.DataFrame(e, columns=preprocessed_x.columns))
 
     def _force_temporal_precedence(self, synthetic_dataset: pd.DataFrame):
         """
