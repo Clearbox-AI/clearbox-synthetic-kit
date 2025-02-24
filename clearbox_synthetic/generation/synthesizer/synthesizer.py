@@ -70,10 +70,10 @@ class Synthesizer(metaclass=abc.ABCMeta):
         numerical_features_sampled = np.zeros((preprocessed_x.shape[0], n_numerical_features))
 
         for i in range(n_numerical_features):
-            if isinstance(preprocessed_x[:, i], scipy.sparse.csr_matrix):
-                converted_input = preprocessed_x[:, i].toarray().reshape(1, -1)[0]
-            else:
-                converted_input = preprocessed_x[:, i]
+            # if isinstance(preprocessed_x[:, i], scipy.sparse.csr_matrix):
+            #     converted_input = preprocessed_x[:, i].toarray().reshape(1, -1)[0]
+            # else:
+            #     converted_input = preprocessed_x[:, i]
 
             numerical_features_sampled[:, i] = (
                 recon_x[:, i] + self.engine.search_params["gauss_s"] * np.random.randn(recon_x.shape[0])
