@@ -87,7 +87,7 @@ class Synthesizer(metaclass=abc.ABCMeta):
         for i in range(preprocessed_x.shape[0]):
             w2 = 0  # index categorical label in preprocessed space
             w3 = 0  # index categorical feature
-            features = preprocessed_x[i, n_numerical_features:] > 0
+            features = preprocessed_x.iloc[i, n_numerical_features:] > 0
             if isinstance(features, scipy.sparse.csr_matrix):
                 features = features.toarray().reshape(1, -1)[0]
 
