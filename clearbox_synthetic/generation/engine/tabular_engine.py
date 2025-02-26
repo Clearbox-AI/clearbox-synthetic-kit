@@ -17,6 +17,7 @@ import sys
 import os
 
 ####################
+# # UNCOMMENT FOR DEBUGGING
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
 # preprocessor_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../preprocessor/clearbox-preprocessor"))
 # sys.path.append(preprocessor_path)
@@ -75,18 +76,100 @@ class TabularEngine(EngineInterface):
     This class integrates the ``TabularVAE`` and ``TabularDiffusion`` models to enable training, 
     evaluation, and inference for tabular datasets.
 
+    Parameters
+    ----------
+    dataset : Dataset
+        The dataset used to initialize the generative engine.
+
+    layers_size : Sequence[int], optional, default=[50]
+        The sizes of the hidden layers.
+
+    params : FrozenDict, optional, default=None
+        Model parameters. 
+
+    train_params : Dict, optional, default=None
+        Training parameters.
+
+    privacy_budget : float, optional, default=1.0
+        The privacy budget. 
+
+    model_type : str, optional, default='VAE'
+        Type of model ('VAE' or 'Diffusion').
+
+    rules : Dict, optional, default={}
+        Rules for embedding and transformations. 
+    
+    cat_labels_threshold : float, optional, default=0.02
+        A float value between 0 and 1 that sets the threshold for discarding categorical features.
+        It defines a minimum frequency threshold for keeping a label as a separate category. If a label appears 
+        in less than :code:`cat_labels_threshold * 100%` of the total occurrences in a categorical column, it is grouped 
+        into a generic ``"other"`` category. 
+
+        For instance, if ``cat_labels_threshold=0.02`` and a label appears less than 2% in the dataset, that label will be converted to `"other"`.
+
+    get_discarded_info : bool, optional, default=False
+        If set to ``True``, the preprocessor will feature the method ``get_discarded_features_reason``,
+        which provides information on which columns were discarded and the reason for discarding.
+        Note that enabling this option may significantly slow down the processing operation.
+        The list of discarded columns is available even when `get_discarded_info=False`, so consider
+        setting this flag to ``True`` only if you need to know why a column was discarded or, in the case
+        of columns containing only one unique value, what that value was.
+
+    excluded_col : List, optional, default=[]
+        A list of column names to be excluded from processing. These columns will be returned in the
+        final DataFrame without being modified.
+
+    time : str, optional, default=None
+        The name of the time column to sort the DataFrame in case of time series data.
+
+    scaling : str, default="none"
+        The method used to scale numerical features:
+
+        - "none"        : No scaling is applied   
+        - "normalize"   : Normalizes numerical features to the [0, 1] range.
+        - "standardize" : Standardizes numerical features to have a mean of 0 and a standard deviation of 1.
+        - "quantile"    : Transforms numerical features using quantiles information.
+        - "kbins"       : Converts continuous numerical data into discrete bins. The number of bins is defined by the parameter n_bin
+
+    num_fill_null : FillNullStrategy or str, default="mean"
+        Strategy or value used to fill null values in numerical features:
+
+        - "mean"        : Fills null values with the mean of the column.
+        - "interpolate" : Fills null values using interpolation.
+        - "forward"     : Fills null values using the previous non-null value.
+        - "backward"    : Fills null values using the next non-null value.
+        - "min"         : Fills null values with the minimum value of the column.
+        - "max"         : Fills null values with the maximum value of the column.
+        - "zero"        : Fills null values with zeros.
+        - "one"         : Fills null values with ones.
+        - value         : Fills null values with the specified value.
+
+    n_bins : int, default=0
+        Number of bins to discretize numerical features. If set to a value greater than 0 and if scaling=="kbins",
+        numerical features are discretized into the specified number of bins using quantile-based
+        binning.
+
+    unseen_labels : str, default="ignore"
+        - "ignore"        : If new data contains labels unseen during fit one hot encoding contains 0 in every column.
+        - "error"         : Raise an error if new data contains labels unseen during fit.
+
     Attributes
     ----------
     model : TabularVAE
         The Variational Autoencoder model.
+
     diffusion_model : TabularDiffusion
         The Diffusion Model for additional training.
+
     params : FrozenDict
         The model parameters.
+
     search_params : Dict
         Training parameters.
+
     architecture : Dict
         The architecture configuration of the model.
+
     hashed_architecture : str
         A hashed string representation of the architecture.
     """
@@ -107,7 +190,7 @@ class TabularEngine(EngineInterface):
         privacy_budget: float = 1.0,
         model_type: str = 'VAE',
         rules: Dict = {},
-        discarding_threshold: float = 0.9, 
+        cat_labels_threshold: float = 0.02,
         get_discarded_info: bool = False,
         excluded_col: List = [],
         time: str = None,
@@ -115,27 +198,8 @@ class TabularEngine(EngineInterface):
         n_bins: int = 0,
         scaling: Literal["none", "normalize", "standardize", "quantile"] = "none", 
         num_fill_null : Literal["interpolate","forward", "backward", "min", "max", "mean", "zero", "one"] = "mean",
-        cat_labels_threshold: float = 0.01,
         unseen_labels = 'ignore',
     ):
-        """
-        Initializes the TabularEngine.
-
-        Parameters
-        ----------
-        layers_size : Sequence[int]
-            The sizes of the hidden layers.
-        params : FrozenDict, optional
-            Model parameters. Defaults to None.
-        train_params : Dict, optional
-            Training parameters. Defaults to None.
-        privacy_budget : float, optional
-            The privacy budget. Defaults to 1.0.
-        model_type : str, optional
-            Type of model ('VAE' or 'Diffusion'). Defaults to 'VAE'.
-        rules : Dict, optional
-            Rules for embedding and transformations. Defaults to {}.
-        """
         self._enforce_cpu_if_no_gpu()
         
         self.model_type = model_type
@@ -160,7 +224,7 @@ class TabularEngine(EngineInterface):
 
         self.preprocessor = Preprocessor(
             X,
-            discarding_threshold,
+            cat_labels_threshold,
             get_discarded_info,
             excluded_col,
             time,
@@ -168,7 +232,6 @@ class TabularEngine(EngineInterface):
             n_bins,
             scaling,
             num_fill_null,
-            cat_labels_threshold,
             unseen_labels,
         ) 
         X_train = self.preprocessor.transform(X)
