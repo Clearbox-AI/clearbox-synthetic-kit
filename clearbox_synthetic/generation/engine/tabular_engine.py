@@ -196,7 +196,7 @@ class TabularEngine(EngineInterface):
         time: str = None,
         missing_values_threshold: float = 0.999,
         n_bins: int = 0,
-        scaling: Literal["none", "normalize", "standardize", "quantile"] = "none", 
+        scaling: Literal["none", "normalize", "standardize", "quantile"] = "quantile", 
         num_fill_null : Literal["interpolate","forward", "backward", "min", "max", "mean", "zero", "one"] = "mean",
         unseen_labels = 'ignore',
     ):
