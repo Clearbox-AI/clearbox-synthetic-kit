@@ -202,6 +202,17 @@ class TabularEngine(EngineInterface):
     ):
         self._enforce_cpu_if_no_gpu()
         
+        # Save all preprocessor arguments as class attributes
+        self.cat_labels_threshold = cat_labels_threshold
+        self.get_discarded_info = get_discarded_info
+        self.excluded_col = excluded_col
+        self.time = time
+        self.missing_values_threshold = missing_values_threshold
+        self.n_bins = n_bins
+        self.scaling = scaling
+        self.num_fill_null = num_fill_null
+        self.unseen_labels = unseen_labels
+        
         self.model_type = model_type
         self.rules = rules
         self.emb_rules = {}
@@ -224,15 +235,15 @@ class TabularEngine(EngineInterface):
 
         self.preprocessor = Preprocessor(
             X,
-            cat_labels_threshold,
-            get_discarded_info,
-            excluded_col,
-            time,
-            missing_values_threshold,
-            n_bins,
-            scaling,
-            num_fill_null,
-            unseen_labels,
+            self.cat_labels_threshold,
+            self.get_discarded_info,
+            self.excluded_col,
+            self.time,
+            self.missing_values_threshold,
+            self.n_bins,
+            self.scaling,
+            self.num_fill_null,
+            self.unseen_labels,
         ) 
         X_train = self.preprocessor.transform(X)
 
@@ -530,6 +541,74 @@ class TabularEngine(EngineInterface):
         encoded_samples = encoded_ds[idx]
         return encoded_samples, idx
 
+    def generate(self, x: np.ndarray, y: np.ndarray = None, n_samples: int = 100, noise: float = 0.0, random_state: int = 42) -> np.ndarray:
+        """
+        Generates synthetic data from the model.
+
+        Parameters
+        ----------
+        x : np.ndarray
+            The input data to condition the generation on. If None, random samples will be generated.
+        y : np.ndarray, optional
+            The target values to condition the generation on. Defaults to None.
+        n_samples : int, optional
+            The number of samples to generate. Defaults to 100.
+        noise : float, optional
+            The amount of noise to add to the latent space. Defaults to 0.0.
+        random_state : int, optional
+            The random seed for reproducibility. Defaults to 42.
+
+        Returns
+        -------
+        np.ndarray
+            The generated synthetic data.
+        """
+        rng = random.PRNGKey(random_state)
+        
+        if self.model_type == 'Diffusion':
+            # For diffusion model, we generate samples using the diffusion process
+            if x is None:
+                # Generate completely random samples if no conditioning data is provided
+                samples = self.diffusion_model.sample(n_samples, rng)
+            else:
+                # Use the VAE to encode the input data first
+                z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x, y, method=self.model.encode)
+                # Add noise to the latent representation if specified
+                if noise > 0:
+                    rng, noise_key = random.split(rng)
+                    z_noise = random.normal(noise_key, z_mean.shape) * noise
+                    z_mean = z_mean + z_noise
+                # Use the diffusion model to generate samples conditioned on the latent representation
+                samples = self.diffusion_model.sample(n_samples, rng, condition=z_mean)
+                
+            # Decode the samples back to the original space
+            return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
+        else:
+            # For VAE model, we use the standard VAE generation process
+            if x is None:
+                # Generate random latent vectors
+                rng, latent_key = random.split(rng)
+                latent_dim = self.architecture["layers_size"][-1]
+                z = random.normal(latent_key, (n_samples, latent_dim))
+            else:
+                # Encode the input data to get latent representations
+                z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x, y, method=self.model.encode)
+                
+                # Add noise to the latent space if specified
+                if noise > 0:
+                    rng, noise_key = random.split(rng)
+                    z_noise = random.normal(noise_key, z_mean.shape) * noise
+                    z_mean = z_mean + z_noise
+                
+                # Sample from the latent distribution
+                rng, sample_key = random.split(rng)
+                eps = random.normal(sample_key, z_mean.shape)
+                z = z_mean + eps * jax.nn.softplus(z_logvar) * 0.5
+            
+            # Decode the latent vectors to generate synthetic data
+            generated_data = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
+            return self.preprocessor.reverse_transform(generated_data)
+
     def save(self, architecture_filename: str, sd_filename: str):
         """
         Saves the model architecture and parameters to files.
@@ -547,37 +626,3 @@ class TabularEngine(EngineInterface):
             eqx.tree_serialise_leaves(f"{sd_filename}_diffusion.eqx", self.diffusion_model.model)
         with open(architecture_filename, "w") as f:
             json.dump(self.architecture, f)
-
-# if __name__=="__main__":
-#     import pandas as pd
-#     data = {"a": [1, 2, 3, 4, 5], 
-#             "b": [6, 7, 8, 9, 10], 
-#             "c":["s1", "s2", "s1", "s3", "s2"],
-#             "income": ["<=50K", "<=50K", ">50K", ">50K", "<=50K"]}
-#     df = pd.DataFrame(data)
-
-#     train_dataset = Dataset.from_dataframe(
-#         df,
-#         target_column="income",
-#         regression=False
-#     )
-
-#     X, Y = train_dataset.get_x_y()
-#     if Y is not None:
-#         y_shape=Y[0].shape  
-#     else:
-#         y_shape = [0]
-
-#     preprocessor = Preprocessor(
-#         X
-#     ) 
-#     X_train = preprocessor.transform(X)
-#     # print(X_train)
-#     # print(X_train.shape[1])
-#     # x_shape = X_train[0].shape  
-
-#     engine = TabularEngine(
-#     train_dataset,
-#     get_discarded_info=True,
-#     scaling = 'standardize',
-#     )
