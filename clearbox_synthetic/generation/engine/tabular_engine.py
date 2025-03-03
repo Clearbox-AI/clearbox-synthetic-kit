@@ -216,13 +216,6 @@ class TabularEngine(EngineInterface):
         self.model_type = model_type
         self.rules = rules
         self.emb_rules = {}
-
-        for w in [i for i in rules.keys() if 'embed_category' in rules[i][0]]:
-            self.emb_rules[w] = _process_categorical(X, rules[w][1], rules[w][2])
-            X = X.drop(w, axis=1)
-
-        for w in [i for i in rules.keys() if 'sum' in rules[i][0]]:
-            X = X.drop(w, axis=1)
             
         rng = random.PRNGKey(0)
         rng, key = random.split(rng)
@@ -232,6 +225,13 @@ class TabularEngine(EngineInterface):
             y_shape=Y[0].shape  
         else:
             y_shape = [0]
+
+        for w in [i for i in rules.keys() if 'embed_category' in rules[i][0]]:
+            self.emb_rules[w] = _process_categorical(X, rules[w][1], rules[w][2])
+            X = X.drop(w, axis=1)
+
+        for w in [i for i in rules.keys() if 'sum' in rules[i][0]]:
+            X = X.drop(w, axis=1)
 
         self.preprocessor = Preprocessor(
             X,
@@ -541,7 +541,13 @@ class TabularEngine(EngineInterface):
         encoded_samples = encoded_ds[idx]
         return encoded_samples, idx
 
-    def generate(self, x: np.ndarray, y: np.ndarray = None, n_samples: int = 100, noise: float = 0.0, random_state: int = 42) -> np.ndarray:
+    def generate(
+            self, 
+            dataset: Dataset,
+            n_samples: int = 100, 
+            noise: float = 0.0, 
+            random_state: int = 42
+        ) -> np.ndarray:
         """
         Generates synthetic data from the model.
 
@@ -565,31 +571,40 @@ class TabularEngine(EngineInterface):
         """
         rng = random.PRNGKey(random_state)
         
-        if self.model_type == 'Diffusion':
-            # For diffusion model, we generate samples using the diffusion process
-            if x is None:
-                # Generate completely random samples if no conditioning data is provided
+        if dataset is None:
+            # Generate completely random samples if no conditioning data is provided
+            if self.model_type == 'Diffusion':
                 samples = self.diffusion_model.sample(n_samples, rng)
+
+                # Decode the samples back to the original space
+                return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
             else:
+                # Generate random latent vectors
+                rng, latent_key = random.split(rng)
+                latent_dim = self.architecture["layers_size"][-1]
+                z = random.normal(latent_key, (n_samples, latent_dim))
+
+                # Decode the latent vectors to generate synthetic data
+                generated_data = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
+                return self.preprocessor.inverse_transform(generated_data)
+        else:
+            x, y = dataset.get_x_y()
+            x = self.preprocessor(x)
+            if self.model_type == 'Diffusion':
                 # Use the VAE to encode the input data first
                 z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x, y, method=self.model.encode)
+
                 # Add noise to the latent representation if specified
                 if noise > 0:
                     rng, noise_key = random.split(rng)
                     z_noise = random.normal(noise_key, z_mean.shape) * noise
                     z_mean = z_mean + z_noise
+
                 # Use the diffusion model to generate samples conditioned on the latent representation
                 samples = self.diffusion_model.sample(n_samples, rng, condition=z_mean)
-                
-            # Decode the samples back to the original space
-            return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
-        else:
-            # For VAE model, we use the standard VAE generation process
-            if x is None:
-                # Generate random latent vectors
-                rng, latent_key = random.split(rng)
-                latent_dim = self.architecture["layers_size"][-1]
-                z = random.normal(latent_key, (n_samples, latent_dim))
+
+                # Decode the samples back to the original space
+                return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
             else:
                 # Encode the input data to get latent representations
                 z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x, y, method=self.model.encode)
@@ -604,10 +619,54 @@ class TabularEngine(EngineInterface):
                 rng, sample_key = random.split(rng)
                 eps = random.normal(sample_key, z_mean.shape)
                 z = z_mean + eps * jax.nn.softplus(z_logvar) * 0.5
+
+                # Decode the latent vectors to generate synthetic data
+                generated_data = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
+                return self.preprocessor.inverse_transform(generated_data)
+
+        # if self.model_type == 'Diffusion':
+        #     # For diffusion model, we generate samples using the diffusion process
+        #     if x is None:
+        #         # Generate completely random samples if no conditioning data is provided
+        #         samples = self.diffusion_model.sample(n_samples, rng)
+        #     else:
+        #         # Use the VAE to encode the input data first
+        #         z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x, y, method=self.model.encode)
+        #         # Add noise to the latent representation if specified
+        #         if noise > 0:
+        #             rng, noise_key = random.split(rng)
+        #             z_noise = random.normal(noise_key, z_mean.shape) * noise
+        #             z_mean = z_mean + z_noise
+        #         # Use the diffusion model to generate samples conditioned on the latent representation
+        #         samples = self.diffusion_model.sample(n_samples, rng, condition=z_mean)
+                
+        #     # Decode the samples back to the original space
+        #     return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
+        # else:
+        #     # For VAE model, we use the standard VAE generation process
+        #     if x is None:
+        #         # Generate random latent vectors
+        #         rng, latent_key = random.split(rng)
+        #         latent_dim = self.architecture["layers_size"][-1]
+        #         z = random.normal(latent_key, (n_samples, latent_dim))
+        #     else:
+        #         # Encode the input data to get latent representations
+        #         z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x, y, method=self.model.encode)
+                
+        #         # Add noise to the latent space if specified
+        #         if noise > 0:
+        #             rng, noise_key = random.split(rng)
+        #             z_noise = random.normal(noise_key, z_mean.shape) * noise
+        #             z_mean = z_mean + z_noise
+                
+        #         # Sample from the latent distribution
+        #         rng, sample_key = random.split(rng)
+        #         eps = random.normal(sample_key, z_mean.shape)
+        #         z = z_mean + eps * jax.nn.softplus(z_logvar) * 0.5
             
-            # Decode the latent vectors to generate synthetic data
-            generated_data = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
-            return self.preprocessor.reverse_transform(generated_data)
+        #     # Decode the latent vectors to generate synthetic data
+        #     generated_data = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
+        #     return self.preprocessor.inverse_transform(generated_data)
 
     def save(self, architecture_filename: str, sd_filename: str):
         """
