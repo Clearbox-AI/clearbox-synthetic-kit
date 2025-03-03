@@ -2,6 +2,8 @@ import json
 import optax
 import numpy as np
 import equinox as eqx
+import pandas as pd
+from tqdm import tqdm
 from typing import Sequence, Tuple, Callable, Dict
 from jax import random
 from flax.core.frozen_dict import FrozenDict
@@ -358,3 +360,22 @@ class TimeSeriesEngine(EngineInterface):
         encoded_samples = encoded_ds[idx]
 
         return encoded_samples, idx
+    
+    def generate_series(self, N, prepro):
+        # Generate the synthetic time series by decoding the samples from a gaussian distribution
+        synth_data = self.decode(np.random.randn(N,self.architecture['layers_size'][0]))  # b.shape[1] dimensione dato da generare
+        #indeces = train_dataset.data[prepro.time_index].sample(N, replace = False).values
+        df =  prepro.reverse_transform(synth_data)
+        dfs = []
+        # Create a dataframe with the original schema
+        for i in tqdm(range(df.shape[0])):
+            x_i = df.iloc[i]
+            time_series = []
+            for feat_name in prepro.time_columns:
+                time_series.append(x_i[[j for j in df.columns if feat_name in j]].values)
+            df_i = pd.DataFrame(np.array(time_series).T)
+            df_i.columns = prepro.time_columns
+            
+            #df_i[prepro.time_index] = indeces[i]
+            dfs.append(df_i)
+        return pd.concat(dfs, axis= 0)    

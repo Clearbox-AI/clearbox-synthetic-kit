@@ -436,7 +436,7 @@ class Preprocessor:
                     column += w1[0] * x[w1[1]]
                 x[w] = column
         else:
-            cols = ['meantemp', 'humidity', 'wind_speed', 'meanpressure']
+            cols = self.time_columns
             out = []
             for j,i in enumerate(cols):
                 oi = pd.DataFrame(x[:,0+self.max_sequence_length*j:self.max_sequence_length*(j+1)]*self.time_std[j]+self.time_mean[j])

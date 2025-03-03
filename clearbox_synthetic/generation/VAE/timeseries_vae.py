@@ -48,9 +48,7 @@ class Encoder(nn.Module):
         x = x.reshape(-1, self.max_sequence_length, self.feature_sizes) 
         x = x + (np.arange(self.max_sequence_length) / self.max_sequence_length).reshape(1, self.max_sequence_length, 1)
         x = nn.LayerNorm()(x)        
-        print(x.shape)
         x = x + nn.MultiHeadDotProductAttention(num_heads=self.num_heads, qkv_features=int(x.shape[1]/self.num_heads))(x, x)
-        print(x.shape)
 
         x = x.reshape(-1, x.shape[-1] * x.shape[-2])
         x_res = x
