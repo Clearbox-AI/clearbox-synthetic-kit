@@ -590,7 +590,7 @@ class TabularEngine(EngineInterface):
                 return self.preprocessor.inverse_transform(generated_data)
         else:
             x, y = dataset.get_x_y()
-            x = self.preprocessor(x)
+            x = self.preprocessor.transform(x)
             if self.model_type == 'Diffusion':
                 # Use the VAE to encode the input data first
                 z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x, y, method=self.model.encode)
