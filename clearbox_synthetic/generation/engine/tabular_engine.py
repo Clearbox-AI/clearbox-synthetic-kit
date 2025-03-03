@@ -593,7 +593,7 @@ class TabularEngine(EngineInterface):
             x = self.preprocessor.transform(x)
             if self.model_type == 'Diffusion':
                 # Use the VAE to encode the input data first
-                z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x.to_numpy(), y.to_numpy(), method=self.model.encode)
+                z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
 
                 # Add noise to the latent representation if specified
                 if noise > 0:
@@ -605,10 +605,10 @@ class TabularEngine(EngineInterface):
                 samples = self.diffusion_model.sample(n_samples, rng, condition=z_mean)
 
                 # Decode the samples back to the original space
-                return self.model.apply({"params": self.params}, samples, y.to_numpy(), method=self.model.decode)
+                return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
             else:
                 # Encode the input data to get latent representations
-                z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x.to_numpy(), y.to_numpy(), method=self.model.encode)
+                z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
                 
                 # Add noise to the latent space if specified
                 if noise > 0:
@@ -622,7 +622,7 @@ class TabularEngine(EngineInterface):
                 z = z_mean + eps * jax.nn.softplus(z_logvar) * 0.5
 
                 # Decode the latent vectors to generate synthetic data
-                generated_data = self.model.apply({"params": self.params}, z, y.to_numpy(), method=self.model.decode)
+                generated_data = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
                 return self.preprocessor.inverse_transform(generated_data)
 
         # if self.model_type == 'Diffusion':
