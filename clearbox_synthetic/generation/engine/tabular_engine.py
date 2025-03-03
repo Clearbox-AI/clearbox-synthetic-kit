@@ -572,6 +572,7 @@ class TabularEngine(EngineInterface):
         rng = random.PRNGKey(random_state)
         
         if dataset is None:
+            y = None
             # Generate completely random samples if no conditioning data is provided
             if self.model_type == 'Diffusion':
                 samples = self.diffusion_model.sample(n_samples, rng)
