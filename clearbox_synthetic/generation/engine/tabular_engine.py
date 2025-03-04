@@ -593,7 +593,7 @@ class TabularEngine(EngineInterface):
             x = self.preprocessor.transform(x)
             if self.model_type == 'Diffusion':
                 # Use the VAE to encode the input data first
-                z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
+                z_mean, z_logvar = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
 
                 # Add noise to the latent representation if specified
                 if noise > 0:
@@ -608,7 +608,7 @@ class TabularEngine(EngineInterface):
                 return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
             else:
                 # Encode the input data to get latent representations
-                z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
+                z_mean, z_logvar = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
                 
                 # Add noise to the latent space if specified
                 if noise > 0:
@@ -686,3 +686,19 @@ class TabularEngine(EngineInterface):
             eqx.tree_serialise_leaves(f"{sd_filename}_diffusion.eqx", self.diffusion_model.model)
         with open(architecture_filename, "w") as f:
             json.dump(self.architecture, f)
+
+if __name__ == "__main__":
+    # Load the example datasets from GitHub
+
+    file_path = "https://raw.githubusercontent.com/Clearbox-AI/clearbox-synthetic-kit/main/tests/resources/uci_adult_dataset"
+
+    train_dataset = Dataset.from_csv(
+            os.path.join(file_path, "dataset.csv"),
+            target_column="income",
+        )
+    engine = TabularEngine(train_dataset)
+
+    # Start the training of the tabular synthetic data generator
+    engine.fit(train_dataset, epochs=5, learning_rate=0.001)
+    
+    engine.generate(train_dataset)
