@@ -541,6 +541,65 @@ class TabularEngine(EngineInterface):
         encoded_samples = encoded_ds[idx]
         return encoded_samples, idx
 
+    def _sample_vae(self, x, recon_x):
+            """
+            Sample data from a Variational Autoencoder (VAE) using the original and reconstructed data.
+
+            Args:
+                x (np.ndarray): Original input data.
+                recon_x (np.ndarray): Reconstructed data from the VAE.
+
+            Returns:
+                pd.DataFrame: The inverse-transformed synthetic data.
+            """
+            
+            preprocessed_x = self.preprocessor.transform(x).to_numpy()
+
+            n_numerical_features = (
+                self.preprocessor.get_features_sizes()[0][0] if self.preprocessor.get_features_sizes()[0] else 0
+            )
+            categorical_features_sizes = self.preprocessor.get_features_sizes()[1]
+
+            numerical_features_sampled = np.zeros((preprocessed_x.shape[0], n_numerical_features))
+            
+            for i in range(n_numerical_features):
+                if isinstance(preprocessed_x[:, i], scipy.sparse.csr_matrix):
+                    converted_input = preprocessed_x[:, i].toarray().reshape(1, -1)[0]
+                else:
+                    converted_input = preprocessed_x[:, i]
+
+                numerical_features_sampled[:, i] = (
+                    recon_x[:, i] + self.search_params["gauss_s"] * np.random.randn(recon_x.shape[0])
+                )
+
+            categorical_features_sampled = np.zeros(
+                (preprocessed_x.shape[0], preprocessed_x.shape[1] - n_numerical_features)
+            )
+            view_decoded = recon_x[:, n_numerical_features:]
+
+            for i in range(preprocessed_x.shape[0]):
+                w2 = 0  # index categorical label in preprocessed space
+                w3 = 0  # index categorical feature
+                features = preprocessed_x[i, n_numerical_features:] > 0
+                if isinstance(features, scipy.sparse.csr_matrix):
+                    features = features.toarray().reshape(1, -1)[0]
+
+                for w in categorical_features_sizes:
+                    if (features[w2:w2 + w]).sum() == 0:
+                        # Indicates a NaN or unknown value
+                        categorical_features_sampled[i, w3] = 0.0
+                    else:
+                        distribution = view_decoded[i, w2:w2 + w]
+                        distribution = np.asarray(distribution).astype("float64")
+                        distribution /= distribution.sum()
+                        pick = np.random.choice(w, p=distribution)
+                        categorical_features_sampled[i, w2 + pick] = 1.0
+                    w2 += w
+                    w3 += 1
+
+            e = np.hstack([numerical_features_sampled, categorical_features_sampled])
+            return e
+
     def generate(
             self, 
             dataset: Dataset,
@@ -608,66 +667,10 @@ class TabularEngine(EngineInterface):
                 return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
             else:
                 # Encode the input data to get latent representations
-                z_mean, z_logvar = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
-                
-                # Add noise to the latent space if specified
-                if noise > 0:
-                    rng, noise_key = random.split(rng)
-                    z_noise = random.normal(noise_key, z_mean.shape) * noise
-                    z_mean = z_mean + z_noise
-                
-                # Sample from the latent distribution
-                rng, sample_key = random.split(rng)
-                eps = random.normal(sample_key, z_mean.shape)
-                z = z_mean + eps * jax.nn.softplus(z_logvar) * 0.5
-
-                # Decode the latent vectors to generate synthetic data
-                generated_data = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
+                recon_x = engine.apply(engine.preprocessor.transform(train_dataset.data))[0]
+                generated_data = self._sample_vae(x, recon_x)
                 return self.preprocessor.inverse_transform(generated_data)
 
-        # if self.model_type == 'Diffusion':
-        #     # For diffusion model, we generate samples using the diffusion process
-        #     if x is None:
-        #         # Generate completely random samples if no conditioning data is provided
-        #         samples = self.diffusion_model.sample(n_samples, rng)
-        #     else:
-        #         # Use the VAE to encode the input data first
-        #         z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x, y, method=self.model.encode)
-        #         # Add noise to the latent representation if specified
-        #         if noise > 0:
-        #             rng, noise_key = random.split(rng)
-        #             z_noise = random.normal(noise_key, z_mean.shape) * noise
-        #             z_mean = z_mean + z_noise
-        #         # Use the diffusion model to generate samples conditioned on the latent representation
-        #         samples = self.diffusion_model.sample(n_samples, rng, condition=z_mean)
-                
-        #     # Decode the samples back to the original space
-        #     return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
-        # else:
-        #     # For VAE model, we use the standard VAE generation process
-        #     if x is None:
-        #         # Generate random latent vectors
-        #         rng, latent_key = random.split(rng)
-        #         latent_dim = self.architecture["layers_size"][-1]
-        #         z = random.normal(latent_key, (n_samples, latent_dim))
-        #     else:
-        #         # Encode the input data to get latent representations
-        #         z_mean, z_logvar, _ = self.model.apply({"params": self.params}, x, y, method=self.model.encode)
-                
-        #         # Add noise to the latent space if specified
-        #         if noise > 0:
-        #             rng, noise_key = random.split(rng)
-        #             z_noise = random.normal(noise_key, z_mean.shape) * noise
-        #             z_mean = z_mean + z_noise
-                
-        #         # Sample from the latent distribution
-        #         rng, sample_key = random.split(rng)
-        #         eps = random.normal(sample_key, z_mean.shape)
-        #         z = z_mean + eps * jax.nn.softplus(z_logvar) * 0.5
-            
-        #     # Decode the latent vectors to generate synthetic data
-        #     generated_data = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
-        #     return self.preprocessor.inverse_transform(generated_data)
 
     def save(self, architecture_filename: str, sd_filename: str):
         """
@@ -687,18 +690,3 @@ class TabularEngine(EngineInterface):
         with open(architecture_filename, "w") as f:
             json.dump(self.architecture, f)
 
-if __name__ == "__main__":
-    # Load the example datasets from GitHub
-
-    file_path = "https://raw.githubusercontent.com/Clearbox-AI/clearbox-synthetic-kit/main/tests/resources/uci_adult_dataset"
-
-    train_dataset = Dataset.from_csv(
-            os.path.join(file_path, "dataset.csv"),
-            target_column="income",
-        )
-    engine = TabularEngine(train_dataset)
-
-    # Start the training of the tabular synthetic data generator
-    engine.fit(train_dataset, epochs=5, learning_rate=0.001)
-    
-    engine.generate(train_dataset)
