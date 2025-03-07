@@ -3,6 +3,7 @@ import json
 import optax
 import numpy as np
 import pandas as pd
+import scipy
 import equinox as eqx
 from typing import Sequence, Callable, Dict, List, Tuple, Literal
 import jax
@@ -667,7 +668,7 @@ class TabularEngine(EngineInterface):
                 return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
             else:
                 # Encode the input data to get latent representations
-                recon_x = engine.apply(engine.preprocessor.transform(train_dataset.data))[0]
+                recon_x = self.apply(x)[0]
                 generated_data = self._sample_vae(x, recon_x)
                 return self.preprocessor.inverse_transform(generated_data)
 

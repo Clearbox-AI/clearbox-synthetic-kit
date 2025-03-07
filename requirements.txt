@@ -13,6 +13,7 @@ pytest
 pytest-cov
 pytest-lazy-fixture
 scikit-learn
+scipy
 cython
 xgboost
 optax
