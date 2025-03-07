@@ -669,11 +669,11 @@ class TabularEngine(EngineInterface):
             else:
                 # Encode the input data to get latent representations
                 if y is not None:
-                    recon_x = self.apply(x, y)[0]
+                    recon_x = self.apply(x.to_numpy(), y)[0]
                 else:
-                    recon_x = self.apply(x)[0]
+                    recon_x = self.apply(x.to_numpy())[0]
 
-                generated_data = self._sample_vae(x, recon_x)
+                generated_data = self._sample_vae(x.to_numpy(), recon_x)
                 return self.preprocessor.inverse_transform(generated_data)
 
 
