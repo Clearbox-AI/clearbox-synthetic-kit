@@ -554,34 +554,29 @@ class TabularEngine(EngineInterface):
                 pd.DataFrame: The inverse-transformed synthetic data.
             """
             
-            preprocessed_x = self.preprocessor.transform(x).to_numpy()
+            # preprocessed_x = self.preprocessor.transform(x).to_numpy()
 
             n_numerical_features = (
                 self.preprocessor.get_features_sizes()[0][0] if self.preprocessor.get_features_sizes()[0] else 0
             )
             categorical_features_sizes = self.preprocessor.get_features_sizes()[1]
 
-            numerical_features_sampled = np.zeros((preprocessed_x.shape[0], n_numerical_features))
+            numerical_features_sampled = np.zeros((x.shape[0], n_numerical_features))
             
             for i in range(n_numerical_features):
-                if isinstance(preprocessed_x[:, i], scipy.sparse.csr_matrix):
-                    converted_input = preprocessed_x[:, i].toarray().reshape(1, -1)[0]
-                else:
-                    converted_input = preprocessed_x[:, i]
-
                 numerical_features_sampled[:, i] = (
                     recon_x[:, i] + self.search_params["gauss_s"] * np.random.randn(recon_x.shape[0])
                 )
 
             categorical_features_sampled = np.zeros(
-                (preprocessed_x.shape[0], preprocessed_x.shape[1] - n_numerical_features)
+                (x.shape[0], x.shape[1] - n_numerical_features)
             )
             view_decoded = recon_x[:, n_numerical_features:]
 
-            for i in range(preprocessed_x.shape[0]):
+            for i in range(x.shape[0]):
                 w2 = 0  # index categorical label in preprocessed space
                 w3 = 0  # index categorical feature
-                features = preprocessed_x[i, n_numerical_features:] > 0
+                features = x[i, n_numerical_features:] > 0
                 if isinstance(features, scipy.sparse.csr_matrix):
                     features = features.toarray().reshape(1, -1)[0]
 
