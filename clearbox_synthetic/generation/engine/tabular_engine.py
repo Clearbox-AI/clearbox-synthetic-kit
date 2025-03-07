@@ -641,8 +641,8 @@ class TabularEngine(EngineInterface):
                 z = random.normal(latent_key, (n_samples, latent_dim))
 
                 # Decode the latent vectors to generate synthetic data
-                generated_data = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
-                return self.preprocessor.inverse_transform(generated_data)
+                generated_np = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
+                return self.preprocessor.inverse_transform(pd.DataFrame(generated_np))
         else:
             x, y = dataset.get_x_y()
             x = self.preprocessor.transform(x)
@@ -660,7 +660,8 @@ class TabularEngine(EngineInterface):
                 samples = self.diffusion_model.sample(n_samples, rng, condition=z_mean)
 
                 # Decode the samples back to the original space
-                return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
+                generated_np = self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
+                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
             else:
                 # Encode the input data to get latent representations
                 if y is not None:
@@ -668,9 +669,12 @@ class TabularEngine(EngineInterface):
                 else:
                     recon_x = self.apply(x.to_numpy())[0]
 
-                generated_data = self._sample_vae(x.to_numpy(), recon_x)
-                return self.preprocessor.inverse_transform(generated_data)
-
+                generated_np = self._sample_vae(x.to_numpy(), recon_x)
+                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
+                
+            # Add the target column on which the generation was conditioned
+            generated_df[dataset.target_column] = dataset.data[dataset.target_column]
+            return generated_df
 
     def save(self, architecture_filename: str, sd_filename: str):
         """
