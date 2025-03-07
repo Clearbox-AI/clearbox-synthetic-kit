@@ -668,7 +668,11 @@ class TabularEngine(EngineInterface):
                 return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
             else:
                 # Encode the input data to get latent representations
-                recon_x = self.apply(x)[0]
+                if y is not None:
+                    recon_x = self.apply(x, y)[0]
+                else:
+                    recon_x = self.apply(x)[0]
+
                 generated_data = self._sample_vae(x, recon_x)
                 return self.preprocessor.inverse_transform(generated_data)
 
