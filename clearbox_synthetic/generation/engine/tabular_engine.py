@@ -459,7 +459,7 @@ class TabularEngine(EngineInterface):
         self.params = state.params
 
         if self.model_type == 'Diffusion':
-            _, diff_train_data, _ = self.model.apply({"params": self.params}, train_ds, y_train_ds)
+            _, diff_train_data, _ = self.model.apply({"params": self.params}, train_ds.to_numpy(), y_train_ds)
             self.diffusion_model.fit(diff_train_data, 
                                      num_steps=epochs, 
                                      lr = learning_rate, 
@@ -671,7 +671,7 @@ class TabularEngine(EngineInterface):
 
                 generated_np = self._sample_vae(x.to_numpy(), recon_x)
                 generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
-                
+
             # Add the target column on which the generation was conditioned
             generated_df[dataset.target_column] = dataset.data[dataset.target_column]
             return generated_df
