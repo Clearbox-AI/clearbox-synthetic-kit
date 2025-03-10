@@ -13,7 +13,7 @@ import pandas as pd
 from loguru import logger
 
 from datetime import datetime
-from typing import List, Dict, Set, Tuple, Union, Optional, IO, Callable, Any, ClassVar
+from typing import List, Dict, Set, Tuple, Union, Optional, IO, Any, Literal
 from pydantic import BaseModel, field_validator, ConfigDict
 from pydantic_core.core_schema import ValidationInfo
 from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder, LabelEncoder
@@ -47,8 +47,8 @@ class Dataset(BaseModel):
         A dictionary of allowed values for each column except the target one.
         For an numeric column use 'column': {'max': max_value, 'min': min_value}.
         For a categorical column use 'column': {allowed_value+}.
-    regression : bool, default False
-            Indicates whether the dataset is used or not for a regression problem.
+    ml_task : str, default "classification"
+            Indicates whether the dataset is used or not for a classification or regression problem.
     """
 
     data: pd.DataFrame
@@ -59,7 +59,7 @@ class Dataset(BaseModel):
     group_by: Optional[Union[int, str]] = None
     column_types: Optional[Dict[str, str]] = None
     bounds: Optional[Dict] = None
-    regression: bool = False
+    ml_task: Literal["classification", "regression"] = "classification"
 
     model_config = ConfigDict(arbitrary_types_allowed=True, validate_assignment=True)
 
@@ -119,7 +119,7 @@ class Dataset(BaseModel):
                 raise ValueError("Column types must be defined for all columns.")
         return v
 
-    @field_validator("regression", mode="before")
+    @field_validator("ml_task", mode="before")
     def validate_regression(cls, v, info: ValidationInfo):
         return v or False
     
@@ -148,7 +148,7 @@ class Dataset(BaseModel):
         dayfirst: bool = False,
         thousands: str = None,
         decimal: str = ".",
-        regression: bool = False,
+        ml_task: Literal["classification", "regression"] = "classification",
         drop_target_na_rows: bool = True,
     ) -> "Dataset":
         """
@@ -241,8 +241,8 @@ class Dataset(BaseModel):
             Thousands separator.
         decimal : str, default ‘.’
             Character to recognize as decimal point (e.g. use ‘,’ for European data).
-        regression : bool, default False
-            Indicates whether the dataset is used or not for a regression problem.
+        ml_task : str, default "classification"
+            Indicates whether the dataset is used or not for a classification or regression problem.
         drop_target_na_rows : bool, default True
             If True and target_column is not None (Labeled Dataset), drop all rows containing na value in the target column
 
@@ -303,7 +303,7 @@ class Dataset(BaseModel):
             column_types=column_types,
             name=name,
             bounds=bounds,
-            regression=regression,
+            ml_task=ml_task,
         )
 
     @classmethod
@@ -317,7 +317,7 @@ class Dataset(BaseModel):
         column_types: Dict[str, str] = None,
         name: str = None,
         bounds: Dict = None,
-        regression: bool = False,
+        ml_task: Literal["classification", "regression"] = "classification",
         drop_target_na_rows: bool = True,
     ) -> "Dataset":
         """
@@ -353,7 +353,7 @@ class Dataset(BaseModel):
             column_types=column_types,
             name=name,
             bounds=bounds,
-            regression=regression,
+            ml_task=ml_task,
         )
 
     def to_csv(self, path: str):
@@ -393,7 +393,7 @@ class Dataset(BaseModel):
         )
 
         if self.target_column: 
-            if self.regression:
+            if self.ml_task=="regression":
                 Y = self.get_normalized_y()
             else:
                 Y = self.get_one_hot_encoded_y()
@@ -439,7 +439,7 @@ class Dataset(BaseModel):
         float
             The std of the target column (y) of the dataset.
         """
-        if self.regression is True:
+        if self.ml_task=="regression":
             std = self.data[self.target_column].values.std()
             if std >= 1e-3:
                 return std
@@ -457,7 +457,7 @@ class Dataset(BaseModel):
         float
             The mean of the target column (y) of the dataset.
         """
-        if self.regression is True:
+        if self.ml_task=="regression":
             return self.data[self.target_column].values.mean()
         else:
             return None
@@ -471,7 +471,7 @@ class Dataset(BaseModel):
         float
             The standardized target column (y)
         """
-        if self.regression is True:
+        if self.ml_task=="regression":
             y_mean = self.get_y_mean()
             y_std = self.get_y_std()
             return ((self.data[self.target_column].values - y_mean) / y_std).reshape(
@@ -491,7 +491,7 @@ class Dataset(BaseModel):
             The target column (y) of the dataset.
         """
         if self.target_column is not None:
-            if self.regression is True:
+            if self.ml_task=="regression":
                 return self.data[self.target_column]
             else:
                 y_encoder = LabelEncoder()
@@ -509,7 +509,7 @@ class Dataset(BaseModel):
             The one hot encoded target column (y) of the dataset.
         """
         if self.target_column is not None:
-            if self.regression is True:
+            if self.ml_task=="regression":
                 return self.data[self.target_column]
             else:
                 y_encoder = OneHotEncoder(handle_unknown="ignore")
@@ -530,7 +530,7 @@ class Dataset(BaseModel):
 
         """
         if self.target_column is not None:
-            if self.regression is True:
+            if self.ml_task=="regression":
                 return 1
             else:
                 return len(self.get_y().unique())
@@ -1251,7 +1251,7 @@ class Dataset(BaseModel):
                 sequence_index=self.sequence_index,
                 group_by=self.group_by,
                 column_types=self.column_types,
-                regression=self.regression,
+                ml_task=self.ml_task,
             ),
             Dataset(
                 data=test_set_df,
@@ -1262,7 +1262,7 @@ class Dataset(BaseModel):
                 sequence_index=self.sequence_index,
                 group_by=self.group_by,
                 column_types=self.column_types,
-                regression=self.regression,
+                ml_task=self.ml_task,
             ),
         )
     
