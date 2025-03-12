@@ -14,11 +14,11 @@ from flax.training import train_state
 from tqdm import tqdm, trange
 from loguru import logger
 
-import sys
 import os
 
 ####################
 # # UNCOMMENT FOR DEBUGGING
+import sys
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
 # preprocessor_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../preprocessor/clearbox-preprocessor"))
 # sys.path.append(preprocessor_path)
@@ -120,9 +120,6 @@ class TabularEngine(EngineInterface):
         A list of column names to be excluded from processing. These columns will be returned in the
         final DataFrame without being modified.
 
-    time : str, optional, default=None
-        The name of the time column to sort the DataFrame in case of time series data.
-
     scaling : str, default="none"
         The method used to scale numerical features:
 
@@ -194,7 +191,6 @@ class TabularEngine(EngineInterface):
         cat_labels_threshold: float = 0.02,
         get_discarded_info: bool = False,
         excluded_col: List = [],
-        time: str = None,
         missing_values_threshold: float = 0.999,
         n_bins: int = 0,
         scaling: Literal["none", "normalize", "standardize", "quantile"] = "quantile", 
@@ -205,9 +201,7 @@ class TabularEngine(EngineInterface):
         
         # Save all preprocessor arguments as class attributes
         self.cat_labels_threshold = cat_labels_threshold
-        self.get_discarded_info = get_discarded_info
         self.excluded_col = excluded_col
-        self.time = time
         self.missing_values_threshold = missing_values_threshold
         self.n_bins = n_bins
         self.scaling = scaling
@@ -236,15 +230,14 @@ class TabularEngine(EngineInterface):
 
         self.preprocessor = Preprocessor(
             X,
-            self.cat_labels_threshold,
-            self.get_discarded_info,
-            self.excluded_col,
-            self.time,
-            self.missing_values_threshold,
-            self.n_bins,
-            self.scaling,
-            self.num_fill_null,
-            self.unseen_labels,
+            cat_labels_threshold     = self.cat_labels_threshold,
+            get_discarded_info       = self.get_discarded_info,
+            excluded_col             = self.excluded_col,
+            missing_values_threshold = self.missing_values_threshold,
+            n_bins                   = self.n_bins,
+            scaling                  = self.scaling,
+            num_fill_null            = self.num_fill_null,
+            unseen_labels            = self.unseen_labels,
         ) 
         X_train = self.preprocessor.transform(X)
 
@@ -416,6 +409,7 @@ class TabularEngine(EngineInterface):
         train_ds = self.preprocessor.transform(X)
         
         train_loader = np.hstack([train_ds, y_train_ds]) if y_train_ds is not None else np.hstack([train_ds])
+
         metrics_train = None
         metrics_val = None
         type_training = 'Engine' if self.model_type == 'VAE' else 'Preprocessor'
@@ -455,8 +449,8 @@ class TabularEngine(EngineInterface):
                     break
 
         self.train_loss = metrics_train
-        self.val_loss = metrics_val
-        self.params = state.params
+        self.val_loss   = metrics_val
+        self.params     = state.params
 
         if self.model_type == 'Diffusion':
             _, diff_train_data, _ = self.model.apply({"params": self.params}, train_ds.to_numpy(), y_train_ds)
@@ -608,10 +602,8 @@ class TabularEngine(EngineInterface):
 
         Parameters
         ----------
-        x : np.ndarray
+        dataset : Dataset
             The input data to condition the generation on. If None, random samples will be generated.
-        y : np.ndarray, optional
-            The target values to condition the generation on. Defaults to None.
         n_samples : int, optional
             The number of samples to generate. Defaults to 100.
         noise : float, optional
