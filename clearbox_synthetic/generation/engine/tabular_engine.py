@@ -231,7 +231,6 @@ class TabularEngine(EngineInterface):
         self.preprocessor = Preprocessor(
             X,
             cat_labels_threshold     = self.cat_labels_threshold,
-            get_discarded_info       = self.get_discarded_info,
             excluded_col             = self.excluded_col,
             missing_values_threshold = self.missing_values_threshold,
             n_bins                   = self.n_bins,
