@@ -40,11 +40,6 @@ class Encoder(nn.Module):
         Returns:
             Tuple: Mean and log variance of the latent space distribution.
         """
-#         x = nn.Dense(
-#             self.max_sequence_length * self.feature_sizes,
-#             kernel_init=nn.initializers.xavier_uniform(),
-#             bias_init=nn.initializers.zeros,
-#         )(x)
         x = x.reshape(-1, self.max_sequence_length, self.feature_sizes) 
         x = x + (np.arange(self.max_sequence_length) / self.max_sequence_length).reshape(1, self.max_sequence_length, 1)
         x = nn.LayerNorm()(x)        
@@ -284,7 +279,6 @@ def train_step(hashed_architecture, state, batch, search_params):
         weight_penalty = search_params["l2_reg"] * 0.5 * weight_l2
         loss_kld = -0.5 * jnp.mean(1 + logvar - mean**2 - jnp.exp(logvar))
         return jnp.mean(loss_ordinal) + weight_penalty + search_params["alpha"] * loss_kld
-
     grads = jax.grad(loss_fn)(state.params)
     return state.apply_gradients(grads=grads)
 

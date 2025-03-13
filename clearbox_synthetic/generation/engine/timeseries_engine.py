@@ -53,7 +53,7 @@ class TimeSeriesEngine(EngineInterface):
         self,
         dataset: Dataset,
         time_id: str,
-        num_heads: Sequence[int] = 4,
+        # num_heads: Sequence[int] = 1,
         layers_size: Sequence[int] = [40],
         params: FrozenDict = None,
         train_params: Dict = None,
@@ -63,8 +63,8 @@ class TimeSeriesEngine(EngineInterface):
         excluded_col: List = [],
         missing_values_threshold: float = 0.999,
         n_bins: int = 0,
-        scaling: Literal["none", "normalize", "standardize", "quantile"] = "quantile", 
-        num_fill_null : Literal["interpolate","forward", "backward", "min", "max", "mean", "zero", "one"] = "mean",
+        scaling: Literal["none", "normalize", "standardize", "quantile"] = "normalize", 
+        num_fill_null : Literal["interpolate","forward", "backward", "min", "max", "mean", "zero", "one"] = "interpolate",
         unseen_labels = 'ignore',
     ):
         """
@@ -93,6 +93,8 @@ class TimeSeriesEngine(EngineInterface):
         privacy_budget : float, optional
             Privacy budget for the model. Defaults to 1.0.
         """
+        num_heads = 1
+
         # Save all preprocessor arguments as class attributes
         self.time_id = time_id
         self.cat_labels_threshold = cat_labels_threshold
@@ -133,7 +135,7 @@ class TimeSeriesEngine(EngineInterface):
         x_shape = X_train.to_numpy()[0].shape
         layers_size = [int(x_shape[0])]
 
-        feature_sizes,_ = self.preprocessor.get_features_sizes()
+        feature_sizes = self.preprocessor.get_features_sizes()[0][0]
 
         if train_params is None:
             train_params = {
@@ -459,5 +461,7 @@ if __name__ == "__main__":
     df['id'] =df['date'].apply(lambda x: ''.join(x.split('-')[0:2]))
     train_dataset = Dataset.from_dataframe(df)
 
-    engine = TimeSeriesEngine(train_dataset, time_id = "id")
+    engine = TimeSeriesEngine(train_dataset, time_id = "id", scaling="normalize")
+    engine.fit(train_dataset, epochs=1, batch_size=124, learning_rate=0.00001)
+    # synthetic_df = engine.generate(n_samples=100)
     a = 1
