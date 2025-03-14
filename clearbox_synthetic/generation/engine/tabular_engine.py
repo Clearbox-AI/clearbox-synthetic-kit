@@ -18,7 +18,7 @@ import os
 
 ####################
 # # UNCOMMENT FOR DEBUGGING
-import sys
+# import sys
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
 # preprocessor_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../preprocessor/clearbox-preprocessor"))
 # sys.path.append(preprocessor_path)
@@ -664,7 +664,8 @@ class TabularEngine(EngineInterface):
                 generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
 
             # Add the target column on which the generation was conditioned
-            generated_df[dataset.target_column] = dataset.data[dataset.target_column]
+            if dataset.target_column is not None:
+                generated_df[dataset.target_column] = dataset.data[dataset.target_column]
             return generated_df
 
     def save(self, architecture_filename: str, sd_filename: str):
@@ -685,3 +686,14 @@ class TabularEngine(EngineInterface):
         with open(architecture_filename, "w") as f:
             json.dump(self.architecture, f)
 
+if __name__ == "__main__":
+    import os
+    import pandas as pd
+    import numpy as np
+
+    df = pd.DataFrame()
+    train_dataset = Dataset.from_dataframe(df)
+
+    engine = TabularEngine(train_dataset, num_fill_null=-1, scaling="standardize")
+    engine.fit(train_dataset, epochs=5, learning_rate=0.001)
+    generated_df = engine.generate(train_dataset)
