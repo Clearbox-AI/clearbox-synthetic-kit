@@ -91,6 +91,9 @@ class TabularEngine(EngineInterface):
     train_params : Dict, optional, default=None
         Training parameters.
 
+    diffusion_params : Dict, optional, default=None
+        Diffusion model parameters.
+
     privacy_budget : float, optional, default=1.0
         The privacy budget. 
 
@@ -185,6 +188,7 @@ class TabularEngine(EngineInterface):
         layers_size: Sequence[int] = [50],
         params: FrozenDict = None,
         train_params: Dict = None,
+        diffusion_params: Dict = None,
         privacy_budget: float = 1.0,
         model_type: str = 'VAE',
         rules: Dict = {},
@@ -194,7 +198,7 @@ class TabularEngine(EngineInterface):
         missing_values_threshold: float = 0.999,
         n_bins: int = 0,
         scaling: Literal["none", "normalize", "standardize", "quantile"] = "quantile", 
-        num_fill_null : Literal["interpolate","forward", "backward", "min", "max", "mean", "zero", "one"] = "mean",
+        num_fill_null : Literal["interpolate","forward", "backward", "min", "max", "mean", "zero", "one"] = "none",
         unseen_labels = 'ignore',
     ):
         self._enforce_cpu_if_no_gpu()
@@ -246,6 +250,8 @@ class TabularEngine(EngineInterface):
 
         if model_type != 'VAE':
             layers_size = [int(x_shape[0])]
+        
+        # Default VAE parameters
         if train_params is None:
             if model_type == 'VAE':
                 beta = 0
@@ -261,12 +267,18 @@ class TabularEngine(EngineInterface):
                 "gauss_s_c": 0.1,
                 "weight_decay": 0.000,
                 "prob_clip": 0.99,
+            }
+        
+        # Default diffusion parameters
+        if diffusion_params is None and model_type == 'Diffusion':
+            diffusion_params = {
                 "hidden_size": 100,
                 "depth": 2,
                 "t1": 10.0,
-                "dt0": 0.1, 
+                "dt0": 0.1,
             }
-
+        
+        self.diffusion_params = diffusion_params
         self.privacy_budget = privacy_budget
         self.search_params = train_params
         self.model = TabularVAE(
@@ -280,11 +292,13 @@ class TabularEngine(EngineInterface):
         )
 
         if model_type == 'Diffusion':
-            self.diffusion_model = TabularDiffusion(seed=42, 
-                                                    hidden_size=train_params["hidden_size"], 
-                                                    depth=train_params["depth"],
-                                                    t1=train_params["t1"], 
-                                                    dt0=train_params["dt0"])
+            self.diffusion_model = TabularDiffusion(
+                seed=42, 
+                hidden_size=diffusion_params["hidden_size"], 
+                depth=diffusion_params["depth"],
+                t1=diffusion_params["t1"], 
+                dt0=diffusion_params["dt0"]
+            )
 
         x = random.uniform(key, [np.prod(x_shape)])
         y = random.uniform(key, [np.prod(y_shape)]) if y_shape != [0] else None
@@ -376,6 +390,9 @@ class TabularEngine(EngineInterface):
         val_ds: np.ndarray = None,
         y_val_ds: np.ndarray = None,
         patience: int = 4,
+        diffusion_epochs: int = None,
+        diffusion_batch_size: int = None,
+        diffusion_learning_rate: float = None,
     ):
         """
         Trains the model on the provided dataset.
@@ -385,17 +402,23 @@ class TabularEngine(EngineInterface):
         dataset : Dataset
             The training dataset.
         epochs : int, optional
-            The number of training epochs. Defaults to 20.
+            The number of training epochs for the VAE. Defaults to 20.
         batch_size : int, optional
-            The batch size for training. Defaults to 128.
+            The batch size for VAE training. Defaults to 128.
         learning_rate : float, optional
-            The learning rate for the optimizer. Defaults to 1e-2.
+            The learning rate for the VAE optimizer. Defaults to 1e-2.
         val_ds : np.ndarray, optional
             The validation dataset. Defaults to None.
         y_val_ds : np.ndarray, optional
             The target values for the validation dataset. Defaults to None.
         patience : int, optional
             The number of epochs to wait for improvement before stopping early. Defaults to 4.
+        diffusion_epochs : int, optional
+            The number of training epochs for the diffusion model. If None, uses the VAE epochs value.
+        diffusion_batch_size : int, optional
+            The batch size for diffusion model training. If None, uses the VAE batch_size value.
+        diffusion_learning_rate : float, optional
+            The learning rate for the diffusion model optimizer. If None, uses the VAE learning_rate value.
         """
         weight_decay = self.search_params["weight_decay"]
         state = train_state.TrainState.create(
@@ -452,11 +475,17 @@ class TabularEngine(EngineInterface):
         self.params     = state.params
 
         if self.model_type == 'Diffusion':
+            # Use diffusion-specific parameters if provided, otherwise fall back to VAE parameters
+            diff_epochs = diffusion_epochs if diffusion_epochs is not None else epochs
+            diff_batch_size = diffusion_batch_size if diffusion_batch_size is not None else batch_size
+            diff_learning_rate = diffusion_learning_rate if diffusion_learning_rate is not None else learning_rate
+            
+            print(f"Training diffusion model for {diff_epochs} epochs with batch size {diff_batch_size} and learning rate {diff_learning_rate}")
             _, diff_train_data, _ = self.model.apply({"params": self.params}, train_ds.to_numpy(), y_train_ds)
             self.diffusion_model.fit(diff_train_data, 
-                                     num_steps=epochs, 
-                                     lr = learning_rate, 
-                                     batch_size = batch_size)
+                                     num_steps=diff_epochs, 
+                                     lr=diff_learning_rate, 
+                                     batch_size=diff_batch_size)
 
     def evaluate(self, test_ds: np.ndarray, y_test_ds: np.ndarray = None) -> Dict:
         """
@@ -639,7 +668,7 @@ class TabularEngine(EngineInterface):
             x = self.preprocessor.transform(x)
             if self.model_type == 'Diffusion':
                 # Use the VAE to encode the input data first
-                z_mean, z_logvar = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
+                z_mean, _ = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
 
                 # Add noise to the latent representation if specified
                 if noise > 0:
@@ -686,14 +715,3 @@ class TabularEngine(EngineInterface):
         with open(architecture_filename, "w") as f:
             json.dump(self.architecture, f)
 
-if __name__ == "__main__":
-    import os
-    import pandas as pd
-    import numpy as np
-
-    df = pd.DataFrame()
-    train_dataset = Dataset.from_dataframe(df)
-
-    engine = TabularEngine(train_dataset, num_fill_null=-1, scaling="standardize")
-    engine.fit(train_dataset, epochs=5, learning_rate=0.001)
-    generated_df = engine.generate(train_dataset)

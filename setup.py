@@ -18,6 +18,7 @@ with open("requirements.txt") as f:
 EXCLUDE_FILES = [
     "clearbox_synthetic/utils/dataset/dataset.py",
     "clearbox_synthetic/generation/VAE/tabular_vae.py",
+    "clearbox_synthetic/generation/VAE/tabular_diffusion.py",
 ]
 
 def get_extensions_paths(root_dir, exclude_files):
@@ -89,7 +90,10 @@ class CustomBuild(build_ext):
             Path("clearbox_synthetic/utils/preprocessor") / "__init__.py",
             Path("clearbox_synthetic/utils/transformers") / "__init__.py",
             Path("clearbox_synthetic/generation/VAE") / "__init__.py",
+            Path("clearbox_synthetic/generation/diffusion") / "__init__.py",
+            Path("clearbox_synthetic/generation/timeseries") / "__init__.py",
             Path("clearbox_synthetic/generation/VAE") / "tabular_vae.py",
+            Path("clearbox_synthetic/generation/diffusion") / "tabular_diffusion.py",
             Path("clearbox_synthetic/generation/VAE") / "timeseries_vae.py",
             Path("clearbox_synthetic/generation/engine") / "__init__.py",
             Path("clearbox_synthetic/utils/autoconfig") / "__init__.py",

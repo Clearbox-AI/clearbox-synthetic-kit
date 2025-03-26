@@ -9,7 +9,7 @@ from clearbox_synthetic.utils import Dataset
 def ames_dataset() -> Dataset:
     return Dataset.from_csv(
         "tests/resources/ames_dataset/dataset.csv",
-        regression=True,
+        ml_task="regression",
         target_column="SalePrice",
     )
 
@@ -20,7 +20,7 @@ def ames_dataset() -> Dataset:
 def ames_synthetic_dataset() -> Dataset:
     return Dataset.from_csv(
         "tests/resources/ames_dataset/synthetic_dataset.csv",
-        regression=True,
+        ml_task="regression",
         target_column="SalePrice",
     )
 
@@ -31,7 +31,7 @@ def ames_synthetic_dataset() -> Dataset:
 def auto_imports_dataset() -> Dataset:
     return Dataset.from_csv(
         "tests/resources/auto_imports_dataset/dataset.csv",
-        regression=True,
+        ml_task="regression",
         target_column="price",
     )
 
@@ -42,7 +42,7 @@ def auto_imports_dataset() -> Dataset:
 def auto_imports_synthetic_dataset() -> Dataset:
     return Dataset.from_csv(
         "tests/resources/auto_imports_dataset/synthetic_dataset.csv",
-        regression=True,
+        ml_task="regression",
         target_column="price",
     )
 
@@ -53,7 +53,7 @@ def auto_imports_synthetic_dataset() -> Dataset:
 def auto_imports_validation() -> Dataset:
     return Dataset.from_csv(
         "tests/resources/auto_imports_dataset/validation.csv",
-        regression=True,
+        ml_task="regression",
         target_column="price",
     )
 
@@ -65,7 +65,7 @@ def auto_imports_validation() -> Dataset:
 def boston_housing_dataset() -> Dataset:
     return Dataset.from_csv(
         "tests/resources/boston_housing_dataset/dataset.csv",
-        regression=True,
+        ml_task="regression",
         target_column="PRICE",
     )
 
@@ -76,7 +76,7 @@ def boston_housing_dataset() -> Dataset:
 def boston_housing_synthetic_dataset() -> Dataset:
     return Dataset.from_csv(
         "tests/resources/boston_housing_dataset/synthetic_dataset.csv",
-        regression=True,
+        ml_task="regression",
         target_column="PRICE",
     )
 
