@@ -10,7 +10,6 @@ import numpy as np
 from functools import partial
 from flax import linen as nn
 from typing import Sequence, Tuple, Dict
-from .vae import VAEInterface
 
 
 class Encoder(nn.Module):
@@ -308,6 +307,7 @@ def eval(hashed_architecture, model, eval_ds, search_params, n_samples=1000):
         eval_ds = eval_ds[points, :]
     else:
         eval_ds = eval_ds[points, :]
+        
     VAE = TimeSeriesVAE(
         encoder_widths=architecture["layers_size"],
         decoder_widths=architecture["layers_size"][::-1],
