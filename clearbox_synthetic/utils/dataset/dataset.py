@@ -10,6 +10,7 @@ import pickle
 from jax.numpy import ndarray
 
 import pandas as pd
+import numpy as np
 from loguru import logger
 
 from datetime import datetime
@@ -401,7 +402,7 @@ class Dataset(BaseModel):
             Y = None
         
         if isinstance(n_samples, int):
-            return X.iloc[:n_samples,:], Y.iloc[:n_samples,:] if Y is not None else None
+            return X.iloc[:n_samples,:], Y[:n_samples,:] if Y is not None else None
         else:
             return X, Y
 

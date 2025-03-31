@@ -105,3 +105,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Debugging file
+clearbox_synthetic/debug.py

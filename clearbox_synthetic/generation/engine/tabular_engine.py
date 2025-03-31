@@ -632,7 +632,7 @@ class TabularEngine(EngineInterface):
             y = None
             # Generate completely random samples if no conditioning data is provided
             if self.model_type == 'Diffusion':
-                samples = self.diffusion_model.sample(n_samples, rng)
+                samples = self.diffusion_model.sample(n_samples)
 
                 # Decode the samples back to the original space
                 return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
@@ -654,7 +654,7 @@ class TabularEngine(EngineInterface):
 
                 # Decode the samples back to the original space
                 generated_np = self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
-                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
+                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np, columns=x.columns))
             else:
                 # Encode the input data to get latent representations
                 if y is not None:
@@ -663,7 +663,7 @@ class TabularEngine(EngineInterface):
                     recon_x = self.apply(x.to_numpy())[0]
 
                 generated_np = self._sample_vae(x.to_numpy(), recon_x)
-                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
+                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np, columns=x.columns))
 
             # Add the target column on which the generation was conditioned
             if dataset.target_column is not None:
