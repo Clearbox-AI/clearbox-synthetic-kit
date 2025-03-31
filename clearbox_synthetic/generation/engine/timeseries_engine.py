@@ -1,10 +1,9 @@
 import json
 import optax
 import numpy as np
-import equinox as eqx
 import pandas as pd
 from tqdm import tqdm
-from typing import Sequence, Tuple, Callable, Dict, Literal, List
+from typing import Sequence, Tuple, Dict
 from jax import random
 from flax.core.frozen_dict import FrozenDict
 from flax import serialization
@@ -12,22 +11,12 @@ from flax.training import train_state
 from tqdm import trange
 from loguru import logger
 
-# from ..VAE.timeseries_vae import TimeSeriesVAE, train_step, eval
-# from .engine import EngineInterface
-# from ...utils import Dataset
-# from clearbox_preprocessor import Preprocessor
-
-####################
-# # UNCOMMENT FOR DEBUGGING
-import sys
-import os
-
 from clearbox_preprocessor import Preprocessor
 
 from clearbox_synthetic.utils import Dataset
 from clearbox_synthetic.generation.engine.engine import EngineInterface
 from clearbox_synthetic.generation.VAE.timeseries_vae import TimeSeriesVAE, train_step, eval
-####################
+
 class TimeSeriesEngine(EngineInterface):
     """
     Manages training and evaluation of a time series model using a Variational Autoencoder (VAE). 
