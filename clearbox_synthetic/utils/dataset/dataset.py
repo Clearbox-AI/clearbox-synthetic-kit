@@ -383,7 +383,7 @@ class Dataset(BaseModel):
             [column for column in self.columns() if column != self.target_column]
         )
 
-    def get_x_y(self):
+    def get_x_y(self, n_samples=None):
         """
         Return all column of the dataset except the target column (y) and the target column separately
 
@@ -400,7 +400,10 @@ class Dataset(BaseModel):
         else:
             Y = None
         
-        return X, Y
+        if isinstance(n_samples, int):
+            return X.iloc[:n_samples,:], Y.iloc[:n_samples,:] if Y is not None else None
+        else:
+            return X, Y
 
     def get_group_by(self) -> pd.Series:
         """

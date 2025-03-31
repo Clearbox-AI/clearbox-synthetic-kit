@@ -664,7 +664,7 @@ class TabularEngine(EngineInterface):
                 generated_np = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
                 return self.preprocessor.inverse_transform(pd.DataFrame(generated_np))
         else:
-            x, y = dataset.get_x_y()
+            x, y = dataset.get_x_y(n_samples)
             x = self.preprocessor.transform(x)
             if self.model_type == 'Diffusion':
                 # Use the VAE to encode the input data first
