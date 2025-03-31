@@ -649,17 +649,8 @@ class TabularEngine(EngineInterface):
             x, y = dataset.get_x_y(n_samples)
             x = self.preprocessor.transform(x)
             if self.model_type == 'Diffusion':
-                # Use the VAE to encode the input data first
-                z_mean, _ = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
-
-                # Add noise to the latent representation if specified
-                if noise > 0:
-                    rng, noise_key = random.split(rng)
-                    z_noise = random.normal(noise_key, z_mean.shape) * noise
-                    z_mean = z_mean + z_noise
-
                 # Use the diffusion model to generate samples conditioned on the latent representation
-                samples = self.diffusion_model.sample(n_samples, rng, condition=z_mean)
+                samples = self.diffusion_model.sample(n_samples)
 
                 # Decode the samples back to the original space
                 generated_np = self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
