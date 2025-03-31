@@ -10,7 +10,7 @@ import numpy as np
 from functools import partial
 from flax import linen as nn
 from typing import Sequence, Tuple, Dict
-
+from .vae import VAEInterface
 
 class Encoder(nn.Module):
     """
