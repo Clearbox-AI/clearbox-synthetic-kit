@@ -602,7 +602,7 @@ class TabularEngine(EngineInterface):
 
     def generate(
             self, 
-            dataset: Dataset,
+            dataset: Dataset= None,
             n_samples: int = 100, 
             noise: float = 0.0, 
             random_state: int = 42
@@ -654,6 +654,14 @@ class TabularEngine(EngineInterface):
 
                 # Decode the samples back to the original space
                 generated_np = self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
+                
+                # Round encoded columns to 0/1 before inverse_transform
+                import jax.numpy as jnp
+                cols_to_round_ind = jnp.array([any(s2.startswith(s1) for s1 in self.preprocessor.categorical_features) for s2 in x.columns]).astype(jnp.float32)
+                rounded_data = jnp.round(generated_np)
+                mask_broadcast = cols_to_round_ind[None, :]
+                generated_np = mask_broadcast * rounded_data + (1 - mask_broadcast) * generated_np
+
                 generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np, columns=x.columns))
             else:
                 # Encode the input data to get latent representations
