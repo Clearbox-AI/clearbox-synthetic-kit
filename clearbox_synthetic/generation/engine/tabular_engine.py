@@ -656,20 +656,21 @@ class TabularEngine(EngineInterface):
             x, y = dataset.get_x_y()
             x = self.preprocessor.transform(x)
             if self.model_type == 'Diffusion':
+                # Use the VAE to encode the input data first
+                z_mean, _ = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
+
+                # Add noise to the latent representation if specified
+                if noise > 0:
+                    rng, noise_key = random.split(rng)
+                    z_noise = random.normal(noise_key, z_mean.shape) * noise
+                    z_mean = z_mean + z_noise
+
                 # Use the diffusion model to generate samples conditioned on the latent representation
-                samples = self.diffusion_model.sample(n_samples)
+                samples = self.diffusion_model.sample(n_samples, rng, condition=z_mean)
 
                 # Decode the samples back to the original space
                 generated_np = self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
-                
-                # Round encoded columns to 0/1 before inverse_transform
-                import jax.numpy as jnp
-                cols_to_round_ind = jnp.array([any(s2.startswith(s1) for s1 in self.preprocessor.categorical_features) for s2 in x.columns]).astype(jnp.float32)
-                rounded_data = jnp.round(generated_np)
-                mask_broadcast = cols_to_round_ind[None, :]
-                generated_np = mask_broadcast * rounded_data + (1 - mask_broadcast) * generated_np
-
-                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np, columns=x.columns))
+                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
             else:
                 # Encode the input data to get latent representations
                 if y is not None:
@@ -684,7 +685,7 @@ class TabularEngine(EngineInterface):
                     recon_x = self.model.apply({"params": self.params}, z_noise, method=self.model.decode)
                     
                 generated_np = self._sample_vae(x.to_numpy(), recon_x)
-                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np, columns=x.columns))
+                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
 
             # Add the target column on which the generation was conditioned
             if dataset.target_column is not None:
