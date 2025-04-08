@@ -666,7 +666,7 @@ class TabularEngine(EngineInterface):
                     z_mean = z_mean + z_noise
 
                 # Use the diffusion model to generate samples conditioned on the latent representation
-                samples = self.diffusion_model.sample(n_samples, rng, condition=z_mean)
+                samples = self.diffusion_model.sample(dataset.data.shape[0])
 
                 # Decode the samples back to the original space
                 generated_np = self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
