@@ -620,8 +620,8 @@ class TabularEngine(EngineInterface):
 
     def generate(
             self, 
-            dataset: Dataset,
-            n_samples: int = 100, 
+            dataset: Dataset = None,
+            n_samples: int = 0, 
             noise: float = 0.0, 
             random_state: int = 42
         ) -> np.ndarray:
@@ -647,23 +647,30 @@ class TabularEngine(EngineInterface):
         rng = random.PRNGKey(random_state)
         
         if dataset is None:
-            y = None
-            # Generate completely random samples if no conditioning data is provided
-            if self.model_type == 'Diffusion':
-                samples = self.diffusion_model.sample(n_samples, rng)
+            if n_samples == 0:
+                n_samples = 100
+            l= [self.preprocessor.categorical_transformer.original_encoded_columns[i] for i in self.preprocessor.categorical_transformer.original_encoded_columns.keys()]
+            cat_cols = [item for sublist in l for item in sublist]
+            columns = list(self.preprocessor.numerical_transformer.numerical_features) + cat_cols
+            if self.preprocessor.ml_task is not None:
+                print("Generation without source data is not supported for annotated datasets")
+                return
 
-                # Decode the samples back to the original space
-                return self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
+            if self.model_type == 'Diffusion':
+                samples = self.diffusion_model.sample(n_samples)
+                recon_x = self.model.apply({"params": self.params}, samples, method=self.model.decode)
             else:
                 # Generate random latent vectors
                 rng, latent_key = random.split(rng)
                 latent_dim = self.architecture["layers_size"][-1]
                 z = random.normal(latent_key, (n_samples, latent_dim))
+                recon_x = self.model.apply({"params": self.params}, z, method=self.model.decode)
 
-                # Decode the latent vectors to generate synthetic data
-                generated_np = self.model.apply({"params": self.params}, z, y, method=self.model.decode)
-                return self.preprocessor.inverse_transform(pd.DataFrame(generated_np))
+            generated_np = self._sample_vae(recon_x, recon_x)
+            return self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=columns))
         else:
+            if n_samples >0:   
+                dataset.data = dataset.data.sample(n_samples, replace=True)  
             x, y = dataset.get_x_y()
             x = self.preprocessor.transform(x)
             if self.model_type == 'Diffusion':
@@ -685,10 +692,16 @@ class TabularEngine(EngineInterface):
             else:
                 # Encode the input data to get latent representations
                 if y is not None:
-                    recon_x = self.apply(x.to_numpy(), y)[0]
+                    rng, noise_key = random.split(rng)
+                    z_noise = random.normal(noise_key, (x.shape[0], self.architecture["layers_size"][-1])) * noise
+                    z_noise = self.apply(x.to_numpy(), y)[1] + z_noise
+                    recon_x = self.model.apply({"params": self.params}, z_noise, y, method=self.model.decode)
                 else:
-                    recon_x = self.apply(x.to_numpy())[0]
-
+                    rng, noise_key = random.split(rng)
+                    z_noise = random.normal(noise_key, (x.shape[0], self.architecture["layers_size"][-1])) * noise
+                    z_noise = self.apply(x.to_numpy())[1] + z_noise
+                    recon_x = self.model.apply({"params": self.params}, z_noise, method=self.model.decode)
+                    
                 generated_np = self._sample_vae(x.to_numpy(), recon_x)
                 generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
 
