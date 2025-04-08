@@ -1,34 +1,16 @@
-import os
 import json
 import optax
 import numpy as np
 import pandas as pd
 import scipy
 import equinox as eqx
-from typing import Sequence, Callable, Dict, List, Tuple, Literal
-import jax
+from typing import Sequence, Dict, List, Tuple, Literal
 from jax import random
 from flax.core.frozen_dict import FrozenDict
 from flax import serialization
 from flax.training import train_state
 from tqdm import tqdm, trange
 from loguru import logger
-
-import os
-
-####################
-# # UNCOMMENT FOR DEBUGGING
-# import sys
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
-# preprocessor_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../preprocessor/clearbox-preprocessor"))
-# sys.path.append(preprocessor_path)
-# from clearbox_preprocessor import Preprocessor
-
-# from clearbox_synthetic.utils import Dataset
-# from clearbox_synthetic.generation.VAE.tabular_vae import TabularVAE, train_step, eval
-# from clearbox_synthetic.generation.diffusion.tabular_diffusion import TabularDiffusion
-# from clearbox_synthetic.generation.engine.engine import EngineInterface
-####################
 
 from clearbox_preprocessor import Preprocessor
 from ...utils import Dataset
@@ -674,21 +656,20 @@ class TabularEngine(EngineInterface):
             x, y = dataset.get_x_y()
             x = self.preprocessor.transform(x)
             if self.model_type == 'Diffusion':
-                # Use the VAE to encode the input data first
-                z_mean, _ = self.model.apply({"params": self.params}, x.to_numpy(), y, method=self.model.encode)
-
-                # Add noise to the latent representation if specified
-                if noise > 0:
-                    rng, noise_key = random.split(rng)
-                    z_noise = random.normal(noise_key, z_mean.shape) * noise
-                    z_mean = z_mean + z_noise
-
                 # Use the diffusion model to generate samples conditioned on the latent representation
-                samples = self.diffusion_model.sample(n_samples, rng, condition=z_mean)
+                samples = self.diffusion_model.sample(n_samples)
 
                 # Decode the samples back to the original space
                 generated_np = self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
-                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
+                
+                # Round encoded columns to 0/1 before inverse_transform
+                import jax.numpy as jnp
+                cols_to_round_ind = jnp.array([any(s2.startswith(s1) for s1 in self.preprocessor.categorical_features) for s2 in x.columns]).astype(jnp.float32)
+                rounded_data = jnp.round(generated_np)
+                mask_broadcast = cols_to_round_ind[None, :]
+                generated_np = mask_broadcast * rounded_data + (1 - mask_broadcast) * generated_np
+
+                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np, columns=x.columns))
             else:
                 # Encode the input data to get latent representations
                 if y is not None:
@@ -703,7 +684,7 @@ class TabularEngine(EngineInterface):
                     recon_x = self.model.apply({"params": self.params}, z_noise, method=self.model.decode)
                     
                 generated_np = self._sample_vae(x.to_numpy(), recon_x)
-                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
+                generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np, columns=x.columns))
 
             # Add the target column on which the generation was conditioned
             if dataset.target_column is not None:
