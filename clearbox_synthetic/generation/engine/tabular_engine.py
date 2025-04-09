@@ -689,7 +689,7 @@ class TabularEngine(EngineInterface):
 
             # Add the target column on which the generation was conditioned
             if dataset.target_column is not None:
-                generated_df[dataset.target_column] = dataset.data[dataset.target_column]
+                generated_df[dataset.target_column] = dataset.data[dataset.target_column].values
             return generated_df
 
     def save(self, architecture_filename: str, sd_filename: str):
