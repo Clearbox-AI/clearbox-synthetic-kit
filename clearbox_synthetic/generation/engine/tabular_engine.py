@@ -93,18 +93,6 @@ class TabularEngine(EngineInterface):
 
         For instance, if ``cat_labels_threshold=0.02`` and a label appears less than 2% in the dataset, that label will be converted to `"other"`.
 
-    get_discarded_info : bool, optional, default=False
-        If set to ``True``, the preprocessor will feature the method ``get_discarded_features_reason``,
-        which provides information on which columns were discarded and the reason for discarding.
-        Note that enabling this option may significantly slow down the processing operation.
-        The list of discarded columns is available even when `get_discarded_info=False`, so consider
-        setting this flag to ``True`` only if you need to know why a column was discarded or, in the case
-        of columns containing only one unique value, what that value was.
-
-    excluded_col : List, optional, default=[]
-        A list of column names to be excluded from processing. These columns will be returned in the
-        final DataFrame without being modified.
-
     scaling : str, default="none"
         The method used to scale numerical features:
 
@@ -175,8 +163,6 @@ class TabularEngine(EngineInterface):
         model_type: str = 'VAE',
         rules: Dict = {},
         cat_labels_threshold: float = 0.02,
-        get_discarded_info: bool = False,
-        excluded_col: List = [],
         missing_values_threshold: float = 0.999,
         n_bins: int = 0,
         scaling: Literal["none", "normalize", "standardize", "quantile"] = "quantile", 
@@ -187,7 +173,6 @@ class TabularEngine(EngineInterface):
         
         # Save all preprocessor arguments as class attributes
         self.cat_labels_threshold = cat_labels_threshold
-        self.excluded_col = excluded_col
         self.missing_values_threshold = missing_values_threshold
         self.n_bins = n_bins
         self.scaling = scaling
@@ -217,7 +202,6 @@ class TabularEngine(EngineInterface):
         self.preprocessor = Preprocessor(
             X,
             cat_labels_threshold     = self.cat_labels_threshold,
-            excluded_col             = self.excluded_col,
             missing_values_threshold = self.missing_values_threshold,
             n_bins                   = self.n_bins,
             scaling                  = self.scaling,

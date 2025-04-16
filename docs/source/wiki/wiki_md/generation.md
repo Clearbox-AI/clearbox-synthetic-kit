@@ -23,14 +23,9 @@ Both Engines handle model initialization and training, evaluation, inference, an
 They implement hyperparameter tuning and early stopping to optimize model performance and provide reconstruction and encoding functions for downstream machine learning tasks.\
 They also allows latent space sampling to explore variations in the data before jumping to data synthesis.
 
-The `train()` method starts the training of the generative model selected on tabular data, applying an optimizer and updating model parameters. The method supports early stopping and progress tracking.
+The `fit()` method starts the training of the generative model selected on tabular data, applying an optimizer and updating model parameters. The method supports early stopping and progress tracking.
 
-#### 2. LabeledSynthesizer and UnlabeledSynthesizer
+After the training, the engine classes can generate brand-new synthetic data with the `generate()` method, which applies shuffling techniques and reconstruction-based sampling to create realistic synthetic samples while maintaining the statistical properties of the original dataset.
 
-The Synthesizer classes are dedicated to generate brand-new synthetic data by leveraging a trained `TabularEngine` or `TimeSeriesEngine`.\
-The `LabeledSynthesizer` is specialized in generating labeld data, while the `UnlabeledSynthesizer` generates synthetic data without labels.
-
-They apply shuffling techniques and reconstruction-based sampling to create realistic synthetic samples while maintaining the statistical properties of the original dataset.
-
-They include privacy-aware data synthesis to prevent data leakage. In fact, it is possible to add a controlled amount of noise to the latent space representation before sampling new data.\
+It includes privacy-aware data synthesis to prevent data leakage. In fact, it is possible to add a controlled amount of noise to the latent space representation before sampling new data.\
 This enables an iterative process between data generation and the evaluation of the privacy performance of synthetic data, ensuring that the privacy level meets the desired constraints.
