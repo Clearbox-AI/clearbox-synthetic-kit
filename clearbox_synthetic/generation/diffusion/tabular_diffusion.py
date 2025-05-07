@@ -1,8 +1,19 @@
 """
-
 This module implements a denoising diffusion model using JAX, Equinox, and Flax libraries.
 It includes an MLP-based denoising model and a TabularDiffusion class for training and sampling
 from the diffusion model.
+
+This implementation is based on the score-based diffusion example from Equinox:
+https://docs.kidger.site/equinox/examples/score_based_diffusion/
+
+Reference:
+@inproceedings{song2021scorebased,
+    title={Score-Based Generative Modeling through Stochastic Differential Equations},
+    author={Yang Song and Jascha Sohl-Dickstein and Diederik P Kingma and
+            Abhishek Kumar and Stefano Ermon and Ben Poole},
+    booktitle={International Conference on Learning Representations},
+    year={2021},
+}
 """
 
 import json
@@ -26,6 +37,9 @@ from loguru import logger
 
 class MLPDenoising(eqx.Module):
     """A Multilayer Perceptron (MLP) model for denoising in the diffusion framework.
+    
+    Based on the implementation from Equinox's score-based diffusion example:
+    https://docs.kidger.site/equinox/examples/score_based_diffusion/
 
     Attributes:
         mlp (eqx.nn.MLP): The MLP model for denoising.
@@ -82,6 +96,9 @@ class MLPDenoising(eqx.Module):
 
 class TabularDiffusion(DiffusionInterface):
     """A class for training and sampling from a diffusion model on tabular data.
+    
+    Implementation inspired by Equinox's score-based diffusion example:
+    https://docs.kidger.site/equinox/examples/score_based_diffusion/
 
     Attributes:
         key: A JAX random key used for various operations.

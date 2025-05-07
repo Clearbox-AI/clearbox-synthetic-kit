@@ -442,8 +442,8 @@ class TabularEngine(EngineInterface):
 
         if self.model_type == 'Diffusion':
             # Use diffusion-specific parameters if provided, otherwise fall back to VAE parameters
-            diff_epochs = diffusion_epochs if diffusion_epochs is not None else epochs
-            diff_batch_size = diffusion_batch_size if diffusion_batch_size is not None else batch_size
+            diff_epochs = diffusion_epochs if diffusion_epochs is not None else epochs * 10
+            diff_batch_size = diffusion_batch_size if diffusion_batch_size is not None else batch_size * 2
             diff_learning_rate = diffusion_learning_rate if diffusion_learning_rate is not None else learning_rate
             
             print(f"Training diffusion model for {diff_epochs} epochs with batch size {diff_batch_size} and learning rate {diff_learning_rate}")
@@ -651,22 +651,17 @@ class TabularEngine(EngineInterface):
 
                 # Use the diffusion model to generate samples conditioned on the latent representation
                 samples = self.diffusion_model.sample(dataset.data.shape[0])
-
+                recon_x = self.model.apply({"params": self.params}, samples, y if y is not None else None, method=self.model.decode)
                 # Decode the samples back to the original space
-                generated_np = self.model.apply({"params": self.params}, samples, y, method=self.model.decode)
+                generated_np = self._sample_vae(np.array(samples), recon_x)
                 generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
             else:
                 # Encode the input data to get latent representations
-                if y is not None:
-                    rng, noise_key = random.split(rng)
-                    z_noise = random.normal(noise_key, (x.shape[0], self.architecture["layers_size"][-1])) * noise
-                    z_noise = self.apply(x.to_numpy(), y)[1] + z_noise
-                    recon_x = self.model.apply({"params": self.params}, z_noise, y, method=self.model.decode)
-                else:
-                    rng, noise_key = random.split(rng)
-                    z_noise = random.normal(noise_key, (x.shape[0], self.architecture["layers_size"][-1])) * noise
-                    z_noise = self.apply(x.to_numpy())[1] + z_noise
-                    recon_x = self.model.apply({"params": self.params}, z_noise, method=self.model.decode)
+                rng, noise_key = random.split(rng)
+                z_noise = random.normal(noise_key, (x.shape[0], self.architecture["layers_size"][-1])) * noise
+                z_noise = self.apply(x.to_numpy(), y)[1] + z_noise
+                recon_x = self.model.apply({"params": self.params}, z_noise, y if y is not None else None, method=self.model.decode)
+
                     
                 generated_np = self._sample_vae(x.to_numpy(), recon_x)
                 generated_df = self.preprocessor.inverse_transform(pd.DataFrame(generated_np,columns=x.columns))
