@@ -5,7 +5,7 @@ flax==0.8.5
 numpy<2.0.0
 pydantic>=2.0
 typing
-pandas
+pandas<=2.2.3
 loguru
 dateparser
 pydateinfer
@@ -13,6 +13,7 @@ pytest
 pytest-cov
 pytest-lazy-fixture
 scikit-learn
+scipy<=1.14
 cython
 xgboost
 optax
@@ -20,3 +21,4 @@ tqdm
 requests
 sphinx_rtd_theme
 myst_parser
+clearbox-preprocessor

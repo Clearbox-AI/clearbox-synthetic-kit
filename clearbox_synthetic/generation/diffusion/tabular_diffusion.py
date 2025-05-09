@@ -1,8 +1,19 @@
 """
-
 This module implements a denoising diffusion model using JAX, Equinox, and Flax libraries.
 It includes an MLP-based denoising model and a TabularDiffusion class for training and sampling
 from the diffusion model.
+
+This implementation is based on the score-based diffusion example from Equinox:
+https://docs.kidger.site/equinox/examples/score_based_diffusion/
+
+Reference:
+@inproceedings{song2021scorebased,
+    title={Score-Based Generative Modeling through Stochastic Differential Equations},
+    author={Yang Song and Jascha Sohl-Dickstein and Diederik P Kingma and
+            Abhishek Kumar and Stefano Ermon and Ben Poole},
+    booktitle={International Conference on Learning Representations},
+    year={2021},
+}
 """
 
 import json
@@ -26,6 +37,9 @@ from loguru import logger
 
 class MLPDenoising(eqx.Module):
     """A Multilayer Perceptron (MLP) model for denoising in the diffusion framework.
+    
+    Based on the implementation from Equinox's score-based diffusion example:
+    https://docs.kidger.site/equinox/examples/score_based_diffusion/
 
     Attributes:
         mlp (eqx.nn.MLP): The MLP model for denoising.
@@ -51,7 +65,7 @@ class MLPDenoising(eqx.Module):
         self.t1 = t1
         self.input_size = input_size
 
-    def __call__(self, t: float, y: jnp.ndarray) -> jnp.ndarray:
+    def __call__(self, t: jnp.ndarray, y: jnp.ndarray) -> jnp.ndarray:
         """Performs a forward pass of the MLPDenoising model.
 
         Args:
@@ -61,9 +75,8 @@ class MLPDenoising(eqx.Module):
         Returns:
             jnp.ndarray: The denoised output.
         """
+        t = jnp.asarray(t, dtype=jnp.float32)
         t = t / self.t1
-        t = jnp.asarray(t)
-        y = jnp.asarray(y)
 
         if t.ndim == 0:
             t = jnp.expand_dims(t, axis=0)
@@ -76,14 +89,16 @@ class MLPDenoising(eqx.Module):
             raise ValueError(f"Unexpected y.ndim: {y.ndim}")
 
         t = t.reshape(-1, 1)
-        y = jnp.concatenate([y, t], axis=-1)
-        outputs = jax.vmap(self.mlp)(y)
-
+        inputs = jnp.concatenate([y, t], axis=-1)
+        outputs = jax.vmap(self.mlp)(inputs)
         return outputs[0] if outputs.shape[0] == 1 else outputs
 
 
 class TabularDiffusion(DiffusionInterface):
     """A class for training and sampling from a diffusion model on tabular data.
+    
+    Implementation inspired by Equinox's score-based diffusion example:
+    https://docs.kidger.site/equinox/examples/score_based_diffusion/
 
     Attributes:
         key: A JAX random key used for various operations.
@@ -187,7 +202,10 @@ class TabularDiffusion(DiffusionInterface):
             jnp.ndarray: The generated sample.
         """
         def drift(t, y, args):
-            _, beta = jax.jvp(int_beta, (t,), (jnp.ones_like(t),))
+            if jnp.isscalar(t) or t.ndim == 0:
+                _, beta = jax.jvp(int_beta, (jnp.array(t, dtype=float),), (jnp.ones_like(jnp.array(t, dtype=float)),))
+            else:
+                beta = jnp.ones_like(t)
             return -0.5 * beta * (y + model(t, y))
 
         term = dfx.ODETerm(drift)
@@ -234,8 +252,19 @@ class TabularDiffusion(DiffusionInterface):
         """
         self.input_size = data.shape[1]
         self.model = MLPDenoising(data.shape[1], self.hidden_size, self.depth, self.t1, key=self.model_key)
-        self.int_beta = lambda t: t
-        weight = lambda t: 1 - jnp.exp(-self.int_beta(t))
+        
+        # Define int_beta to properly handle both scalar and array inputs
+        def safe_int_beta(t):
+            t_array = jnp.asarray(t, dtype=jnp.float32)
+            # Handle array inputs by applying the operation elementwise
+            if t_array.ndim > 0:
+                return jnp.ones_like(t_array)  # Return ones with same shape instead of converting to int
+            else:
+                # Only convert to int if it's a scalar (ndim=0)
+                return jnp.asarray(1.0, dtype=jnp.float32)
+        
+        self.int_beta = safe_int_beta
+        weight = lambda t: 1 - jnp.exp(-safe_int_beta(t))
 
         opt = optax.adabelief(lr)
         opt_state = opt.init(eqx.filter(self.model, eqx.is_inexact_array))

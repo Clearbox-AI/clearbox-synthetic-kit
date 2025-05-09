@@ -12,7 +12,6 @@ from flax import linen as nn
 from typing import Sequence, Tuple, Dict
 from .vae import VAEInterface
 
-
 class Encoder(nn.Module):
     """
     Encoder network for the Time Series VAE.
@@ -40,17 +39,10 @@ class Encoder(nn.Module):
         Returns:
             Tuple: Mean and log variance of the latent space distribution.
         """
-#         x = nn.Dense(
-#             self.max_sequence_length * self.feature_sizes,
-#             kernel_init=nn.initializers.xavier_uniform(),
-#             bias_init=nn.initializers.zeros,
-#         )(x)
         x = x.reshape(-1, self.max_sequence_length, self.feature_sizes) 
         x = x + (np.arange(self.max_sequence_length) / self.max_sequence_length).reshape(1, self.max_sequence_length, 1)
         x = nn.LayerNorm()(x)        
-        print(x.shape)
         x = x + nn.MultiHeadDotProductAttention(num_heads=self.num_heads, qkv_features=int(x.shape[1]/self.num_heads))(x, x)
-        print(x.shape)
 
         x = x.reshape(-1, x.shape[-1] * x.shape[-2])
         x_res = x
@@ -286,7 +278,6 @@ def train_step(hashed_architecture, state, batch, search_params):
         weight_penalty = search_params["l2_reg"] * 0.5 * weight_l2
         loss_kld = -0.5 * jnp.mean(1 + logvar - mean**2 - jnp.exp(logvar))
         return jnp.mean(loss_ordinal) + weight_penalty + search_params["alpha"] * loss_kld
-
     grads = jax.grad(loss_fn)(state.params)
     return state.apply_gradients(grads=grads)
 
@@ -316,6 +307,7 @@ def eval(hashed_architecture, model, eval_ds, search_params, n_samples=1000):
         eval_ds = eval_ds[points, :]
     else:
         eval_ds = eval_ds[points, :]
+        
     VAE = TimeSeriesVAE(
         encoder_widths=architecture["layers_size"],
         decoder_widths=architecture["layers_size"][::-1],

@@ -1,17 +1,21 @@
 import json
 import optax
 import numpy as np
-import equinox as eqx
-from typing import Sequence, Tuple, Callable, Dict
+import pandas as pd
+from tqdm import tqdm
+from typing import Sequence, Tuple, Dict
 from jax import random
 from flax.core.frozen_dict import FrozenDict
 from flax import serialization
 from flax.training import train_state
 from tqdm import trange
 from loguru import logger
-from ..VAE.timeseries_vae import TimeSeriesVAE, train_step, eval
-from .engine import EngineInterface
 
+from clearbox_preprocessor import Preprocessor
+
+from clearbox_synthetic.utils import Dataset
+from clearbox_synthetic.generation.engine.engine import EngineInterface
+from clearbox_synthetic.generation.VAE.timeseries_vae import TimeSeriesVAE, train_step, eval
 
 class TimeSeriesEngine(EngineInterface):
     """
@@ -34,44 +38,43 @@ class TimeSeriesEngine(EngineInterface):
 
     def __init__(
         self,
-        layers_size: Sequence[int],
-        feature_sizes: Sequence[int],
-        max_sequence_length: Sequence[int],
-        num_heads: Sequence[int],
-        y_shape: Sequence[int] = [0],
+        dataset: Dataset,
+        time_id: str,
+        layers_size: Sequence[int] = [40],
         params: FrozenDict = None,
         train_params: Dict = None,
-        train_loss: Dict = None,
-        val_loss: Dict = None,
-        privacy_budget: float = 1.0,
+        num_heads: int = 4,
     ):
         """
-        Initializes the TimeSeriesEngine with the given parameters and validates the license.
+        Initializes the TimeSeriesEngine with the given parameters.
 
         Parameters
         ----------
+        dataset : Dataset
+            The dataset containing time series data.
+        time_id : str
+            The time series index that identifies single events.
         layers_size : Sequence[int]
             List of sizes for the hidden layers.
-        feature_sizes : Sequence[int]
-            Sizes of the input features.
-        max_sequence_length : Sequence[int]
-            Maximum length of the input sequences.
-        num_heads : Sequence[int]
-            Number of self-attention heads.
-        y_shape : Sequence[int], optional
-            Shape of the target variable. Defaults to [0].
         params : FrozenDict, optional
             Model parameters. Defaults to None.
         train_params : Dict, optional
             Training parameters. Defaults to None.
-        train_loss : Dict, optional
-            Training loss information. Defaults to None.
-        val_loss : Dict, optional
-            Validation loss information. Defaults to None.
-        privacy_budget : float, optional
-            Privacy budget for the model. Defaults to 1.0.
+        num_heads : int
+            Number of self-attention heads.
         """
-        
+
+        self.meta_columns = [i for i in dataset.data.columns if (dataset.data[i].dtype in ['object','category']) and (i not in [time_id])]
+        self.time_id = time_id        
+        X = dataset.data
+        self.time_columns = [i for i in dataset.data.columns if i not in [time_id]+self.meta_columns]
+        self.time_mean= dataset.data[self.time_columns].mean(axis=0).values
+        self.time_std= dataset.data[self.time_columns].std(axis=0).values
+        self.n_time_features = len(self.time_columns)
+        n =  X[[self.time_id,self.time_columns[0]]].groupby(self.time_id).count().max().values[0]
+        self.max_sequence_length = n if n % 2 == 0 else n + 1
+        self.prepro = Preprocessor(dataset.data[self.meta_columns])
+        self.num_heads = num_heads
         rng = random.PRNGKey(0)
         rng, key = random.split(rng)
 
@@ -86,24 +89,23 @@ class TimeSeriesEngine(EngineInterface):
                 "prob_clip": 0.99,
             }
 
-        self.privacy_budget = privacy_budget
         self.search_params = train_params
-        x_shape = feature_sizes * max_sequence_length
-
+        self.x_shape = self.n_time_features * self.max_sequence_length
+        self.y_shape = self.prepro.transform(dataset.data[self.meta_columns]).shape[1]
         self.model = TimeSeriesVAE(
             encoder_widths=layers_size,
             decoder_widths=layers_size[::-1],
-            y_shape=y_shape,
-            feature_sizes=feature_sizes,
-            max_sequence_length=max_sequence_length,
-            num_heads=num_heads,
+            y_shape=self.y_shape,
+            feature_sizes=self.n_time_features,
+            max_sequence_length=self.max_sequence_length,
+            num_heads=self.num_heads,
             search_params=train_params,
         )
 
-        x = random.uniform(key, [np.prod(x_shape)])
+        x = random.uniform(key, [np.prod(self.x_shape)])
 
-        if y_shape != [0]:
-            y = random.uniform(key, [np.prod(y_shape)])
+        if self.y_shape != 0:
+            y = random.uniform(key, [np.prod(self.y_shape)])
         else:
             y = None
 
@@ -112,11 +114,10 @@ class TimeSeriesEngine(EngineInterface):
 
         self.architecture = {
             "layers_size": layers_size,
-            "y_shape": y_shape,
-            "feature_sizes": feature_sizes,
-            "max_sequence_length": max_sequence_length,
-            "num_heads": num_heads,
-        }
+            "y_shape": [int(self.y_shape)],
+            "feature_sizes": int(self.n_time_features),
+            "max_sequence_length": int(self.max_sequence_length),
+            "num_heads": int(self.num_heads)}
 
         self.hashed_architecture = json.dumps(self.architecture)
 
@@ -176,13 +177,11 @@ class TimeSeriesEngine(EngineInterface):
 
     def fit(
         self,
-        train_ds: np.ndarray,
-        y_train_ds: np.ndarray = None,
+        dataset: Dataset,
         epochs: int = 20,
         batch_size: int = 128,
         learning_rate: float = 1e-2,
-        val_ds: np.ndarray = None,
-        y_val_ds: np.ndarray = None,
+        val_dataset: Dataset = None,
         patience: int = 4,
     ):
         """
@@ -190,10 +189,8 @@ class TimeSeriesEngine(EngineInterface):
 
         Parameters
         ----------
-        train_ds : np.ndarray
-            Training dataset.
-        y_train_ds : np.ndarray, optional
-            Target values for the training dataset. Defaults to None.
+        dataset : Dataset
+            The training dataset.
         epochs : int, optional
             Number of training epochs. Defaults to 20.
         batch_size : int, optional
@@ -207,20 +204,45 @@ class TimeSeriesEngine(EngineInterface):
         patience : int, optional
             Number of epochs to wait before early stopping. Defaults to 4.
         """
+        ntrain = dataset.data[self.time_id].nunique()
+
+        X_proc = np.zeros((ntrain, self.max_sequence_length*self.n_time_features))
+        X = dataset.data
+        meta_data = dataset.data.groupby(self.time_id).first()[self.meta_columns]
+        y_train_ds = self.prepro.transform(meta_data)
+        logger.info('Preprocessing training time series')
+        for j,i in tqdm(enumerate(X[self.time_id].unique())):
+            dt = (X[X[self.time_id]==i][self.time_columns].values-self.time_mean)/self.time_std
+            L = self.max_sequence_length-dt.T.shape[1]
+            dt = np.hstack([dt.T,np.zeros((self.n_time_features,L))])
+            X_proc[j,:] = dt.reshape(self.max_sequence_length*self.n_time_features,-1).T
+        
+        
+        if val_dataset:
+            X_proc_val = np.zeros((ntrain, self.max_sequence_length*self.n_time_features))
+            X_val = val_dataset.data            
+            meta_data_val = val_dataset.data.groupby(self.time_id).first()[self.meta_columns]
+            y_val_ds = self.prepro.transform(meta_data_val)
+            logger.info('Preprocessing validation time series')
+            for j,i in tqdm(enumerate(X_val[self.time_id].unique())):
+                dt = (X_val[X_val[self.time_id]==i][self.time_columns].values-self.time_mean)/self.time_std
+                L = self.max_sequence_length-dt.T.shape[1]
+                dt = np.hstack([dt.T,np.zeros((self.n_time_features,L))])
+                X_proc_val[j,:] = dt.reshape(self.max_sequence_length*self.n_time_features,-1).T
+                
+        train_loader = np.hstack([X_proc, y_train_ds]) if y_train_ds is not None else np.hstack([X_proc])
+            
         weight_decay = self.search_params["weight_decay"]
 
         state = train_state.TrainState.create(
-            apply_fn=self.model.apply,
-            params=self.params,
-            tx=optax.adamw(learning_rate=learning_rate, weight_decay=weight_decay),
+            apply_fn = self.model.apply,
+            params   = self.params,
+            tx       = optax.adamw(learning_rate=learning_rate, weight_decay=weight_decay),
         )
+                
 
-        if y_train_ds is not None:
-            train_loader = np.hstack([train_ds, y_train_ds])
-        else:
-            train_loader = np.hstack([train_ds])
-
-        metrics_train, metrics_val = None, None
+        metrics_train = None
+        metrics_val = None
         splits = np.arange(batch_size, train_loader.shape[0], batch_size)
         loop_range = trange(epochs, desc="Engine fitting in progress", unit="epoch", leave=True)
 
@@ -233,9 +255,9 @@ class TimeSeriesEngine(EngineInterface):
 
             if i % 25 == 0:  # Update progress every 25 iterations
                 self.params = state.params
-                metrics_train = self.evaluate(train_ds, y_train_ds)
-                if val_ds is not None:
-                    metrics_val = self.evaluate(val_ds, y_val_ds)
+                metrics_train = self.evaluate(X_proc, y_train_ds)
+                if val_dataset is not None:
+                    metrics_val = self.evaluate(X_proc_val, y_val_ds)
                     loop_range.set_postfix({
                         "Train loss": metrics_train["mean_reconstruction_loss"],
                         "Val loss": metrics_val["mean_reconstruction_loss"]
@@ -258,8 +280,8 @@ class TimeSeriesEngine(EngineInterface):
                     break
 
         self.train_loss = metrics_train
-        self.val_loss = metrics_val
-        self.params = state.params
+        self.val_loss   = metrics_val
+        self.params     = state.params
 
     def evaluate(self, test_ds: np.ndarray, y_test_ds: np.ndarray = None) -> Dict:
         """
@@ -279,22 +301,6 @@ class TimeSeriesEngine(EngineInterface):
 
         metrics = eval(self.hashed_architecture, self.params, test_loader, self.search_params)
         return metrics
-
-    def save(self, architecture_filename: str, sd_filename: str):
-        """
-        Saves the model architecture and parameters.
-
-        Parameters
-        ----------
-        architecture_filename : str
-            Filename to save the model architecture.
-        sd_filename : str
-            Filename to save the state dictionary.
-        """
-        state_dict = serialization.to_state_dict(self.params)
-        np.save(sd_filename, state_dict)
-        with open(architecture_filename, "w") as f:
-            json.dump(self.architecture, f)
 
     def reconstruction_error(self, x: np.ndarray, y: np.ndarray = None) -> np.ndarray:
         """
@@ -358,3 +364,51 @@ class TimeSeriesEngine(EngineInterface):
         encoded_samples = encoded_ds[idx]
 
         return encoded_samples, idx
+    
+    def generate(
+            self, 
+            dataset: Dataset,
+            n_samples: int = 100, 
+        ):
+        """
+        Generates synthetic time series data from the model.
+
+        Parameters
+        ----------
+        n_samples : int, optional
+            Number of samples to generate. Defaults to 100.
+        """
+        synth_data = self.decode(np.random.randn(n_samples,
+                                                 self.architecture['layers_size'][0]))  # b.shape[1] dimensione dato da generare
+        indeces = dataset.data[self.time_id].values    
+        dfs = []
+
+        for i in tqdm(range(synth_data.shape[0])):
+            x_i = synth_data[i,:]
+            time_series = []
+            for j,feat_name in enumerate(self.time_columns):
+                ts =x_i[self.max_sequence_length*j:self.max_sequence_length*(j+1)]
+                ts = ts * self.time_std[j] + self.time_mean[j]
+                time_series.append(ts)
+            df_i = pd.DataFrame(np.array(time_series).T)
+            df_i.columns = self.time_columns
+            df_i['id'] = i
+            dfs.append(df_i)    
+        
+        return pd.concat(dfs, axis= 0)  
+
+    def save(self, architecture_filename: str, sd_filename: str):
+        """
+        Saves the model architecture and parameters.
+
+        Parameters
+        ----------
+        architecture_filename : str
+            Filename to save the model architecture.
+        sd_filename : str
+            Filename to save the state dictionary.
+        """
+        state_dict = serialization.to_state_dict(self.params)
+        np.save(sd_filename, state_dict)
+        with open(architecture_filename, "w") as f:
+            json.dump(self.architecture, f)

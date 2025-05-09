@@ -12,8 +12,9 @@ Key features of the Clearbox Synthetic Kit include:
     - A highly flexible module to import, manipulate, and prepare data for training.
     - Supports various transformations and preprocessing pipelines to ensure compatibility with synthetic generation workflows.
 
-3. Evaluation Module
+3. Evaluation
 
+    The evaluation of the synthetic data generated is carried out with the <a href="https://github.com/Clearbox-AI/SURE" target="_blank" rel="noopener noreferrer">SURE library</a>, which includes:
     - Tools to rigorously assess the utility and privacy of synthetic data.
     - Offers insights into the effectiveness of synthetic data in preserving privacy while retaining usefulness for downstream tasks like machine learning and analytics.
 
