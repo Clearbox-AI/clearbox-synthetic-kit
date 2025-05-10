@@ -8,6 +8,7 @@ typing
 pandas<=2.2.3
 loguru
 dateparser
+pyarrow
 pydateinfer
 pytest
 pytest-cov
