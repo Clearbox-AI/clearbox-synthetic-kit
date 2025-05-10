@@ -106,17 +106,16 @@ class Anomalies:
         for anomaly_index in anomaly_instances:
             features = []
             for value in self.dataset.get_x().iloc[anomaly_index].values.tolist():
-                features.append(
-                    "NaN"
-                    if pd.isnull(value)
-                    else value
-                    if isinstance(value, str)
-                    else str(value)
-                    if isinstance(value, bool)
-                    else float(value)
-                    if isinstance(value, float)
-                    else int(value)
-                )
+                if pd.isnull(value):
+                    features.append("NaN")
+                elif isinstance(value, str):
+                    features.append(value)
+                elif isinstance(value, bool):
+                    features.append(str(value))
+                elif isinstance(value, float):
+                    features.append(float(value))
+                else:
+                    features.append(int(value))
             features_values.append(features)
 
         anomalies = {
