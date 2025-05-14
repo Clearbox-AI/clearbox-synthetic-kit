@@ -38,29 +38,29 @@ jobs:
       run: |
         python setup.py bdist_wheel
 
-    - name: Check if version exists on PyPI
-      id: check-version
-      run: |
-        PACKAGE_NAME=$(python setup.py --name)
-        PACKAGE_VERSION=$(python setup.py --version)
+    # - name: Check if version exists on PyPI
+    #   id: check-version
+    #   run: |
+    #     PACKAGE_NAME=$(python setup.py --name)
+    #     PACKAGE_VERSION=$(python setup.py --version)
         
-        RESPONSE=$(curl --silent --fail https://pypi.org/pypi/${PACKAGE_NAME}/json || echo "not found")
+    #     RESPONSE=$(curl --silent --fail https://pypi.org/pypi/${PACKAGE_NAME}/json || echo "not found")
         
-        if echo "$RESPONSE" | grep -q '"releases"'; then
-          if echo "$RESPONSE" | jq -e ".releases | has(\"$PACKAGE_VERSION\")" >/dev/null; then
-            echo "Version ${PACKAGE_VERSION} already exists on PyPI."
-            echo "already_published=true" >> $GITHUB_ENV
-          else
-            echo "Version ${PACKAGE_VERSION} does not exist on PyPI."
-            echo "already_published=false" >> $GITHUB_ENV
-          fi
-        else
-          echo "Package does not exist on PyPI."
-          echo "already_published=false" >> $GITHUB_ENV
-        fi
+    #     if echo "$RESPONSE" | grep -q '"releases"'; then
+    #       if echo "$RESPONSE" | jq -e ".releases | has(\"$PACKAGE_VERSION\")" >/dev/null; then
+    #         echo "Version ${PACKAGE_VERSION} already exists on PyPI."
+    #         echo "already_published=true" >> $GITHUB_ENV
+    #       else
+    #         echo "Version ${PACKAGE_VERSION} does not exist on PyPI."
+    #         echo "already_published=false" >> $GITHUB_ENV
+    #       fi
+    #     else
+    #       echo "Package does not exist on PyPI."
+    #       echo "already_published=false" >> $GITHUB_ENV
+    #     fi
 
     - name: Publish on PyPI
-      if: env.already_published == 'false'
+      # if: env.already_published == 'false'
       run: |
         pip install twine
         export TWINE_USERNAME=__token__

@@ -107,8 +107,4 @@ dmypy.json
 cython_debug/
 
 # Debugging file
-clearbox_synthetic/debug.py
-tutorials/tabular_data/2_tabular_utility_evaluation.ipynb
-tutorials/tabular_data/3_tabular_privacy_evaluation.ipynb
-tutorials/tabular_data/4_tabular_data_augmentation_with_synthetic_kit.ipynb
-tutorials/use_cases/
+debug.py
