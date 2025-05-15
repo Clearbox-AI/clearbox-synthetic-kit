@@ -62,12 +62,15 @@ jobs:
     - name: Repair manylinux wheels
       if: runner.os == 'Linux'
       run: |
+        pip install numpy build wheel auditwheel
         for whl in dist/*.whl; do
           auditwheel repair "$whl" --plat manylinux2014_x86_64 -w dist/
         done
     - name: Publish on PyPI
       # if: env.already_published == 'false'
+      
       run: |
+              pip twine
               twine upload dist/*.*
       env:
         TWINE_USERNAME: __token__
