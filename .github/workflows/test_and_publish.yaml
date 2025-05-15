@@ -62,8 +62,13 @@ jobs:
     - name: Publish on PyPI
       # if: env.already_published == 'false'
       run: |
-        pip install twine
-        export TWINE_USERNAME=__token__
-        export TWINE_PASSWORD=${{ secrets.PYPI_TOKEN }}
-        twine upload dist/*.whl
+        pip install build wheel auditwheel twine
+        python3 -m build --sdist --wheel
+        for whl in dist/*.whl; do
+          auditwheel repair "$whl" --plat manylinux2014_x86_64 -w dist/
+        done
+        twine upload dist/*.tar.gz dist/*manylinux*_*.whl
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
 
