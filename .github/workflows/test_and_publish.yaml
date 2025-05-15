@@ -14,64 +14,86 @@ jobs:
         python-version: ["3.10", "3.11", "3.12"]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4 # Updated to v4
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }} on ${{ matrix.os }}
-        uses: actions/setup-python@v5 # Updated to v5
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install wheel setuptools # For building
+          pip install wheel setuptools # For building with setup.py
+          # For modern building with `pyproject.toml`, you'd install `build`:
+          # pip install build
           pip install -r requirements.txt # For tests
       - name: Run Python tests
         run: |
           pip install pytest
           pytest
-      - name: Build Python sdist and wheels
+
+      - name: Build Python distributions
         run: |
-          python setup.py sdist bdist_wheel
+          # Build sdist only on one specific job configuration (e.g., ubuntu-latest with Python 3.12)
+          # All jobs will build wheels.
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" && "${{ matrix.python-version }}" == "3.12" ]]; then
+            echo "Building sdist and wheels on ${{ matrix.os }} Python ${{ matrix.python-version }}"
+            python setup.py sdist bdist_wheel
+            # If using the 'build' package (recommended for projects with pyproject.toml):
+            # python -m build --sdist --wheel .
+          else
+            echo "Building only wheels on ${{ matrix.os }} Python ${{ matrix.python-version }}"
+            python setup.py bdist_wheel
+            # If using the 'build' package:
+            # python -m build --wheel .
+          fi
+          echo "Listing dist/ directory contents after build step:"
+          ls -lR dist/
+
       - name: Repair manylinux wheels
-        if: runner.os == 'Linux' 
+        if: runner.os == 'Linux' # Applies to ubuntu-latest
         run: |
           pip install auditwheel
           REPAIRED_ANY=false
+          # Iterate over Linux-specific wheels in the dist directory.
+          # auditwheel creates new files with the manylinux tag.
+          # The original linux_* wheel will then be removed.
           for whl_file in dist/*-linux_*.whl; do
-            if [ -f "$whl_file" ]; then
+            if [ -f "$whl_file" ]; then # Check if the glob found any files and if the current item is a file
               echo "Processing $whl_file for repair..."
               auditwheel repair "$whl_file" --plat manylinux2014_x86_64 -w dist/
               if [ $? -eq 0 ]; then
-                echo "Successfully repaired and replaced $whl_file with manylinux version. Removing original."
+                echo "Successfully repaired $whl_file. Original linux wheel removed."
                 rm "$whl_file" # Remove the original non-manylinux wheel
                 REPAIRED_ANY=true
               else
                 echo "ERROR: auditwheel repair failed for $whl_file"
+                # Consider 'exit 1' if a failed repair should stop the workflow
               fi
             fi
           done
           if [ "$REPAIRED_ANY" = false ]; then
             echo "No Linux-specific wheels (e.g., *linux_x86_64.whl) found to repair."
           fi
-      - name: List contents of dist for ${{ matrix.os }}-${{ matrix.python-version }}
+      - name: List contents of dist for ${{ matrix.os }}-${{ matrix.python-version }} (after potential repair)
         run: |
           echo "Contents of dist/ for ${{ matrix.os }} Python ${{ matrix.python-version }}:"
           ls -lR dist/
       - name: Upload distribution files from ${{ matrix.os }}-${{ matrix.python-version }}
-        uses: actions/upload-artifact@v4 # Updated to v4
+        uses: actions/upload-artifact@v4
         with:
           name: python-packages-${{ matrix.os }}-${{ matrix.python-version }}
-          path: dist/ # Upload the entire dist directory created by this job
+          path: dist/
 
   publish:
-    needs: build 
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.11"] # Python version for Twine execution environment
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4 # Good practice, though not strictly needed if only using downloaded artifacts
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }} for publishing
         uses: actions/setup-python@v5
         with:
@@ -81,9 +103,9 @@ jobs:
         run: mkdir -p dist
 
       - name: Download all distribution artifacts
-        uses: actions/download-artifact@v4 
+        uses: actions/download-artifact@v4
         with:
-          path: downloaded_artifacts/
+          path: downloaded_artifacts/ # Download all artifacts into this directory
 
       - name: Consolidate all packages into the 'dist' directory
         run: |
@@ -91,6 +113,20 @@ jobs:
           find downloaded_artifacts/ -type f \( -name "*.whl" -o -name "*.tar.gz" \) -exec cp {} dist/ \;
           echo "Final contents of dist/ to be published:"
           ls -lR dist/
+
+          # Verify that only one sdist is present
+          SDIST_COUNT=$(find dist/ -maxdepth 1 -name "*.tar.gz" | wc -l)
+          echo "Number of sdist (.tar.gz) files found in dist/: $SDIST_COUNT"
+          if [ "$SDIST_COUNT" -gt 1 ]; then
+            echo "Error: Multiple sdist files found after consolidation. Aborting."
+            exit 1
+          elif [ "$SDIST_COUNT" -eq 0 ]; then
+            # This might be acceptable if you only intend to publish wheels for some reason,
+            # but usually an sdist is expected.
+            echo "Warning: No sdist file found in dist/."
+          fi
+
+          # Check if dist directory has any files to upload
           if [ -z "$(ls -A dist)" ]; then
             echo "Error: The 'dist' directory is empty. No packages found to publish."
             exit 1
@@ -101,7 +137,7 @@ jobs:
 
       - name: Publish to PyPI
         env:
-          TWINE_USERNAME: "__token__" # Standard for PyPI API token
+          TWINE_USERNAME: "__token__"
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
         run: |
           python -m twine upload --verbose dist/*
