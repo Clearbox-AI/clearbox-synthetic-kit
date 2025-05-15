@@ -1,3 +1,4 @@
+
 name: Test and Publish Library to PyPI
 
 on:
@@ -58,15 +59,16 @@ jobs:
     #       echo "Package does not exist on PyPI."
     #       echo "already_published=false" >> $GITHUB_ENV
     #     fi
-
-    - name: Publish on PyPI
-      # if: env.already_published == 'false'
+    - name: Repair manylinux wheels
+      if: runner.os == 'Linux'
       run: |
-        pip install build wheel auditwheel twine
         for whl in dist/*.whl; do
           auditwheel repair "$whl" --plat manylinux2014_x86_64 -w dist/
         done
-        twine upload dist/*.tar.gz dist/*manylinux*_*.whl
+    - name: Publish on PyPI
+      # if: env.already_published == 'false'
+      run: |
+              twine upload dist/*.*
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
