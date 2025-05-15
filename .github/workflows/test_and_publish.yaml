@@ -63,7 +63,6 @@ jobs:
       # if: env.already_published == 'false'
       run: |
         pip install build wheel auditwheel twine
-        python3 -m build --sdist --wheel
         for whl in dist/*.whl; do
           auditwheel repair "$whl" --plat manylinux2014_x86_64 -w dist/
         done
