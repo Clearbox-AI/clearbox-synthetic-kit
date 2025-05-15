@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.11"]  #  <- Still need to pick ONE version.
+        python-version: ["3.11"] 
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout repository
