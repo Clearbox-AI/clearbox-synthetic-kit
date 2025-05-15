@@ -8,62 +8,100 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest]
         python-version: ["3.10", "3.11", "3.12"]
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Updated to v4
+      - name: Set up Python ${{ matrix.python-version }} on ${{ matrix.os }}
+        uses: actions/setup-python@v5 # Updated to v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install wheel setuptools # For building
+          pip install -r requirements.txt # For tests
+      - name: Run Python tests
+        run: |
+          pip install pytest
+          pytest
+      - name: Build Python sdist and wheels
+        run: |
+          python setup.py sdist bdist_wheel
+      - name: Repair manylinux wheels
+        if: runner.os == 'Linux' 
+        run: |
+          pip install auditwheel
+          REPAIRED_ANY=false
+          for whl_file in dist/*-linux_*.whl; do
+            if [ -f "$whl_file" ]; then
+              echo "Processing $whl_file for repair..."
+              auditwheel repair "$whl_file" --plat manylinux2014_x86_64 -w dist/
+              if [ $? -eq 0 ]; then
+                echo "Successfully repaired and replaced $whl_file with manylinux version. Removing original."
+                rm "$whl_file" # Remove the original non-manylinux wheel
+                REPAIRED_ANY=true
+              else
+                echo "ERROR: auditwheel repair failed for $whl_file"
+              fi
+            fi
+          done
+          if [ "$REPAIRED_ANY" = false ]; then
+            echo "No Linux-specific wheels (e.g., *linux_x86_64.whl) found to repair."
+          fi
+      - name: List contents of dist for ${{ matrix.os }}-${{ matrix.python-version }}
+        run: |
+          echo "Contents of dist/ for ${{ matrix.os }} Python ${{ matrix.python-version }}:"
+          ls -lR dist/
+      - name: Upload distribution files from ${{ matrix.os }}-${{ matrix.python-version }}
+        uses: actions/upload-artifact@v4 # Updated to v4
+        with:
+          name: python-packages-${{ matrix.os }}-${{ matrix.python-version }}
+          path: dist/ # Upload the entire dist directory created by this job
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+  publish:
+    needs: build 
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Good practice, though not strictly needed if only using downloaded artifacts
+      - name: Set up Python ${{ matrix.python-version }} for publishing
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install wheel setuptools
-        pip install -r requirements.txt
+      - name: Create a common dist directory for all packages
+        run: mkdir -p dist
 
-    - name: Run Python tests
-      run: |
-        pip install pytest
-        pytest
+      - name: Download all distribution artifacts
+        uses: actions/download-artifact@v4 
+        with:
+          path: downloaded_artifacts/
 
-    - name: Build Python wheels
-      run: |
-        python setup.py bdist_wheel
+      - name: Consolidate all packages into the 'dist' directory
+        run: |
+          echo "Consolidating packages from downloaded_artifacts/ into dist/"
+          find downloaded_artifacts/ -type f \( -name "*.whl" -o -name "*.tar.gz" \) -exec cp {} dist/ \;
+          echo "Final contents of dist/ to be published:"
+          ls -lR dist/
+          if [ -z "$(ls -A dist)" ]; then
+            echo "Error: The 'dist' directory is empty. No packages found to publish."
+            exit 1
+          fi
 
-    # - name: Check if version exists on PyPI
-    #   id: check-version
-    #   run: |
-    #     PACKAGE_NAME=$(python setup.py --name)
-    #     PACKAGE_VERSION=$(python setup.py --version)
-        
-    #     RESPONSE=$(curl --silent --fail https://pypi.org/pypi/${PACKAGE_NAME}/json || echo "not found")
-        
-    #     if echo "$RESPONSE" | grep -q '"releases"'; then
-    #       if echo "$RESPONSE" | jq -e ".releases | has(\"$PACKAGE_VERSION\")" >/dev/null; then
-    #         echo "Version ${PACKAGE_VERSION} already exists on PyPI."
-    #         echo "already_published=true" >> $GITHUB_ENV
-    #       else
-    #         echo "Version ${PACKAGE_VERSION} does not exist on PyPI."
-    #         echo "already_published=false" >> $GITHUB_ENV
-    #       fi
-    #     else
-    #       echo "Package does not exist on PyPI."
-    #       echo "already_published=false" >> $GITHUB_ENV
-    #     fi
+      - name: Install Twine
+        run: python -m pip install --upgrade pip twine
 
-    - name: Publish on PyPI
-      # if: env.already_published == 'false'
-      run: |
-        pip install twine
-        export TWINE_USERNAME=__token__
-        export TWINE_PASSWORD=${{ secrets.PYPI_TOKEN }}
-        twine upload dist/*.whl
-
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: "__token__" # Standard for PyPI API token
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          python -m twine upload --verbose dist/*
