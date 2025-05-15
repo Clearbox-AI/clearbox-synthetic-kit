@@ -8,67 +8,69 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest]
         python-version: ["3.10", "3.11", "3.12"]
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install wheel setuptools
-        pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install wheel setuptools
+          pip install -r requirements.txt
 
-    - name: Run Python tests
-      run: |
-        pip install pytest
-        pytest
+      - name: Run Python tests
+        run: |
+          pip install pytest
+          pytest
 
-    - name: Build Python wheels
-      run: |
-        python setup.py bdist_wheel
+      - name: Build Python distributions
+        run: |
+          python setup.py sdist bdist_wheel
 
-    # - name: Check if version exists on PyPI
-    #   id: check-version
-    #   run: |
-    #     PACKAGE_NAME=$(python setup.py --name)
-    #     PACKAGE_VERSION=$(python setup.py --version)
-        
-    #     RESPONSE=$(curl --silent --fail https://pypi.org/pypi/${PACKAGE_NAME}/json || echo "not found")
-        
-    #     if echo "$RESPONSE" | grep -q '"releases"'; then
-    #       if echo "$RESPONSE" | jq -e ".releases | has(\"$PACKAGE_VERSION\")" >/dev/null; then
-    #         echo "Version ${PACKAGE_VERSION} already exists on PyPI."
-    #         echo "already_published=true" >> $GITHUB_ENV
-    #       else
-    #         echo "Version ${PACKAGE_VERSION} does not exist on PyPI."
-    #         echo "already_published=false" >> $GITHUB_ENV
-    #       fi
-    #     else
-    #       echo "Package does not exist on PyPI."
-    #       echo "already_published=false" >> $GITHUB_ENV
-    #     fi
+      - name: Repair manylinux wheels
+        if: runner.os == 'Linux'
+        run: |
+          pip install auditwheel
+          mkdir wheels
+          for whl in dist/*.whl; do
+            auditwheel repair "$whl" --plat manylinux2014_x86_64 -w wheels
+          done
+          mv wheels/*.whl dist/
 
-    - name: Publish on PyPI
-      # if: env.already_published == 'false'
-      run: |
-        pip install build wheel auditwheel twine
-        python3 -m build --sdist --wheel
-        for whl in dist/*.whl; do
-          auditwheel repair "$whl" --plat manylinux2014_x86_64 -w dist/
-        done
-        twine upload dist/*.tar.gz dist/*manylinux*_*.whl
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+      - name: Show distribution files
+        if: always()
+        run: |
+          ls -l dist/
 
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Twine
+        run: |
+          pip install twine
+      - name: Publish to PyPI
+        run: |
+          twine upload dist/*
+        env:
+          TWINE_USERNAME: "__token__"
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
